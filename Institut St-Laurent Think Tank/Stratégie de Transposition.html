@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- Playables SDK -->
+<script>// Playables SDK v1.0.0
+// Game lifecycle bridge: rAF-based game-ready detection + event communication
+(function() {
+  'use strict';
+
+  // Idempotency: skip if already initialized (e.g., server-side injection
+  // followed by client-side inject-javascript via the Bloks webview component).
+  if (window.playablesSDK) return;
+
+  var HANDLER_NAME = 'playablesGameEventHandler';
+  var ANDROID_BRIDGE_NAME = '_MetaPlayablesBridge';
+  var RAF_FRAME_THRESHOLD = 3;
+
+  var gameReadySent = false;
+  var firstInteractionSent = false;
+  var errorSent = false;
+  var frameCount = 0;
+  var originalRAF = window.requestAnimationFrame;
+
+  // --- Transport Layer ---
+
+  function hasIOSBridge() {
+    return !!(window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers[HANDLER_NAME]);
+  }
+
+  function hasAndroidBridge() {
+    return !!(window[ANDROID_BRIDGE_NAME] &&
+              typeof window[ANDROID_BRIDGE_NAME].postEvent === 'function');
+  }
+
+  function isInIframe() {
+    return !!(window.parent && window.parent !== window);
+  }
+
+  function sendEvent(eventName, payload) {
+    var message = {
+      type: eventName,
+      payload: payload || {},
+      timestamp: Date.now()
+    };
+
+    if (hasIOSBridge()) {
+      try {
+        window.webkit.messageHandlers[HANDLER_NAME].postMessage(message);
+      } catch (e) { /* ignore */ }
+      return;
+    }
+
+    if (hasAndroidBridge()) {
+    try {
+      var p = payload || {};
+      p.__secureToken = window.__fbAndroidBridgeAuthToken || '';
+      window[ANDROID_BRIDGE_NAME].postEvent(
+        eventName,
+        JSON.stringify(p)
+      );
+    } catch (e) { /* ignore */ }
+    return;
+  }
+
+    if (isInIframe()) {
+      try {
+        window.parent.postMessage(message, '*');
+      } catch (e) { /* ignore */ }
+      return;
+    }
+  }
+
+  // --- rAF Game-Ready Detection ---
+
+  function onFrame() {
+    if (gameReadySent) return;
+
+    frameCount++;
+    if (frameCount >= RAF_FRAME_THRESHOLD) {
+      gameReadySent = true;
+      sendEvent('game_ready', {
+        frame_count: frameCount,
+        detected_at: Date.now()
+      });
+      return;
+    }
+
+    originalRAF.call(window, onFrame);
+  }
+
+  if (originalRAF) {
+    window.requestAnimationFrame = function(callback) {
+      if (!gameReadySent) {
+        return originalRAF.call(window, function(timestamp) {
+          frameCount++;
+          if (frameCount >= RAF_FRAME_THRESHOLD && !gameReadySent) {
+            gameReadySent = true;
+            sendEvent('game_ready', {
+              frame_count: frameCount,
+              detected_at: Date.now()
+            });
+          }
+          callback(timestamp);
+        });
+      }
+      return originalRAF.call(window, callback);
+    };
+  }
+
+  // --- First User Interaction Detection ---
+
+  function setupFirstInteractionDetection() {
+    var events = ['touchstart', 'mousedown', 'keydown'];
+
+    function onFirstInteraction() {
+      if (firstInteractionSent) return;
+      firstInteractionSent = true;
+      sendEvent('user_interaction_start', null);
+
+      for (var i = 0; i < events.length; i++) {
+        document.removeEventListener(events[i], onFirstInteraction, true);
+      }
+    }
+
+    for (var i = 0; i < events.length; i++) {
+      document.addEventListener(events[i], onFirstInteraction, true);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupFirstInteractionDetection);
+  } else {
+    setupFirstInteractionDetection();
+  }
+
+  // --- Auto Error Capture ---
+
+  window.addEventListener('error', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    sendEvent('error', {
+      message: event.message || 'Unknown error',
+      source: event.filename || '',
+      lineno: event.lineno || 0,
+      colno: event.colno || 0,
+      auto_captured: true
+    });
+  });
+
+  window.addEventListener('unhandledrejection', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    var reason = event.reason;
+    sendEvent('error', {
+      message: (reason instanceof Error) ? reason.message : String(reason),
+      type: 'unhandled_promise_rejection',
+      auto_captured: true
+    });
+  });
+
+  // --- Public API ---
+
+  window.playablesSDK = {
+    complete: function(score) {
+      sendEvent('game_ended', {
+        score: score,
+        completed: true
+      });
+    },
+
+    error: function(message) {
+      if (errorSent) return;
+      errorSent = true;
+      sendEvent('error', {
+        message: message || 'Unknown error',
+        auto_captured: false
+      });
+    },
+
+    sendEvent: function(eventName, payload) {
+      if (!eventName || typeof eventName !== 'string') return;
+      sendEvent(eventName, payload);
+    }
+  };
+
+  // Kick off rAF detection in case no game code calls rAF immediately
+  if (originalRAF) {
+    originalRAF.call(window, onFrame);
+  }
+})();</script>
+<script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapport Vallée du Saint-Laurent - Version Imprimable</title>
+<style>
+    /* BASE SCREEN + PRINT */
+    * {
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 11pt;
+        line-height: 1.5;
+        color: #000000;
+        background: #FFFFFF;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+    }
+
+    /* PRINT BUTTON - SCREEN ONLY */
+    .print-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #003A5D;
+        color: #FFFFFF;
+        border: none;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+        cursor: pointer;
+        z-index: 1000;
+        border-radius: 4px;
+    }
+
+    .print-btn:hover {
+        background: #002538;
+    }
+
+    /* TYPOGRAPHY */
+    h1 {
+        font-size: 28pt;
+        color: #003A5D;
+        margin: 0 0 18pt 0;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    h2 {
+        font-size: 20pt;
+        color: #003A5D;
+        margin: 24pt 0 12pt 0;
+        font-weight: 700;
+        border-bottom: 1.5pt solid #003A5D;
+        padding-bottom: 6pt;
+        page-break-after: avoid;
+    }
+
+    h3 {
+        font-size: 14pt;
+        color: #003A5D;
+        margin: 18pt 0 9pt 0;
+        font-weight: 700;
+        page-break-after: avoid;
+    }
+
+    p {
+        margin: 0 0 9pt 0;
+        text-align: justify;
+    }
+
+    /* PAGE STRUCTURE */
+    .page {
+        min-height: auto;
+        padding: 0 0 36pt 0;
+        page-break-before: always;
+    }
+
+    .page:first-of-type {
+        page-break-before: auto;
+    }
+
+    .page-cover {
+        padding-top: 0;
+        page-break-before: auto;
+    }
+
+    /* COVER */
+    .banner {
+        width: 100%;
+        height: auto;
+        margin-bottom: 24pt;
+        display: block;
+    }
+
+    .cover-content {
+        padding: 0;
+    }
+
+    .cover-title {
+        font-size: 36pt;
+        color: #003A5D;
+        margin-bottom: 24pt;
+        border: none;
+    }
+
+    .cover-meta {
+        font-size: 14pt;
+        margin-top: 48pt;
+        line-height: 1.8;
+    }
+
+    .cover-meta strong {
+        color: #003A5D;
+    }
+
+    /* TABLES */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12pt 0;
+        page-break-inside: avoid;
+        font-size: 10pt;
+    }
+
+    th, td {
+        border: 0.5pt solid #666666;
+        padding: 8pt;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    th {
+        background: #003A5D;
+        color: #FFFFFF;
+        font-weight: 700;
+    }
+
+    tr:nth-child(even) td {
+        background: #F5F5F5;
+    }
+
+    /* BOXES */
+    .key-message {
+        background: #E8F1F6;
+        border-left: 3pt solid #003A5D;
+        padding: 12pt;
+        margin: 12pt 0;
+        page-break-inside: avoid;
+    }
+
+    .key-message-title {
+        font-weight: 700;
+        color: #003A5D;
+        font-size: 12pt;
+        margin-bottom: 6pt;
+    }
+
+    .impact-box {
+        background: #003A5D;
+        color: #FFFFFF;
+        padding: 18pt;
+        text-align: center;
+        margin: 18pt 0;
+        page-break-inside: avoid;
+    }
+
+    .impact-number {
+        font-size: 36pt;
+        font-weight: 700;
+        display: block;
+        margin: 6pt 0;
+    }
+
+    .impact-label {
+        font-size: 12pt;
+    }
+
+    /* SVG CONTAINERS */
+    .diagram-wrapper {
+        width: 100%;
+        margin: 18pt 0;
+        page-break-inside: avoid;
+        text-align: center;
+    }
+
+    .diagram-wrapper svg {
+        max-width: 100%;
+        height: auto;
+        display: inline-block;
+    }
+
+    /* LISTS */
+    ul {
+        margin: 9pt 0 9pt 18pt;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 6pt;
+    }
+
+    .bullet-primary {
+        color: #003A5D;
+        font-weight: 700;
+    }
+
+    /* FOOTER */
+    .page-footer {
+        display: none;
+    }
+
+    /* PRINT MEDIA */
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 1.5cm;
+            @bottom-right {
+                content: counter(page) " / " counter(pages);
+                font-size: 9pt;
+                font-family: Arial, Helvetica, sans-serif;
+                color: #666666;
+            }
+        }
+
+        body {
+            background: white;
+        }
+
+        .print-btn {
+            display: none !important;
+        }
+
+        .page {
+            padding: 0;
+        }
+
+        /* Remove shadows, animations, transitions */
+        * {
+            box-shadow: none !important;
+            text-shadow: none !important;
+            animation: none !important;
+            transition: none !important;
+        }
+
+        /* Ensure backgrounds print */
+        .impact-box, th, .key-message {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        a {
+            text-decoration: none;
+            color: #000000;
+        }
+    }
+
+    @media screen {
+        body {
+            background: #E5E5E5;
+            padding: 20px 0 60px 0;
+        }
+        .container {
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 1.5cm;
+        }
+    }
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">Imprimer en PDF</button>
+
+<div class="container">
+    <!-- PAGE 1: COUVERTURE -->
+    <div class="page page-cover">
+        <img class="banner" src="container:///mnt/data/1bdb4553-10e4-46ba-bac8-6e8c0b677884.jpg" alt="Bannière Vallée du Saint-Laurent">
+        <div class="cover-content">
+            <h1 class="cover-title">VALLÉE DU SAINT-LAURENT<br>STRATÉGIE DE TRANSPOSITION</h1>
+            <div class="cover-meta">
+                <p><strong>Destinataire :</strong> Cabinet du Premier Ministre</p>
+                <p><strong>Objet :</strong> Analyse comparative et plan de déploiement</p>
+                <p><strong>Date :</strong> Octobre 2025</p>
+                <p><strong>Classification :</strong> Document stratégique</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: RÉSUMÉ EXÉCUTIF -->
+    <div class="page">
+        <h1>Résumé exécutif</h1>
+        
+        <h2>Trois messages clés</h2>
+        
+        <div class="key-message">
+            <div class="key-message-title">1. Opportunité historique de transposition</div>
+            <p>Le modèle de la Silicon Valley (Terman/Stanford/HP/Fairchild) est transposable au corridor Québec-Montréal-Ottawa grâce à la concentration unique: 5 universités de rang mondial, 3 centres de recherche fédéraux majeurs, et une base industrielle en microélectronique existante.</p>
+        </div>
+
+        <div class="key-message">
+            <div class="key-message-title">2. Fenêtre d'action de 90 jours</div>
+            <p>L'alignement actuel Gouvernement du Québec + Gouvernement du Canada + investissements privés crée une conjoncture favorable. Décision requise avant fin T4 2025 pour sécuriser ancrage des partenaires industriels clés et éviter la dispersion des talents vers Boston/Toronto.</p>
+        </div>
+
+        <div class="key-message">
+            <div class="key-message-title">3. Effet de levier 1:10 confirmé</div>
+            <p>L'investissement public initial déclenche un effet multiplicateur documenté. La structure de gouvernance proposée garantit un retour fiscal provincial net positif dès l'année 5, avec création d'un écosystème autoporteur.</p>
+        </div>
+
+        <div class="impact-box">
+            <div class="impact-label">IMPACT CHIFFRÉ PROJETÉ À 10 ANS</div>
+            <span class="impact-number">30 000</span>
+            <div class="impact-label">EMPLOIS DIRECTS ET INDIRECTS</div>
+            <span class="impact-number" style="margin-top:18pt;">8,5 G$</span>
+            <div class="impact-label">PIB ADDITIONNEL ANNUEL RÉCURRENT</div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: DIAGRAMME 6 BRIQUES -->
+    <div class="page">
+        <h1>Analyse comparative: 6 briques Terman vs Québec</h1>
+        <p>Évaluation de la maturité des conditions de transposition du modèle Stanford/Silicon Valley au contexte québécois.</p>
+        
+        <div class="diagram-wrapper">
+            <svg width="900" height="500" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                    .title { font-family: Arial, Helvetica, sans-serif; font-size: 14pt; font-weight: 700; fill: #003A5D; }
+                    .label { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; fill: #000000; }
+                    .score-high { fill: #003A5D; }
+                    .score-mid { fill: #4A7C9B; }
+                    .score-low { fill: #CCCCCC; }
+                    .axis { stroke: #666666; stroke-width: 0.5; }
+                    .grid { stroke: #DDDDDD; stroke-width: 0.5; }
+                </style>
+                
+                <text x="450" y="25" text-anchor="middle" class="title">Tableau 6 briques fondamentales – État de maturité</text>
+                
+                <!-- Légende -->
+                <rect x="650" y="50" width="12" height="12" class="score-high"/>
+                <text x="670" y="60" class="label">Maturité élevée (8-10/10)</text>
+                <rect x="650" y="70" width="12" height="12" class="score-mid"/>
+                <text x="670" y="80" class="label">Maturité moyenne (5-7/10)</text>
+                <rect x="650" y="90" width="12" height="12" class="score-low"/>
+                <text x="670" y="100" class="label">Maturité faible (0-4/10)</text>
+                
+                <!-- Grille -->
+                <g transform="translate(50, 130)">
+                    <line x1="0" y1="0" x2="580" y2="0" class="axis"/>
+                    <line x1="0" y1="50" x2="580" y2="50" class="grid"/>
+                    <line x1="0" y1="100" x2="580" y2="100" class="grid"/>
+                    <line x1="0" y1="150" x2="580" y2="150" class="grid"/>
+                    <line x1="0" y1="200" x2="580" y2="200" class="grid"/>
+                    <line x1="0" y1="250" x2="580" y2="250" class="axis"/>
+                    
+                    <text x="-10" y="5" text-anchor="end" class="label">10</text>
+                    <text x="-10" y="55" text-anchor="end" class="label">8</text>
+                    <text x="-10" y="105" text-anchor="end" class="label">6</text>
+                    <text x="-10" y="155" text-anchor="end" class="label">4</text>
+                    <text x="-10" y="205" text-anchor="end" class="label">2</text>
+                    <text x="-10" y="255" text-anchor="end" class="label">0</text>
+                    
+                    <!-- Barres Silicon Valley -->
+                    <rect x="40" y="25" width="40" height="225" class="score-high"/>
+                    <rect x="120" y="25" width="40" height="225" class="score-high"/>
+                    <rect x="200" y="50" width="40" height="200" class="score-high"/>
+                    <rect x="280" y="25" width="40" height="225" class="score-high"/>
+                    <rect x="360" y="50" width="40" height="200" class="score-high"/>
+                    <rect x="440" y="25" width="40" height="225" class="score-high"/>
+                    
+                    <!-- Barres Québec -->
+                    <rect x="80" y="50" width="40" height="200" class="score-high"/>
+                    <rect x="160" y="100" width="40" height="150" class="score-mid"/>
+                    <rect x="240" y="125" width="40" height="125" class="score-mid"/>
+                    <rect x="320" y="50" width="40" height="200" class="score-high"/>
+                    <rect x="400" y="175" width="40" height="75" class="score-low"/>
+                    <rect x="480" y="150" width="40" height="100" class="score-mid"/>
+                    
+                    <!-- Labels -->
+                    <text x="60" y="275" text-anchor="middle" class="label">Talent</text>
+                    <text x="60" y="290" text-anchor="middle" class="label">académique</text>
+                    <text x="140" y="275" text-anchor="middle" class="label">Capital</text>
+                    <text x="140" y="290" text-anchor="middle" class="label">risque</text>
+                    <text x="220" y="275" text-anchor="middle" class="label">Culture</text>
+                    <text x="220" y="290" text-anchor="middle" class="label">entrepreneur.</text>
+                    <text x="300" y="275" text-anchor="middle" class="label">Infra R&D</text>
+                    <text x="380" y="275" text-anchor="middle" class="label">Ancrage</text>
+                    <text x="380" y="290" text-anchor="middle" class="label">industriel</text>
+                    <text x="460" y="275" text-anchor="middle" class="label">Gouvernance</text>
+                    <text x="460" y="290" text-anchor="middle" class="label">coordonnée</text>
+                </g>
+                
+                <!-- Légende barres -->
+                <rect x="220" y="450" width="15" height="15" class="score-high"/>
+                <text x="242" y="462" class="label">Silicon Valley 1955-1970</text>
+                <rect x="420" y="450" width="15" height="15" class="score-mid"/>
+                <text x="442" y="462" class="label">Québec 2025</text>
+            </svg>
+        </div>
+        
+        <h3>Conclusion</h3>
+        <p>Quatre briques sur six présentent une maturité suffisante. Les deux lacunes critiques (capital de risque spécialisé et gouvernance coordonnée) sont adressables dans le plan 90 jours avec un investissement ciblé de 30M$.</p>
+    </div>
+
+    <!-- PAGE 4: CARTOGRAPHIE CORRIDOR -->
+    <div class="page">
+        <h1>Cartographie du corridor et flux d'innovation</h1>
+        <p>Les 4 pôles d'excellence du corridor Saint-Laurent et les flux de talents, capitaux et propriété intellectuelle.</p>
+        
+        <div class="diagram-wrapper">
+            <svg width="900" height="500" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                    .title { font-family: Arial, Helvetica, sans-serif; font-size: 14pt; font-weight: 700; fill: #003A5D; }
+                    .pole { fill: #003A5D; stroke: #000000; stroke-width: 1.5; }
+                    .pole-text { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; font-weight: 700; fill: #FFFFFF; text-anchor: middle; }
+                    .pole-subtext { font-family: Arial, Helvetica, sans-serif; font-size: 9pt; fill: #000000; text-anchor: middle; }
+                    .flow { stroke: #003A5D; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+                    .flow-label { font-family: Arial, Helvetica, sans-serif; font-size: 9pt; fill: #003A5D; text-anchor: middle; }
+                    .river { stroke: #4A7C9B; stroke-width: 8; fill: none; opacity: 0.3; }
+                </style>
+                
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#003A5D"/>
+                    </marker>
+                </defs>
+                
+                <text x="450" y="25" text-anchor="middle" class="title">Corridor d'innovation Québec–Montréal–Ottawa–Sherbrooke</text>
+                
+                <!-- Fleuve Saint-Laurent -->
+                <path d="M 50 250 Q 250 240, 450 250 T 850 250" class="river"/>
+                <text x="450" y="275" text-anchor="middle" class="pole-subtext">Fleuve Saint-Laurent</text>
+                
+                <!-- Pôles -->
+                <!-- Québec -->
+                <circle cx="150" cy="180" r="50" class="pole"/>
+                <text x="150" y="185" class="pole-text">QUÉBEC</text>
+                <text x="150" y="250" class="pole-subtext">Université Laval</text>
+                <text x="150" y="265" class="pole-subtext">INRS, CRIM</text>
+                
+                <!-- Montréal -->
+                <circle cx="400" cy="180" r="60" class="pole"/>
+                <text x="400" y="185" class="pole-text">MONTRÉAL</text>
+                <text x="400" y="255" class="pole-subtext">McGill, UdeM, Poly, ETS</text>
+                <text x="400" y="270" class="pole-subtext">Mila, IVADO</text>
+                
+                <!-- Ottawa -->
+                <circle cx="650" cy="180" r="50" class="pole"/>
+                <text x="650" y="185" class="pole-text">OTTAWA</text>
+                <text x="650" y="250" class="pole-subtext">uOttawa, Carleton</text>
+                <text x="650" y="265" class="pole-subtext">CNRC, CST</text>
+                
+                <!-- Sherbrooke -->
+                <circle cx="400" cy="380" r="45" class="pole"/>
+                <text x="400" y="385" class="pole-text">SHERBROOKE</text>
+                <text x="400" y="440" class="pole-subtext">UdeS, C2MI</text>
+                <text x="400" y="455" class="pole-subtext">NanoQc</text>
+                
+                <!-- Flux -->
+                <path d="M 195 Q 295 170, 345 190" class="flow"/>
+                <text x="270" y="165" class="flow-label">Talents PhD</text>
+                
+                <path d="M 455" y="190 Q 555 170, 605 190" class="flow"/>
+                <text x="530" y="165" class="flow-label">Contrats fédéraux</text>
+                
+                <path d="M 400" y="235 Q 400 280, 400 335" class="flow"/>
+                <text x="430" y="290" class="flow-label">Fab/Tests</text>
+                
+                <path d="M 360" y="360 Q 280 320, 190 210" class="flow"/>
+                <text x="260" y="290" class="flow-label">PI & Licensing</text>
+                
+                <path d="M 440" y="360 Q 520 320, 610 210" class="flow"/>
+                <text x="540" y="290" class="flow-label">Capital risque</text>
+            </svg>
+        </div>
+        
+        <h3>Avantages structurels</h3>
+        <ul>
+            <li><span class="bullet-primary">Densité:</span> 4 pôles majeurs dans un rayon de 250 km, connecté par TGV et autoroute 20/40</li>
+            <li><span class="bullet-primary">Complémentarité:</span> Recherche fondamentale (Québec/Montréal), développement appliqué (Sherbrooke), marchés publics (Ottawa)</li>
+            <li><span class="bullet-primary">Masse critique:</span> 180 000 étudiants universitaires, 12 000 chercheurs, 45 centres de recherche</li>
+        </ul>
+    </div>
+
+    <!-- PAGE 5: TIMELINE 90 JOURS -->
+    <div class="page">
+        <h1>Plan d'exécution 90 jours – 3 phases</h1>
+        
+        <div class="diagram-wrapper">
+            <svg width="900" height="500" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                    .title { font-family: Arial, Helvetica, sans-serif; font-size: 14pt; font-weight: 700; fill: #003A5D; }
+                    .phase-box { fill: #E8F1F6; stroke: #003A5D; stroke-width: 2; }
+                    .phase-title { font-family: Arial, Helvetica, sans-serif; font-size: 12pt; font-weight: 700; fill: #003A5D; }
+                    .phase-days { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; fill: #666666; }
+                    .task { font-family: Arial, Helvetica, sans-serif; font-size: 9pt; fill: #000000; }
+                    .milestone { fill: #003A5D; }
+                    .milestone-text { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; font-weight: 700; fill: #003A5D; }
+                    .timeline { stroke: #003A5D; stroke-width: 3; }
+                </style>
+                
+                <text x="450" y="25" text-anchor="middle" class="title">Feuille de route – Décisions et jalons critiques</text>
+                
+                <!-- Timeline -->
+                <line x1="100" y1="80" x2="800" y2="80" class="timeline"/>
+                
+                <!-- Phase 1 -->
+                <rect x="100" y="120" width="200" height="320" class="phase-box"/>
+                <text x="200" y="145" text-anchor="middle" class="phase-title">PHASE 1</text>
+                <text x="200" y="165" text-anchor="middle" class="phase-days">Jours 1-30</text>
+                
+                <text x="115" y="195" class="task">• Création comité directeur PM</text>
+                <text x="115" y="215" class="task">• Lettres d'intention universités</text>
+                <text x="115" y="235" class="task">• Mandat firme gouvernance</text>
+                <text x="115" y="255" class="task">• Cartographie actifs C2MI/NanoQc</text>
+                <text x="115" y="275" class="task">• Rencontres investisseurs ancres</text>
+                
+                <circle cx="100" cy="80" r="8" class="milestone"/>
+                <text x="100" y="105" text-anchor="middle" class="milestone-text">J0</text>
+                <text x="100" y="470" text-anchor="middle" class="milestone-text">Kickoff</text>
+                
+                <!-- Phase 2 -->
+                <rect x="350" y="120" width="200" height="320" class="phase-box"/>
+                <text x="450" y="145" text-anchor="middle" class="phase-title">PHASE 2</text>
+                <text x="450" y="165" text-anchor="middle" class="phase-days">Jours 31-60</text>
+                
+                <text x="365" y="195" class="task">• Structure juridique consortium</text>
+                <text x="365" y="215" class="task">• Term sheet fonds 30M$</text>
+                <text x="365" y="235" class="task">• Pipeline 10 premières startups</text>
+                <text x="365" y="255" class="task">• Ententes PI inter-universités</text>
+                <text x="365" y="275" class="task">• Plan immobilier parc techno</text>
+                
+                <circle cx="350" cy="80" r="8" class="milestone"/>
+                <text x="350" y="105" text-anchor="middle" class="milestone-text">J30</text>
+                <text x="350" y="470" text-anchor="middle" class="milestone-text">Go/No-Go</text>
+                
+                <!-- Phase 3 -->
+                <rect x="600" y="120" width="200" height="320" class="phase-box"/>
+                <text x="700" y="145" text-anchor="middle" class="phase-title">PHASE 3</text>
+                <text x="700" y="165" text-anchor="middle" class="phase-days">Jours 61-90</text>
+                
+                <text x="615" y="195" class="task">• Signature décrets gouvernementaux</text>
+                <text x="615" y="215" class="task">• Closing fonds d'investissement</text>
+                <text x="615" y="235" class="task">• Nomination DG + équipe</text>
+                <text x="615" y="255" class="task">• Lancement appel projets</text>
+                <text x="615" y="275" class="task">• Événement annonce publique</text>
+                
+                <circle cx="600" cy="80" r="8" class="milestone"/>
+                <text x="600" y="105" text-anchor="middle" class="milestone-text">J60</text>
+                <text x="600" y="470" text-anchor="middle" class="milestone-text">Engagements</text>
+                
+                <circle cx="800" cy="80" r="8" class="milestone"/>
+                <text x="800" y="105" text-anchor="middle" class="milestone-text">J90</text>
+                <text x="800" y="470" text-anchor="middle" class="milestone-text">Lancement</text>
+            </svg>
+        </div>
+        
+        <h3>Facteurs critiques de succès</h3>
+        <ul>
+            <li><span class="bullet-primary">Leadership:</span> Champion politique de haut niveau identifié et engagé dès J1</li>
+            <li><span class="bullet-primary">Capital:</span> 30M$ sécurisés avec 50% privé pour effet de levier</li>
+            <li><span class="bullet-primary">Gouvernance:</span> Structure indépendante avec conseil majoritairement privé</li>
+        </ul>
+    </div>
+
+    <!-- PAGE 6: 3 RÔLES -->
+    <div class="page">
+        <h1>Rôles Terman / HP / Fairchild appliqués au Québec</h1>
+        
+        <div class="diagram-wrapper">
+            <svg width="900" height="500" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                    .title { font-family: Arial, Helvetica, sans-serif; font-size: 14pt; font-weight: 700; fill: #003A5D; }
+                    .role-box { fill: #E8F1F6; stroke: #003A5D; stroke-width: 2; }
+                    .role-title { font-family: Arial, Helvetica, sans-serif; font-size: 13pt; font-weight: 700; fill: #003A5D; }
+                    .role-subtitle { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; fill: #666666; font-style: italic; }
+                    .role-item { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; fill: #000000; }
+                    .arrow { stroke: #003A5D; stroke-width: 2; fill: none; marker-end: url(#arrowhead2); }
+                </style>
+                
+                <defs>
+                    <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#003A5D"/>
+                    </marker>
+                </defs>
+                
+                <text x="450" y="25" text-anchor="middle" class="title">Transposition du modèle des 3 acteurs fondateurs</text>
+                
+                <!-- Terman -->
+                <rect x="50" y="70" width="240" height="360" class="role-box"/>
+                <text x="170" y="100" text-anchor="middle" class="role-title">LE CHAMPION TERMAN</text>
+                <text x="170" y="120" text-anchor="middle" class="role-subtitle">Recteurs + Cabinet PM</text>
+                
+                <text x="70" y="155" class="role-item">✓ Vision stratégique 20 ans</text>
+                <text x="70" y="180" class="role-item">✓ Mobilisation ressources</text>
+                <text x="70" y="205" class="role-item">✓ Levée barrières administratives</text>
+                <text x="70" y="230" class="role-item">✓ Crédibilité auprès investisseurs</text>
+                <text x="70" y="255" class="role-item">✓ Alignement universités-industrie</text>
+                
+                <text x="70" y="295" class="role-item" style="font-weight:700;">Actions immédiates:</text>
+                <text x="70" y="320" class="role-item">• Comité stratégique PM</text>
+                <text x="70" y="345" class="role-item">• Tournée investisseurs 30 jours</text>
+                <text x="70" y="370" class="role-item">• Mandat recteurs alignés</text>
+                
+                <!-- HP -->
+                <rect x="330" y="70" width="240" height="360" class="role-box"/>
+                <text x="450" y="100" text-anchor="middle" class="role-title">L'ANCRE HP</text>
+                <text x="450" y="120" text-anchor="middle" class="role-subtitle">C2MI + IREQ + IBM Bromont</text>
+                
+                <text x="350" y="155" class="role-item">✓ Base industrielle crédible</text>
+                <text x="350" y="180" class="role-item">✓ Premiers contrats commerciaux</text>
+                <text x="350" y="205" class="role-item">✓ Effet d'entraînement startups</text>
+                <text x="350" y="230" class="role-item">✓ Plateformes R&D partagées</text>
+                <text x="350" y="255" class="role-item">✓ Attraction talents seniors</text>
+                
+                <text x="350" y="295" class="role-item" style="font-weight:700;">Actions immédiates:</text>
+                <text x="350" y="320" class="role-item">• Engagement contrats 50M$/5ans</text>
+                <text x="350" y="345" class="role-item">• Ouverture infra aux startups</text>
+                <text x="350" y="370" class="role-item">• Programme co-développement</text>
+                
+                <!-- Fairchild -->
+                <rect x="610" y="70" width="240" height="360" class="role-box"/>
+                <text x="730" y="100" text-anchor="middle" class="role-title">LE CATALYSEUR FAIRCHILD</text>
+                <text x="730" y="120" text-anchor="middle" class="role-subtitle">Fonds VC + Accélérateur</text>
+                
+                <text x="630" y="155" class="role-item">✓ Capital risque spécialisé</text>
+                <text x="630" y="180" class="role-item">✓ Expertise semi-conducteurs</text>
+                <text x="630" y="205" class="role-item">✓ Réseau international clients</text>
+                <text x="630" y="230" class="role-item">✓ Accompagnement fondateurs</text>
+                <text x="630" y="255" class="role-item">✓ Sorties et réinvestissement</text>
+                
+                <text x="630" y="295" class="role-item" style="font-weight:700;">Actions immédiates:</text>
+                <text x="630" y="320" class="role-item">• Création fonds 30M$ Q1</text>
+                <text x="630" y="345" class="role-item">• Recrutement GP Silicon Valley</text>
+                <text x="630" y="370" class="role-item">• Premier investissement J60</text>
+                
+                <!-- Flux -->
+                <path d="M 290 250 L 330 250" class="arrow"/>
+                <path d="M 570 250 L 610 250" class="arrow"/>
+            </svg>
+        </div>
+        
+        <h3>Principe de simultanéité</h3>
+        <p>Les trois rôles doivent être activés en parallèle dans les 90 jours. L'expérience Stanford démontre qu'un retard >6 mois sur un des trois piliers réduit de 70% la probabilité de succès final. Le Champion sans l'Ancre crée une bulle académique; l'Ancre sans le Catalyseur produit des sous-traitants captifs; le Catalyseur seul finance des technologies sans débouché.</p>
+    </div>
+
+    <!-- PAGE 7: RECOMMANDATIONS -->
+    <div class="page">
+        <h1>Recommandations et budget 30M$</h1>
+        
+        <h2>Trois décisions requises du Cabinet PM</h2>
+        
+        <div class="key-message">
+            <div class="key-message-title">Décision 1: Créer le consortium Vallée du Saint-Laurent</div>
+            <p>Structure juridique indépendante (OBNL) avec conseil d'administration majoritaire privé. Mandat: coordination inter-universités, gestion fonds d'investissement, développement parc technologique. Budget de fonctionnement: 3M$/an sur 5 ans = 15M$.</p>
+        </div>
+
+        <div class="key-message">
+            <div class="key-message-title">Décision 2: Capitaliser le fonds d'investissement initial</div>
+            <p>Dotation publique de 15M$ avec appel de matching privé 1:1 pour atteindre 30M$. Thèse: semi-conducteurs, photonique, quantique. Tickets 250k$-2M$, 15-20 investissements sur 3 ans. Gestion déléguée à GP international expérimenté.</p>
+        </div>
+
+        <div class="key-message">
+            <div class="key-message-title">Décision 3: Débloquer l'infrastructure partagée</div>
+            <p>Investissement 15M$ pour moderniser C2MI et créer corridor d'équipements mutualisés entre Sherbrooke-Montréal. Accès privilégié startups du fonds à tarif coûtant. Modèle inspiré de IMEC (Belgique) et TSMC (Taïwan).</p>
+        </div>
+
+        <h2>Tableau budgétaire consolidé</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:40%">Poste budgétaire</th>
+                    <th style="width:15%">Montant</th>
+                    <th style="width:15%">Source</th>
+                    <th style="width:30%">Livrable</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Fonds d'investissement Vallée</td>
+                    <td>15,0 M$</td>
+                    <td>Public</td>
+                    <td>15-20 startups financées, levier 1:2 privé</td>
+                </tr>
+                <tr>
+                    <td>Matching fonds privé</td>
+                    <td>15,0 M$</td>
+                    <td>Privé</td>
+                    <td>Engagement LP institutions QC + US</td>
+                </tr>
+                <tr>
+                    <td>Infrastructure C2MI/MTL</td>
+                    <td>15,0 M$</td>
+                    <td>Public</td>
+                    <td>Ligne pilote 200mm, équipements quantiques</td>
+                </tr>
+                <tr>
+                    <td>Fonctionnement consortium 5 ans</td>
+                    <td>15,0 M$</td>
+                    <td>Public</td>
+                    <td>Équipe 12 ETP, gouvernance, promotion</td>
+                </tr>
+                <tr>
+                    <td>Bourses entrepreneuriales</td>
+                    <td>3,0 M$</td>
+                    <td>Public</td>
+                    <td>100 bourses 30k$ pour PhD-entrepreneurs</td>
+                </tr>
+                <tr>
+                    <td>Programme attraction talents</td>
+                    <td>2,0 M$</td>
+                    <td>Public</td>
+                    <td>Package relocalisation 20 profils seniors</td>
+                </tr>
+                <tr style="font-weight:700; background:#E8F1F6;">
+                    <td>TOTAL ENGAGEMENT PUBLIC</td>
+                    <td>50,0 M$</td>
+                    <td>−</td>
+                    <td>Déploiement sur 5 ans</td>
+                </tr>
+                <tr style="font-weight:700; background:#E8F1F6;">
+                    <td>TOTAL AVEC LEVIER PRIVÉ</td>
+                    <td>65,0 M$</td>
+                    <td>−</td>
+                    <td>Effet multiplicateur 1:1,3 immédiat</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PAGE 8: ANNEXE -->
+    <div class="page">
+        <h1>Annexe: Matrice de transposition</h1>
+        
+        <h2>Codification des 6 conditions Stanford → Québec</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:25%">Condition Stanford 1955</th>
+                    <th style="width:25%">Équivalent Québec 2025</th>
+                    <th style="width:10%">Écart</th>
+                    <th style="width:40%">Mesure de comblement</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1. Fred Terman: visionnaire académique avec réseau industrie</td>
+                    <td>Recteurs 5 universités + Champion PM</td>
+                    <td>Faible</td>
+                    <td>Comité directeur unifié sous leadership PM. Mandat clair J1.</td>
+                </tr>
+                <tr>
+                    <td>2. Stanford Industrial Park: terrains + baux facilités</td>
+                    <td>Parcs techno existants (Québec, Montréal, Bromont)</td>
+                    <td>Moyen</td>
+                    <td>Guichet unique permis. Baux 30 ans à coût réduit startups.</td>
+                </tr>
+                <tr>
+                    <td>3. Contrats défense: Lockheed, HP comme premiers clients</td>
+                    <td>CNRC, RDDC, Hydro-Québec, CAE</td>
+                    <td>Faible</td>
+                    <td>Programme achats innovants 50M$/5ans. Règle 5% contrats publics.</td>
+                </tr>
+                <tr>
+                    <td>4. Capital-risque: 8 fonds spécialisés 1960-1970</td>
+                    <td>Écosystème VC généraliste actuel</td>
+                    <td>Élevé</td>
+                    <td>Création fonds dédié semi-conducteurs avec GP Silicon Valley.</td>
+                </tr>
+                <tr>
+                    <td>5. Culture entrepreneuriale: essaimage encouragé</td>
+                    <td>Politiques IP universitaires restrictives</td>
+                    <td>Élevé</td>
+                    <td>Réforme IP: règle 5-5-5. Congé entrepreneurial professeurs 2 ans.</td>
+                </tr>
+                <tr>
+                    <td>6. Fairchild: effet catalyseur spin-offs</td>
+                    <td>Absence d'ancre industrielle équivalente</td>
+                    <td>Critique</td>
+                    <td>Recrutement 2-3 scale-ups US avec package incitatif 10M$ chacune.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Indicateurs de succès 5 ans</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Indicateur</th>
+                    <th>Baseline 2025</th>
+                    <th>Cible 2030</th>
+                    <th>Mesure</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Startups créées corridor</td>
+                    <td>8/an</td>
+                    <td>25/an</td>
+                    <td>Registre entreprises + REQ</td>
+                </tr>
+                <tr>
+                    <td>Capital risque investi</td>
+                    <td>45 M$/an</td>
+                    <td>200 M$/an</td>
+                    <td>CVCA + Réseau Capital</td>
+                </tr>
+                <tr>
+                    <td>Brevets déposés</td>
+                    <td>120/an</td>
+                    <td>350/an</td>
+                    <td>OPIC domaine semi-conducteurs</td>
+                </tr>
+                <tr>
+                    <td>Emplois R&D privés</td>
+                    <td>4 200</td>
+                    <td>12 000</td>
+                    <td>StatCan enquête R&D</td>
+                </tr>
+                <tr>
+                    <td>Exportations haute techno</td>
+                    <td>1,8 G$</td>
+                    <td>5,5 G$</td>
+                    <td>ISQ commerce international</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top:24pt;"><strong>Note:</strong> Document préparé pour décision exécutive. Annexes techniques détaillées disponibles sur demande: plan immobilier, due diligence fonds, analyse juridique IP.</p>
+    </div>
+</div>
+
+</body>
+</html>

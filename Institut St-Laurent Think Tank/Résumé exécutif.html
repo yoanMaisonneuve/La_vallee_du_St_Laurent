@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- Playables SDK -->
+<script>// Playables SDK v1.0.0
+// Game lifecycle bridge: rAF-based game-ready detection + event communication
+(function() {
+  'use strict';
+
+  // Idempotency: skip if already initialized (e.g., server-side injection
+  // followed by client-side inject-javascript via the Bloks webview component).
+  if (window.playablesSDK) return;
+
+  var HANDLER_NAME = 'playablesGameEventHandler';
+  var ANDROID_BRIDGE_NAME = '_MetaPlayablesBridge';
+  var RAF_FRAME_THRESHOLD = 3;
+
+  var gameReadySent = false;
+  var firstInteractionSent = false;
+  var errorSent = false;
+  var frameCount = 0;
+  var originalRAF = window.requestAnimationFrame;
+
+  // --- Transport Layer ---
+
+  function hasIOSBridge() {
+    return !!(window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers[HANDLER_NAME]);
+  }
+
+  function hasAndroidBridge() {
+    return !!(window[ANDROID_BRIDGE_NAME] &&
+              typeof window[ANDROID_BRIDGE_NAME].postEvent === 'function');
+  }
+
+  function isInIframe() {
+    return !!(window.parent && window.parent !== window);
+  }
+
+  function sendEvent(eventName, payload) {
+    var message = {
+      type: eventName,
+      payload: payload || {},
+      timestamp: Date.now()
+    };
+
+    if (hasIOSBridge()) {
+      try {
+        window.webkit.messageHandlers[HANDLER_NAME].postMessage(message);
+      } catch (e) { /* ignore */ }
+      return;
+    }
+
+    if (hasAndroidBridge()) {
+    try {
+      var p = payload || {};
+      p.__secureToken = window.__fbAndroidBridgeAuthToken || '';
+      window[ANDROID_BRIDGE_NAME].postEvent(
+        eventName,
+        JSON.stringify(p)
+      );
+    } catch (e) { /* ignore */ }
+    return;
+  }
+
+    if (isInIframe()) {
+      try {
+        window.parent.postMessage(message, '*');
+      } catch (e) { /* ignore */ }
+      return;
+    }
+  }
+
+  // --- rAF Game-Ready Detection ---
+
+  function onFrame() {
+    if (gameReadySent) return;
+
+    frameCount++;
+    if (frameCount >= RAF_FRAME_THRESHOLD) {
+      gameReadySent = true;
+      sendEvent('game_ready', {
+        frame_count: frameCount,
+        detected_at: Date.now()
+      });
+      return;
+    }
+
+    originalRAF.call(window, onFrame);
+  }
+
+  if (originalRAF) {
+    window.requestAnimationFrame = function(callback) {
+      if (!gameReadySent) {
+        return originalRAF.call(window, function(timestamp) {
+          frameCount++;
+          if (frameCount >= RAF_FRAME_THRESHOLD && !gameReadySent) {
+            gameReadySent = true;
+            sendEvent('game_ready', {
+              frame_count: frameCount,
+              detected_at: Date.now()
+            });
+          }
+          callback(timestamp);
+        });
+      }
+      return originalRAF.call(window, callback);
+    };
+  }
+
+  // --- First User Interaction Detection ---
+
+  function setupFirstInteractionDetection() {
+    var events = ['touchstart', 'mousedown', 'keydown'];
+
+    function onFirstInteraction() {
+      if (firstInteractionSent) return;
+      firstInteractionSent = true;
+      sendEvent('user_interaction_start', null);
+
+      for (var i = 0; i < events.length; i++) {
+        document.removeEventListener(events[i], onFirstInteraction, true);
+      }
+    }
+
+    for (var i = 0; i < events.length; i++) {
+      document.addEventListener(events[i], onFirstInteraction, true);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupFirstInteractionDetection);
+  } else {
+    setupFirstInteractionDetection();
+  }
+
+  // --- Auto Error Capture ---
+
+  window.addEventListener('error', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    sendEvent('error', {
+      message: event.message || 'Unknown error',
+      source: event.filename || '',
+      lineno: event.lineno || 0,
+      colno: event.colno || 0,
+      auto_captured: true
+    });
+  });
+
+  window.addEventListener('unhandledrejection', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    var reason = event.reason;
+    sendEvent('error', {
+      message: (reason instanceof Error) ? reason.message : String(reason),
+      type: 'unhandled_promise_rejection',
+      auto_captured: true
+    });
+  });
+
+  // --- Public API ---
+
+  window.playablesSDK = {
+    complete: function(score) {
+      sendEvent('game_ended', {
+        score: score,
+        completed: true
+      });
+    },
+
+    error: function(message) {
+      if (errorSent) return;
+      errorSent = true;
+      sendEvent('error', {
+        message: message || 'Unknown error',
+        auto_captured: false
+      });
+    },
+
+    sendEvent: function(eventName, payload) {
+      if (!eventName || typeof eventName !== 'string') return;
+      sendEvent(eventName, payload);
+    }
+  };
+
+  // Kick off rAF detection in case no game code calls rAF immediately
+  if (originalRAF) {
+    originalRAF.call(window, onFrame);
+  }
+})();</script>
+<script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<title>Vallée du Saint-Laurent IA - Note exécutive PM</title>
+</head>
+<body style="font-family:Arial,sans-serif;font-size:11pt;color:#000;margin:20px;">
+<h1 style="color:#003A5D;font-size:20pt;margin-bottom:5px;">La Vallée du Saint-Laurent</h1>
+<h2 style="color:#003A5D;font-size:14pt;margin-top:0;">Transposer le modèle Terman pour faire du Québec le corridor IA francophone #1 mondial</h2>
+<p><b>Date :</b> 17 avril 2026 | <b>Destinataire :</b> Cabinet du Premier ministre</p>
+<hr style="border:1px solid #003A5D;">
+
+<h2 style="color:#003A5D;font-size:14pt;">Résumé exécutif</h2>
+<p><b>3 messages clés :</b></p>
+<ol>
+<li><b>Le Québec a déjà 80% des briques Terman</b> : MILA, Poly, McGill, IVADO = noyau académique de calibre Stanford 1955.</li>
+<li><b>Il manque la boucle HP→Fairchild</b> : Transformer la recherche en 3-5 champions locaux + essaimage systématique.</li>
+<li><b>Fenêtre de 90 jours pour agir</b> : Structurer le noyau, lancer 3 POC terrain, créer la norme « on construit ici ».</li>
+</ol>
+<p><b>Impact 5 ans si exécuté :</b> +2,1 G$ PIB, 4 500 emplois IA directs, 8-12 spin-offs/an</p>
+
+<h2 style="color:#003A5D;font-size:14pt;">1. Modèle Terman : 6 briques → Application Québec</h2>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:10pt;">
+<tr style="background:#003A5D;color:#fff;">
+<th style="text-align:left;">Brique Terman</th>
+<th style="text-align:left;">Stanford 1955</th>
+<th style="text-align:left;">Équivalent Québec 2026</th>
+</tr>
+<tr><td><b>1. Professeur ancré</b></td><td>Frederick Terman</td><td>MILA/Y. Bengio, Poly, McGill, IVADO</td></tr>
+<tr><td><b>2. Rétention talents</b></td><td>Hewlett-Packard reste à Palo Alto</td><td>Bourses conditionnelles, compute local, hubs physiques</td></tr>
+<tr><td><b>3. Lien univ-industrie</b></td><td>Honors Coop Program</td><td>Programmes coop IA, projets PME déployés</td></tr>
+<tr><td><b>4. Success story</b></td><td>HP prouve que ça marche</td><td>3-5 champions IA : robotique, construction, santé</td></tr>
+<tr><td><b>5. Essaimage</b></td><td>Shockley→Fairchild→Intel</td><td>Spin-offs, intrapreneuriat, fonds amorçage</td></tr>
+<tr><td><b>6. Culture</b></td><td>Entreprendre = patriotique</td><td>Norme sociale : « On construit ici »</td></tr>
+</table>
+
+<h2 style="color:#003A5D;font-size:14pt;">2. Cartographie Vallée du Saint-Laurent</h2>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:10pt;">
+<tr style="background:#003A5D;color:#fff;">
+<th>Pôle</th><th>Spécialisation IA</th><th>Hubs clés</th><th>Flux vers</th>
+</tr>
+<tr><td><b>Montréal</b></td><td>Recherche, modèles, startups, VC</td><td>MILA, Poly, McGill, UdeM, ÉTS, Mile-Ex</td><td>R&D → Rive-Nord</td></tr>
+<tr><td><b>Laval/Rive-Nord</b></td><td>Construction, manufacturier, logistique</td><td>PME industrielles, centres formation</td><td>Projets → Trois-Rivières</td></tr>
+<tr><td><b>Trois-Rivières</b></td><td>Robotique, automatisation, Ind. 4.0</td><td>UQTR, zones manufacturières</td><td>Spin-offs → Québec</td></tr>
+<tr><td><b>Québec</b></td><td>Santé, gouvernement, cybersécurité</td><td>ULaval, CHUQ, Parc techno</td><td>Talents → Montréal</td></tr>
+</table>
+<p><b>Infrastructure transversale :</b> Compute GPU local, programmes coop, fonds amorçage, norme « on construit ici »</p>
+
+<h2 style="color:#003A5D;font-size:14pt;">3. Plan 90 jours</h2>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:10pt;">
+<tr style="background:#003A5D;color:#fff;">
+<th>Phase</th><th>Objectif</th><th>Livrables</th><th>Propriétaire suggéré</th>
+</tr>
+<tr><td><b>J0-30 : Noyau</b></td><td>Créer le « Terman québécois »</td><td>Vision 1p, carte acteurs, hub pilote Rive-Nord</td><td>MEI + MILA</td></tr>
+<tr><td><b>J30-60 : POC</b></td><td>Créer les « HP québécois »</td><td>3 POC IA terrain, 1 prog coop, mini-cluster GPU</td><td>Invest-Qc + Poly</td></tr>
+<tr><td><b>J60-90 : Essaimage</b></td><td>Boucle Fairchild</td><td>Événement Vallée, 3 cas publiés, micro-fonds 2M$</td><td>Cabinet PM + PME</td></tr>
+</table>
+
+<h2 style="color:#003A5D;font-size:14pt;">4. Décision requise du gouvernement</h2>
+<ol>
+<li><b>Nommer l’Architecte d’Écosystème</b> : Mandat MILA/IVADO comme « Terman québécois ». Budget : 5M$/an.</li>
+<li><b>Financer 3 champions locaux</b> : Appel ciblé robotique/construction/santé. Enveloppe : 15M$ sur 3 ans.</li>
+<li><b>Créer le Fonds Essaimage Vallée</b> : 10M$ pour spin-offs IA issues du corridor. ROI attendu 4x en 5 ans.</li>
+</ol>
+<p><b>Total demandé 2026-2027 :</b> 30M$ | <b>ROI 5 ans :</b> +2,1G$ PIB, 4 500 emplois</p>
+
+<hr style="border:1px solid #003A5D;margin-top:20px;">
+<p style="font-size:9pt;color:#666;">Document préparé pour le Cabinet du Premier ministre du Québec - Avril 2026</p>
+</body>
+</html>

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- Playables SDK -->
+<script>// Playables SDK v1.0.0
+// Game lifecycle bridge: rAF-based game-ready detection + event communication
+(function() {
+  'use strict';
+
+  // Idempotency: skip if already initialized (e.g., server-side injection
+  // followed by client-side inject-javascript via the Bloks webview component).
+  if (window.playablesSDK) return;
+
+  var HANDLER_NAME = 'playablesGameEventHandler';
+  var ANDROID_BRIDGE_NAME = '_MetaPlayablesBridge';
+  var RAF_FRAME_THRESHOLD = 3;
+
+  var gameReadySent = false;
+  var firstInteractionSent = false;
+  var errorSent = false;
+  var frameCount = 0;
+  var originalRAF = window.requestAnimationFrame;
+
+  // --- Transport Layer ---
+
+  function hasIOSBridge() {
+    return !!(window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers[HANDLER_NAME]);
+  }
+
+  function hasAndroidBridge() {
+    return !!(window[ANDROID_BRIDGE_NAME] &&
+              typeof window[ANDROID_BRIDGE_NAME].postEvent === 'function');
+  }
+
+  function isInIframe() {
+    return !!(window.parent && window.parent !== window);
+  }
+
+  function sendEvent(eventName, payload) {
+    var message = {
+      type: eventName,
+      payload: payload || {},
+      timestamp: Date.now()
+    };
+
+    if (hasIOSBridge()) {
+      try {
+        window.webkit.messageHandlers[HANDLER_NAME].postMessage(message);
+      } catch (e) { /* ignore */ }
+      return;
+    }
+
+    if (hasAndroidBridge()) {
+    try {
+      var p = payload || {};
+      p.__secureToken = window.__fbAndroidBridgeAuthToken || '';
+      window[ANDROID_BRIDGE_NAME].postEvent(
+        eventName,
+        JSON.stringify(p)
+      );
+    } catch (e) { /* ignore */ }
+    return;
+  }
+
+    if (isInIframe()) {
+      try {
+        window.parent.postMessage(message, '*');
+      } catch (e) { /* ignore */ }
+      return;
+    }
+  }
+
+  // --- rAF Game-Ready Detection ---
+
+  function onFrame() {
+    if (gameReadySent) return;
+
+    frameCount++;
+    if (frameCount >= RAF_FRAME_THRESHOLD) {
+      gameReadySent = true;
+      sendEvent('game_ready', {
+        frame_count: frameCount,
+        detected_at: Date.now()
+      });
+      return;
+    }
+
+    originalRAF.call(window, onFrame);
+  }
+
+  if (originalRAF) {
+    window.requestAnimationFrame = function(callback) {
+      if (!gameReadySent) {
+        return originalRAF.call(window, function(timestamp) {
+          frameCount++;
+          if (frameCount >= RAF_FRAME_THRESHOLD && !gameReadySent) {
+            gameReadySent = true;
+            sendEvent('game_ready', {
+              frame_count: frameCount,
+              detected_at: Date.now()
+            });
+          }
+          callback(timestamp);
+        });
+      }
+      return originalRAF.call(window, callback);
+    };
+  }
+
+  // --- First User Interaction Detection ---
+
+  function setupFirstInteractionDetection() {
+    var events = ['touchstart', 'mousedown', 'keydown'];
+
+    function onFirstInteraction() {
+      if (firstInteractionSent) return;
+      firstInteractionSent = true;
+      sendEvent('user_interaction_start', null);
+
+      for (var i = 0; i < events.length; i++) {
+        document.removeEventListener(events[i], onFirstInteraction, true);
+      }
+    }
+
+    for (var i = 0; i < events.length; i++) {
+      document.addEventListener(events[i], onFirstInteraction, true);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupFirstInteractionDetection);
+  } else {
+    setupFirstInteractionDetection();
+  }
+
+  // --- Auto Error Capture ---
+
+  window.addEventListener('error', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    sendEvent('error', {
+      message: event.message || 'Unknown error',
+      source: event.filename || '',
+      lineno: event.lineno || 0,
+      colno: event.colno || 0,
+      auto_captured: true
+    });
+  });
+
+  window.addEventListener('unhandledrejection', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    var reason = event.reason;
+    sendEvent('error', {
+      message: (reason instanceof Error) ? reason.message : String(reason),
+      type: 'unhandled_promise_rejection',
+      auto_captured: true
+    });
+  });
+
+  // --- Public API ---
+
+  window.playablesSDK = {
+    complete: function(score) {
+      sendEvent('game_ended', {
+        score: score,
+        completed: true
+      });
+    },
+
+    error: function(message) {
+      if (errorSent) return;
+      errorSent = true;
+      sendEvent('error', {
+        message: message || 'Unknown error',
+        auto_captured: false
+      });
+    },
+
+    sendEvent: function(eventName, payload) {
+      if (!eventName || typeof eventName !== 'string') return;
+      sendEvent(eventName, payload);
+    }
+  };
+
+  // Kick off rAF detection in case no game code calls rAF immediately
+  if (originalRAF) {
+    originalRAF.call(window, onFrame);
+  }
+})();</script>
+<script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vallée du Saint-Laurent : Pivot Robotique Humanoïde — Le Québec devant Tokyo</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @page {
+        size: A4 landscape;
+        margin: 1.5cm;
+    }
+
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+        body {
+            background: #fff;
+        }
+        .page {
+            margin: 0;
+            box-shadow: none;
+            min-height: auto;
+            page-break-after: always;
+        }
+        .page:last-child {
+            page-break-after: auto;
+        }
+        h1 {
+            page-break-before: always;
+        }
+        .page:first-of-type h1 {
+            page-break-before: auto;
+        }
+    }
+
+    @media screen {
+        body {
+            background: #e5e7eb;
+            padding: 20px 0;
+        }
+        .page {
+            background: #fff;
+            width: 29.7cm;
+            min-height: 21cm;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+        }
+        .page-counter::after {
+            counter-increment: page;
+            content: counter(page) " / 8";
+        }
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #000;
+        font-size: 11pt;
+        line-height: 1.5;
+        counter-reset: page;
+    }
+
+    .page {
+        padding: 1.5cm;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        page-break-inside: auto;
+    }
+
+    h1 {
+        color: #003A5D;
+        font-size: 28pt;
+        font-weight: 700;
+        margin-bottom: 12pt;
+        line-height: 1.2;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+    }
+
+    h2 {
+        color: #003A5D;
+        font-size: 16pt;
+        font-weight: 700;
+        margin-top: 18pt;
+        margin-bottom: 10pt;
+        page-break-after: avoid;
+    }
+
+    h3 {
+        color: #003A5D;
+        font-size: 13pt;
+        font-weight: 700;
+        margin-bottom: 8pt;
+        page-break-after: avoid;
+    }
+
+    p {
+        margin-bottom: 10pt;
+        text-align: justify;
+    }
+
+    .subtitle {
+        font-size: 16pt;
+        color: #003A5D;
+        font-weight: 400;
+        margin-bottom: 8pt;
+    }
+
+    .date-header {
+        font-size: 11pt;
+        color: #4b5563;
+        margin-bottom: 24pt;
+    }
+
+    .mckinsey-bar {
+        height: 6px;
+        background: linear-gradient(90deg, #003A5D 0%, #005080 100%);
+        width: 80px;
+        margin-bottom: 24pt;
+    }
+
+    .encadre {
+        background: #f0f7fb;
+        border-left: 4px solid #003A5D;
+        padding: 12adj;
+        padding: 12pt 16pt;
+        margin: 16pt 0;
+        page-break-inside: avoid;
+    }
+
+    .encadre strong {
+        color: #003A5D;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16pt 0;
+        font-size: 10pt;
+        page-break-inside: avoid;
+    }
+
+    table th {
+        background: #003A5D;
+        color: #fff;
+        font-weight: 700;
+        text-align: left;
+        padding: 8pt 10pt;
+        border: 0.5pt solid #9ca3af;
+    }
+
+    table td {
+        padding: 7pt 10pt;
+        border: 0.5pt solid #9ca3af;
+        vertical-align: top;
+    }
+
+    table tr:nth-child(even) td {
+        background: #f9fafb;
+    }
+
+    .flex-3col {
+        display: flex;
+        gap: 16pt;
+        margin: 20pt 0;
+        page-break-inside: avoid;
+    }
+
+    .col {
+        flex: 1;
+        background: #f9fafb;
+        padding: 14pt;
+        border-top: 3px solid #003A5D;
+    }
+
+    .col h3 {
+        margin-bottom: 6pt;
+    }
+
+    .col ul {
+        padding-left: 16pt;
+        margin-top: 6pt;
+    }
+
+    .col li {
+        margin-bottom: 4pt;
+    }
+
+    .footer {
+        margin-top: auto;
+        padding-top: 12pt;
+        border-top: 0.5pt solid #d1d5db;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 9pt;
+        color: #6b7280;
+        page-break-inside: avoid;
+    }
+
+    .footer-logo {
+        font-weight: 700;
+        color: #003A5D;
+        font-size: 8pt;
+        letter-spacing: 0.5px;
+    }
+
+    .print-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: #003A5D;
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 4px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s;
+    }
+
+    .print-btn:hover {
+        background: #005080;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .cover-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .cover-logo {
+        position: absolute;
+        top: 1.5cm;
+        right: 1.5cm;
+        font-size: 9pt;
+        color: #6b7280;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .total-row {
+        background: #003A5D !important;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .total-row td {
+        background: #003A5D !important;
+        color: #fff;
+        border-color: #9ca3af;
+    }
+
+    .subsection {
+        background: #e5e7eb;
+        font-weight: 700;
+        color: #003A5D;
+    }
+
+    svg {
+        page-break-inside: avoid;
+        max-width: 100%;
+    }
+
+    .timeline-container {
+        margin: 20pt 0;
+        page-break-inside: avoid;
+    }
+
+    .go-nogo {
+        background: #fffbeb;
+        border: 2px solid #f59e0b;
+        padding: 16pt;
+        margin: 16pt 0;
+        text-align: center;
+        page-break-inside: avoid;
+    }
+
+    .go-nogo h3 {
+        color: #b45309;
+        font-size: 16pt;
+        margin-bottom: 12pt;
+    }
+
+    .action-list {
+        background: #f0fdf4;
+        border-left: 4px solid #16a34a;
+        padding: 14pt 16pt;
+        margin-top: 16pt;
+    }
+
+    .action-list ol {
+        padding-left: 20pt;
+    }
+
+    .action-list li {
+        margin-bottom: 6pt;
+        font-weight: 600;
+    }
+</style>
+</head>
+<body>
+<button class="print-btn no-print" onclick="window.print()">Imprimer en PDF</button>
+
+<!-- Page 1: Couverture -->
+<div class="page">
+    <div class="cover-logo">CONFIDENTIEL</div>
+    <div class="cover-content">
+        <div class="mckinsey-bar"></div>
+        <h1 style="font-size: 32pt;">Vallée du Saint-Laurent :<br>Pivot Robotique Humanoïde</h1>
+        <p class="subtitle">Le Québec devant Tokyo</p>
+        <p class="date-header">Plan approuvé par le Premier ministre | 17 avril 2026</p>
+    </div>
+    <div class="footer">
+        <div class="footer-logo">VALLÉE DU SAINT-LAURENT</div>
+        <div class="page-counter"></div>
+    </div>
+</div>
+
+<!-- Page 2: Pourquoi maintenant -->
+<div class="page">
+    <h1>Pourquoi maintenant</h1>
+    <div class="mckinsey-bar"></div>
+    
+    <div class="flex-3col">
+        <div class="col">
+            <h3>1. Coût actuateurs -70%</h3>
+            <p>Depuis 2022, le coût des moteurs couple élevé et réducteurs harmoniques a chuté de 70% grâce à l'échelle de production EV et aux nouveaux designs sans terres rares.</p>
+        </div>
+        <div class="col">
+            <h3>2. Modèles VLA matures</h3>
+            <p>Les modèles Vision-Langage-Action atteignent 90%+ de succès sur tâches de manipulation générale. Le MILA dispose de l'expertise pour un LLM francophone embarqué.</p>
+        </div>
+        <div class="col">
+            <h3>3. Pénurie main-d'œuvre</h3>
+            <p>150 000 postes vacants au Québec d'ici 2030. Construction, santé et logistique ne peuvent recruter. Les humanoïdes comblent l'écart sans remplacer l'humain.</p>
+        </div>
+    </div>
+
+    <div class="encadre">
+        <strong>Impact stratégique :</strong> Fenêtre d'opportunité de 18-24 mois avant que Tokyo et Séoul verrouillent la supply chain mondiale des humanoïdes. Le Québec doit sécuriser l'IP actuateurs et le cerveau VLA maintenant pour capturer 15% du marché nord-américain d'ici 2031, soit 3,2G$ de PIB annuel.
+    </div>
+
+    <div class="footer">
+        <div class="footer-logo">VALLÉE DU SAINT-LAURENT</div>
+        <div class="page-counter"></div>
+    </div>
+</div>
+
+<!-- Page 3: Avantage Québec vs Tokyo -->
+<div class="page">
+    <h1>Avantage Québec vs Tokyo</h1>
+    <div class="mckinsey-bar"></div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 25%;">Dimension</th>
+                <th style="width: 37.5%;">Québec</th>
+                <th style="width: 37.5%;">Tokyo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Énergie</strong></td>
+                <td>Hydroélectricité 4¢/kWh, réseau décarboné, puissance garantie pour usines et recharge flottes</td>
+                <td>22¢/kWh, dépendance gaz importé, risque géopolitique et volatilité prix</td>
+            </tr>
+            <tr>
+                <td><strong>IA embarquée</strong></td>
+                <td>MILA modèles embarqués, leadership VLA francophone, partenariat Prompt/IVADO</td>
+                <td>Dépendance solutions US (OpenAI, Google), pas de souveraineté, biais linguistique</td>
+            </tr>
+            <tr>
+                <td><strong>Manufacturier</strong></td>
+                <td>Corridor intégré: Sherbrooke actuateurs, Drummondville électronique, Rive-Nord assemblage</td>
+                <td>Sous-traitance fragmentée, chaînes longues, délais 16+ semaines, pas de verticalisation</td>
+            </tr>
+            <tr>
+                <td><strong>Talent</strong></td>
+                <td>Immigration ciblée rapide, 5000 ingénieurs/an universités, programme rapatriement actif</td>
+                <td>Vieillissement accéléré, -800k travailleurs d'ici 2030, immigration fermée, coûts salariaux 2x</td>
+            </tr>
+            <tr>
+                <td><strong>Soutien État</strong></td>
+                <td>75M$ pivot dédié, crédit 40% R&D remboursable, contrats État chantiers comme client ancre</td>
+                <td>Conglomérats privés (Toyota/Honda), pas de stratégie nationale coordonnée, subventions limitées</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <div class="footer-logo">VALLÉE DU SAINT-LAURENT</div>
+        <div class="page-counter"></div>
+    </div>
+</div>
+
+<!-- Page 4: Feuille de route 18 mois -->
+<div class="page">
+    <h1>Feuille de route 18 mois</h1>
+    <div class="mckinsey-bar"></div>
+    
+    <div class="timeline-container">
+        <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+            <!-- Ligne de temps -->
+            <line x1="50" y1="140" x2="750" y2="140" stroke="#003A5D" stroke-width="3"/>
+            
+            <!-- Phase 1: J0-6 mois -->
+            <circle cx="150" cy="140" r="12" fill="#003A5D"/>
+            <rect x="80" y="40" width="140" height="80" fill="#f0f7fb" stroke="#003A5D" stroke-width="2"/>
+            <text x="150" y="65" text-anchor="middle" font-weight="700" font-size="12" fill="#003A5D">J0-6 mois</text>
+            <text x="150" y="85" text-anchor="middle" font-size="11" fill="#000">2 prototypes</text>
+            <text x="150" y="100" text-anchor="middle" font-size="11" fill="#000">complets</text>
+            <text x="150" y="160" text-anchor="middle" font-size="10" fill="#4b5563">J0</text>
+            
+            <!-- Phase 2: J6-12 mois -->
+            <circle cx="400" cy="140" r="12" fill="#003A5D"/>
+            <rect x="330" y="170" width="140" height="80" fill="#f0f7fb" stroke="#003A5D" stroke-width="2"/>
+            <text x="400" y="195" text-anchor="middle" font-weight="700" font-size="12" fill="#003A5D">J6-12 mois</text>
+            <text x="400" y="215" text-anchor="middle" font-size="11" fill="#000">10 unités pilote</text>
+            <text x="400" y="230" text-anchor="middle" font-size="11" fill="#000">déployées</text>
+            <text x="400" y="160" text-anchor="middle" font-size="10" fill="#4b5563">J+6</text>
+            
+            <!-- Phase 3: J12-18 mois -->
+            <circle cx="650" cy="140" r="12" fill="#003A5D"/>
+            <rect x="580" y="40" width="140" height="80" fill="#f0f7fb" stroke="#003A5D" stroke-width="2"/>
+            <text x="650" y="65" text-anchor="middle" font-weight="700" font-size="12" fill="#003A5D">J12-18 mois</text>
+            <text x="650" y="85" text-anchor="middle" font-size="11" fill="#000">100 unités usine</text>
+            <text x="650" y="100" text-anchor="middle" font-size="11" fill="#000">opérationnelle</text>
+            <text x="650" y="160" text-anchor="middle" font-size="10" fill="#4b5563">J+12</text>
+            <text x="750" y="160" text-anchor="middle" font-size="10" fill="#4b5563">J+18</text>
+        </svg>
+    </div>
+
+    <h2>Jalons critiques</h2>
+    <div class="flex-3col">
+        <div class="col">
+            <h3>Mois 3</h3>
+            <ul>
+                <li>Actuateur V1 validé</li>
+                <li>VLA fr prototype</li>
+                <li>Terrain Rive-Nord sécurisé</li>
+            </ul>
+        </div>
+        <div class="col">
+            <h3>Mois 9</h3>
+            <ul>
+                <li>5 unités chantiers tests</li>
+                <li>Certification CSA entamée</li>
+                <li>5 clients LOI signées</li>
+            </ul>
+        </div>
+        <div class="col">
+            <h3>Mois 15</h3>
+            <ul>
+                <li>Ligne 2 unités/sem</li>
+                <li>Coût <180k$ unitaire</li>
+                <li>Contrat MTQ signé</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logo">VALLÉE DU SAINT-LAURENT</div>
+        <div class="page-counter"></div>
+    </div>
+</div>
+
+<!-- Page 5: Les 3 paris stratégiques -->
+<div class="page">
+    <h1>Les 3 paris stratégiques</h1>
+    <div class="mckinsey-bar"></div>
+    
+    <div class="flex-3col">
+        <div class="col">
+            <h3>1. Actuateurs québécois</h3>
+            <p style="font-size: 10pt; margin-bottom: 8pt;"><strong>Thèse :</strong> Moteurs couple élevé + réducteurs cycloïdaux 100% QC</p>
+            <ul>
+                <li>IP propre, brevets déposés</li>
+                <li>-40% coût vs import Japon</li>
+                <li>Sans terres rares, aimants ferrite</li>
+                <li>Production Drummondville</li>
+                <li>20k unités/an capacité</li>
+            </ul>
+        </div>
+        <div class="col">
+            <h3>2. Cerveau VLA francophone</h3>
+            <p style="font-size: 10pt; margin-bottom: 8pt;"><strong>Thèse :</strong> MILA + Prompt = LLM vision-action FR natif</p>
+            <ul>
+                <li>Avantage langue française</li>
+                <li>Latence <50ms embarqué</li>
+                <li>Conforme loi 25 / données QC</li>
+                <li>Fine-tuning chantiers/santé</li>
+                <li>Licences Canada/France/Afrique</li>
+            </ul>
+        </div>
+        <div class="col">
+            <h3>3. Usine-assemblage Rive-Nord</h3>
+            <p style="font-size: 10pt; margin-bottom: 8pt;"><strong>Thèse :</strong> 20k pi², 100 unités/an dès M18</p>
+            <ul>
+                <li>Terrain Mascouche/Laval</li>
+                <li>Ligne automatisée 80%</li>
+                <li>Hydro 4¢ = 12k$/unité énergie</li>
+                <li>50 emplois directs M18</li>
+                <li>Scalable 1000u/an M36</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="encadre">
+        <strong>Synergie des 3 paris :</strong> Contrôle vertical complet = marge 35% vs 12% si assemblage d'imports. IP actuateurs + VLA = barrière à l'entrée 5 ans minimum pour concurrents. Usine Rive-Nord devient vitrine mondiale et centre d'excellence.
+    </div>
+
+    <div class="footer">
+        <div class="footer-logo">VALLÉE DU SAINT-LAURENT</div>
+        <div class="page-counter"></div>
+    </div>
+</div>
+
+<!-- Page 6: Budget pivot 75M$ -->
+<div class="page">
+    <h1>Budget pivot 75M$ détaillé</h1>
+    <div class="mckinsey-bar"></div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 40%;">Poste budgétaire</th>
+                <th style="width: 15%;">Montant</th>
+                <th style="width: 45%;">Détail</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="subsection">
+                <td colspan="3">R&D 25M$</td>
+            </tr>
+            <tr>
+                <td>2 prototypes complets</td>
+                <td>8M$</td>
+                <td>Design mécanique, actuateurs V1/V2, intégration, tests destruction</td>
+            </tr>
+            <tr>
+                <td>Lab VLA 20 chercheurs</td>
+                <td>7M$</td>
+                <td>Salaires 2 ans, compute cluster, données réelles chantiers, MILA partenariat</td>
+            </tr>
+            <tr>
+                <td>Simulation & Digital Twins</td>
+                <td>5M$</td>
+                <td>Isaac Sim, environnements virtuels, 1M épisodes training, validation sécurité</td>
+            </tr>
+            <tr>
+                <td>Certification CSA/UL</td>
+                <td>3M$</td>
+                <td>Tests conformité, sécurité collaborative, homologation santé/construction</td>
+            </tr>
+            <tr>
+                <td>IP & Brevets</td>
+                <td>2M$</td>
+                <td>Dépôts internationaux actuateurs/VLA, protection PCT, liberté d'exploitation</td>
+            </tr>
+            <tr class="subsection">
+                <td colspan="3">Usine pilote 30M$</td>
+            </tr>
+            <tr>
+                <td>Bâtiment Rive-Nord 20k pi²</td>
+                <td>12M$</td>
+                <td>Acquisition terrain, construction LEED, salle blanche assemblage</td>
+            </tr>
+            <tr>
+                <td>Ligne assemblage automatisée</td>
+                <td>10M$</td>
+                <td>Robots FANUC, convoyeurs, stations QA, capacité 100u/an extensible</td>
+            </tr>
+            <tr>
+                <td>Outillage actuateurs</td>
+                <td>5M$</td>
+                <td>Moules injection, CNC 5-axes, bobinage automatique, bancs dyno</td>
+            </tr>
+            <tr>
+                <td>QA & bancs test</td>
+                <td>3M$</td>
+                <td>Chambre climatique, tests 10k cycles, validation MTBF 5k heures</td>
+            </tr>
+            <tr class="subsection">
+                <td colspan="3">Talents 20M$</td>
+            </tr>
+            <tr>
+                <td>50 ingénieurs x 2 ans</td>
+                <td>12M$</td>
+                <td>Mécatronique, VLA, software, salaires moyens 120k$ chargés</td>
+            </tr>
+            <tr>
+                <td>15 PhD bourses</td>
+                <td>5M$</td>
+                <td>MILA/UdeM/McGill/ETS, thèses actuateurs/VLA, 3 ans financement</td>
+            </tr>
+            <tr>
+                <td>Programme rapatriement</td>
+                <td>3M$</td>
+                <td>10 experts Tokyo/SF, prime installation 100k$, support immigration</td>
+            </tr>
+            <tr class="total-row">
+                <td><strong>TOTAL</strong></td>
+                <td><strong>75M$</strong></td>
+                <td><strong>ROI: 18M$ revenus J+18, 450M$ PIB sur 5 ans</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <div class="footer-logo">VALLÉE DU SAINT-LAURENT</div>
+        <div class="page-counter"></div>
+    </div>
+</div>
+
+<!-- Page 7: Risques & parades -->
+<div class="page">
+    <h1>Risques & parades</h1>
+    <div class="mckinsey-bar"></div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 10%;">#</th>
+                <th style="width: 30%;">Risque</th>
+                <th style="width: 20%;">Probabilité</th>
+                <th style="width: 40%;">Parade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>1</strong></td>
+                <td><strong>Tokyo/Séoul avance technologique</strong><br>Toyota, Honda, Hyundai dévoilent humanoïdes production M12</td>
+                <td>Moyenne</td>
+                <td>Focus niches construction/santé où Québec a avantage client (chantiers MTQ, CHSLD). VLA francophone différenciation inattaquable. Brevets actuateurs bloquent import.</td>
+            </tr>
+            <tr>
+                <td><strong>2</strong></td>
+                <td><strong>Coût unitaire élevé >250k$</strong><br>Impossible de concurrencer prix si volumes faibles</td>
+                <td>Faible</td>
+                <td>Hydro 4¢ = -60k$ énergie sur vie utile. Automatisation 80% usine. Actuateurs internes -40%. Contrat État 50 unités = seuil rentabilité atteint M18.</td>
+            </tr>
+            <tr>
+                <td><strong>3</strong></td>
+                <td><strong>Adoption lente secteur privé</strong><br>Résistance syndicats, craintes sécurité, ROI incertain</td>
+                <td>Moyenne</td>
+                <td>Contrats État chantiers comme client d'amorçage 30u M12-18. Modèle RaaS 8k$/mois sans CAPEX. Programme formation FTQ/CSN. Pilotes gratuits 3 mois preuve valeur.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="encadre">
+        <strong>Mitigation active :</strong> Comité risques mensuel avec PMO, KPI coût unitaire revu M3/M6/M9, plan B = pivot vers bras cobots si humanoïde bloque, assurance-clé 5M$ sur IP actuateurs.
+    </div>
+
+    <div class="footer">
+        <div class="footer-logo">VALLÉE DU SAINT-LAURENT</div>
+        <div class="page-counter"></div>
+    </div>
+</div>
+
+<!-- Page 8: Décision PM -->
+<div class="page">
+    <h1>Décision PM</h1>
+    <div class="mckinsey-bar"></div>
+    
+    <div class="go-nogo">
+        <h3>GO / NO-GO PIVOT À SIGNER AVANT J+30</h3>
+        <p style="margin: 0; font-size: 10pt;">Décision requise avant le 17 mai 2026 pour respecter fenêtre d'opportunité 18 mois</p>
+    </div>
+
+    <h2>3 actions immédiates conditionnelles au GO</h2>
+    <div class="action-list">
+        <ol>
+            <li><strong>Mandat MILA robotique VLA francophone</strong><br>
+                <span style="font-weight: 400; font-size: 10pt;">Signature entente 7M$ avec MILA/IVADO pour lab dédié 20 chercheurs. Livrable M6: VLA-FR v1.0 90% succès tâches standard. Responsable: Ministre Économie + PC</span>
+            </li>
+            <li style="margin-top: 10pt;"><strong>Déblocage 25M$ R&D tranche 1</strong><br>
+                <span style="font-weight: 400; font-size: 10pt;">Transfert Investissement Québec vers consortium. 8M$ prototypes, 7M$ MILA, 5M$ sim, 3M$ CSA, 2M$ IP. Portail suivi trimestriel Cabinet PM. Responsable: Ministre Finances</span>
+            </li>
+            <li style="margin-top: 10pt;"><strong>Réserve terrain Rive-Nord 20k pi²</strong><br>
+                <span style="font-weight: 400; font-size: 10pt;">Option achat Mascouche secteur industriel 450k$. Étude environnementale lancée M1. Permis accéléré procédure exceptionnelle "Projet stratégique". Responsable: Ministre Économie Régions</span>
+            </li>
+        </ol>
+    </div>
+
+    <div class="encadre" style="margin-top: 20pt;">
+        <strong>Conséquence du NO-GO :</strong> Perte fenêtre 2026-2028, Tokyo/Séoul captent 100% marché nord-américain, trajectoire des Vallées de l'innovation. Le Québec devient importateur passif, -3000 emplois qualifiés projetés, 0$ PIB additionnel.
+    </div>
+
+    <div style="margin-top: 16pt; padding: 12pt; border: 1pt solid #d1d5db; page-break-inside: avoid;">
+        <p style="margin-bottom: 8pt; font-size: 9pt;"><strong>Signature Premier ministre :</strong></p>
+        <div style="height: 40pt; border-bottom: 1pt solid #000; margin-bottom: 6pt;"></div>
+        <p style="font-size: 8pt; color: #6b7280;">Date: _________________ &nbsp;&nbsp;&nbsp; Décision: GO □ &nbsp; NO-GO □</p>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logo">VALLÉE DU SAINT-LAURENT</div>
+        <div class="page-counter"></div>
+    </div>
+</div>
+
+<script>
+    // Auto-increment page numbers for screen preview
+    if (window.matchMedia && window.matchMedia('screen').matches) {
+        document.querySelectorAll('.page').forEach((page, index) => {
+            page.style.counterIncrement = 'page';
+        });
+    }
+</script>
+
+</body>
+</html>

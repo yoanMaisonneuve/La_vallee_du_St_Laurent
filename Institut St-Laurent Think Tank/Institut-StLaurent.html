@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Institut St-Laurent · Direction stratégique AGI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            marine:   '#003A5D',
+            'marine-dark': '#001e30',
+            'marine-mid':  '#004d78',
+            vivid:    '#009ADE',
+            bg:       '#f8f9fa',
+            ink:      '#1a1a1a',
+            muted:    '#6B7280',
+          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; color: #1a1a1a; background: #f8f9fa; }
+
+    /* Fade-in animation */
+    .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in-delay-1 { transition-delay: 0.1s; }
+    .fade-in-delay-2 { transition-delay: 0.2s; }
+    .fade-in-delay-3 { transition-delay: 0.3s; }
+    .fade-in-delay-4 { transition-delay: 0.4s; }
+
+    /* Section top bar */
+    .section-bar::before {
+      content: '';
+      display: block;
+      width: 56px;
+      height: 3px;
+      background: #009ADE;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Section number watermark */
+    .section-num {
+      position: absolute;
+      top: -0.25rem;
+      right: 2rem;
+      font-size: clamp(5rem, 12vw, 9rem);
+      font-weight: 900;
+      color: #E5E7EB;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.04em;
+    }
+
+    /* Header scroll shadow */
+    .header-scrolled { box-shadow: 0 2px 20px rgba(0,58,93,0.12); }
+
+    /* Hero gradient */
+    .hero-bg {
+      background: linear-gradient(135deg, #003A5D 0%, #004d78 60%, #003A5D 100%);
+    }
+
+    /* Card hover */
+    .service-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,58,93,0.12); }
+
+    /* Step connector line */
+    @media (min-width: 768px) {
+      .step-connector::after {
+        content: '';
+        position: absolute;
+        top: 2rem;
+        right: -50%;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, #009ADE, transparent);
+      }
+      .step-connector:last-child::after { display: none; }
+    }
+
+    /* Logo mark */
+    .logo-mark {
+      width: 44px;
+      height: 44px;
+      background: #009ADE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .logo-mark-lg {
+      width: 88px;
+      height: 88px;
+      background: rgba(255,255,255,0.12);
+      border: 2px solid rgba(0,154,222,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.6rem;
+      letter-spacing: 0.08em;
+      color: white;
+      margin: 0 auto 2rem;
+    }
+
+    .logic-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logic-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,154,222,0.06), transparent 55%);
+      pointer-events: none;
+    }
+
+    .logic-tier {
+      border-left: 3px solid #009ADE;
+    }
+
+    .sync-pill {
+      border: 1px solid rgba(0,58,93,0.08);
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(8px);
+    }
+
+    .code-panel {
+      background: #001e30;
+      color: #dbeafe;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      white-space: pre-wrap;
+    }
+
+    .logic-grid-line {
+      background-image: linear-gradient(rgba(0,58,93,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,58,93,0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    @media (max-width: 767px) {
+      .section-num { display: none; }
+      .step-connector::after { display: none; }
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- ═══════════════════════════════════════════
+       HEADER — Sticky
+  ════════════════════════════════════════════ -->
+  <header id="site-header" class="fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-300">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#hero" class="flex items-center gap-3 no-underline">
+        <div class="logo-mark">ISL</div>
+        <div>
+          <div class="font-bold text-marine text-sm tracking-wide leading-tight">Institut St-Laurent</div>
+          <div class="text-muted text-xs font-medium tracking-widest uppercase">Think Tank AGI · Montréal</div>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-ink">
+        <a href="#mission" class="hover:text-vivid transition-colors">Mission</a>
+        <a href="#services" class="hover:text-vivid transition-colors">Services</a>
+        <a href="#manifeste" class="hover:text-vivid transition-colors">Manifeste</a>
+        <a href="#approche" class="hover:text-vivid transition-colors">Approche</a>
+        <a href="#logique" class="hover:text-vivid transition-colors">L0→L4</a>
+        <a href="#contact" class="bg-vivid text-white px-5 py-2 font-semibold hover:bg-blue-600 transition-colors">
+          Contact
+        </a>
+      </nav>
+      <!-- Mobile menu toggle (visual only) -->
+      <button class="md:hidden text-marine" aria-label="Menu">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════════════
+       01 · HERO — Plein écran
+  ════════════════════════════════════════════ -->
+  <section id="hero" class="hero-bg min-h-screen flex flex-col justify-between pt-20">
+    <div class="flex-1 flex flex-col items-center justify-center text-center px-6 py-24">
+      <div class="logo-mark-lg fade-in">ISL</div>
+
+      <div class="fade-in fade-in-delay-1 mb-3">
+        <span class="inline-block text-vivid text-xs font-semibold tracking-widest uppercase border border-vivid/40 px-3 py-1">
+          Montréal · QC · 2026
+        </span>
+      </div>
+
+      <h1 class="fade-in fade-in-delay-2 text-white font-black text-5xl md:text-7xl tracking-tight leading-none mt-4 mb-6">
+        Institut<br class="md:hidden" /> <span class="text-vivid">St-Laurent</span>
+      </h1>
+
+      <p class="fade-in fade-in-delay-2 text-blue-200 text-lg md:text-xl font-light max-w-2xl leading-relaxed mb-10">
+        Direction stratégique AGI pour gouvernements, entreprises et nations.<br class="hidden md:block"/>
+        Clarté. Vitesse. Profondeur.
+      </p>
+
+      <div class="fade-in fade-in-delay-3 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#contact" class="bg-vivid text-white font-semibold px-8 py-3.5 text-sm tracking-wide hover:bg-blue-500 transition-colors">
+          Commencer la conversation →
+        </a>
+        <a href="#manifeste" class="border border-white/60 text-white font-semibold px-8 py-3.5 text-sm tracking-wide hover:border-white hover:bg-white/10 transition-all">
+          Lire le manifeste
+        </a>
+      </div>
+    </div>
+
+    <!-- Tagline bas de hero -->
+    <div class="border-t border-white/10 py-5 px-6 text-center fade-in fade-in-delay-4">
+      <p class="text-white/50 text-sm italic font-light tracking-wide">
+        "La crédibilité ne vient plus du passé — elle vient de la clarté."
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       02 · MISSION
+  ════════════════════════════════════════════ -->
+  <section id="mission" class="relative bg-white py-24 px-6 overflow-hidden">
+    <div class="section-num">02</div>
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+
+      <!-- Texte gauche -->
+      <div class="fade-in section-bar">
+        <p class="text-muted text-xs font-semibold tracking-widest uppercase mb-4">Notre Mission</p>
+        <h2 class="text-marine font-black text-3xl md:text-4xl leading-tight mb-6 border-l-4 border-vivid pl-5">
+          Le monde change.<br/>
+          Les gouvernements sont perdus.<br/>
+          <span class="text-vivid">Nous donnons la direction.</span>
+        </h2>
+        <p class="text-muted text-base leading-relaxed max-w-md">
+          L'Institut St-Laurent comble le vide entre la vitesse de l'AGI et la lenteur des institutions.
+          Nous transformons la complexité en clarté stratégique — pour ceux qui décident à l'échelle des nations.
+        </p>
+      </div>
+
+      <!-- Stats droite -->
+      <div class="grid gap-6 fade-in fade-in-delay-2">
+        <div class="bg-bg border border-gray-100 p-6 flex gap-5 items-start">
+          <div class="w-1 self-stretch bg-vivid flex-shrink-0"></div>
+          <div>
+            <div class="text-marine font-black text-3xl leading-none mb-1">47</div>
+            <div class="text-ink font-semibold text-sm">pays touchés par l'AGI</div>
+            <div class="text-muted text-xs mt-1">Gouvernements actifs sous pression de transformation</div>
+          </div>
+        </div>
+        <div class="bg-bg border border-gray-100 p-6 flex gap-5 items-start">
+          <div class="w-1 self-stretch bg-vivid flex-shrink-0"></div>
+          <div>
+            <div class="text-marine font-black text-3xl leading-none mb-1">2026</div>
+            <div class="text-ink font-semibold text-sm">fenêtre critique</div>
+            <div class="text-muted text-xs mt-1">Les décisions prises maintenant structurent la prochaine décennie</div>
+          </div>
+        </div>
+        <div class="bg-bg border border-gray-100 p-6 flex gap-5 items-start">
+          <div class="w-1 self-stretch bg-vivid flex-shrink-0"></div>
+          <div>
+            <div class="text-marine font-black text-3xl leading-none mb-1">0</div>
+            <div class="text-ink font-semibold text-sm">PowerPoint recyclé</div>
+            <div class="text-muted text-xs mt-1">Chaque mandat est construit depuis le contexte réel du client</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       03 · SERVICES — Grille 2×2
+  ════════════════════════════════════════════ -->
+  <section id="services" class="relative bg-bg py-24 px-6 overflow-hidden">
+    <div class="section-num">03</div>
+    <div class="max-w-6xl mx-auto">
+
+      <div class="max-w-xl mb-14 fade-in section-bar">
+        <p class="text-muted text-xs font-semibold tracking-widest uppercase mb-4">Services</p>
+        <h2 class="text-marine font-black text-3xl md:text-4xl leading-tight">
+          Ce que nous faisons — et pourquoi ça compte.
+        </h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-6">
+
+        <!-- Carte 1 -->
+        <div class="service-card fade-in fade-in-delay-1 bg-white border border-gray-100 p-8 border-l-4 border-l-vivid">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-4">01</div>
+          <h3 class="text-marine font-bold text-xl mb-3">Direction stratégique AGI</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Accompagnement exécutif pour gouvernements naviguant la transition AGI.
+            Cadrage des enjeux souverains, feuilles de route décisionnelles, positionnement géopolitique.
+          </p>
+          <div class="mt-6 text-vivid text-xs font-semibold tracking-wide">GOUVERNEMENTS →</div>
+        </div>
+
+        <!-- Carte 2 -->
+        <div class="service-card fade-in fade-in-delay-2 bg-white border border-gray-100 p-8 border-l-4 border-l-vivid">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-4">02</div>
+          <h3 class="text-marine font-bold text-xl mb-3">Politique publique & IA</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Conception de cadres réglementaires, de politiques d'adoption responsable et de mécanismes
+            de gouvernance IA adaptés aux contextes nationaux et régionaux.
+          </p>
+          <div class="mt-6 text-vivid text-xs font-semibold tracking-wide">CADRES & RÉGULATION →</div>
+        </div>
+
+        <!-- Carte 3 -->
+        <div class="service-card fade-in fade-in-delay-3 bg-white border border-gray-100 p-8 border-l-4 border-l-vivid">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-4">03</div>
+          <h3 class="text-marine font-bold text-xl mb-3">Développement économique</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Stratégies M&A, corridors d'investissement technologique et positionnement compétitif
+            des nations dans l'économie AGI émergente.
+          </p>
+          <div class="mt-6 text-vivid text-xs font-semibold tracking-wide">M&A · INVESTISSEMENT →</div>
+        </div>
+
+        <!-- Carte 4 -->
+        <div class="service-card fade-in fade-in-delay-4 bg-white border border-gray-100 p-8 border-l-4 border-l-vivid">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-4">04</div>
+          <h3 class="text-marine font-bold text-xl mb-3">Architecture cognitive</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Conception de systèmes décisionnels hiérarchiques L0→L4.
+            Perception, cohérence, raisonnement explicite et auto-correction intégrés dans une même architecture.
+          </p>
+          <div class="mt-6 text-vivid text-xs font-semibold tracking-wide">ORGANISATIONS →</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       04 · MANIFESTE — Fond sombre
+  ════════════════════════════════════════════ -->
+  <section id="manifeste" class="relative py-24 px-6 overflow-hidden" style="background:#001e30;">
+    <div class="max-w-4xl mx-auto">
+
+      <div class="text-center mb-16 fade-in">
+        <p class="text-vivid text-xs font-semibold tracking-widest uppercase mb-4">Manifeste</p>
+        <h2 class="text-white font-black text-3xl md:text-4xl leading-tight">
+          Ce en quoi nous croyons.
+        </h2>
+      </div>
+
+      <!-- Citation 1 -->
+      <div class="fade-in fade-in-delay-1 py-10">
+        <div class="h-px bg-vivid/30 mb-10"></div>
+        <p class="text-white/90 text-xl md:text-2xl font-light italic leading-relaxed text-center">
+          "Le monde ne récompense plus les diplômes. Il récompense la vitesse,
+          la lucidité et la capacité à collaborer avec l'AGI."
+        </p>
+      </div>
+
+      <!-- Citation 2 -->
+      <div class="fade-in fade-in-delay-2 py-10">
+        <div class="h-px bg-vivid/30 mb-10"></div>
+        <p class="text-white/90 text-xl md:text-2xl font-light italic leading-relaxed text-center">
+          "Un humain + AGI = capacité d'un think tank, vitesse d'un laboratoire,
+          profondeur d'un institut stratégique."
+        </p>
+      </div>
+
+      <!-- Citation 3 -->
+      <div class="fade-in fade-in-delay-3 py-10">
+        <div class="h-px bg-vivid/30 mb-10"></div>
+        <p class="text-white/90 text-xl md:text-2xl font-light italic leading-relaxed text-center">
+          "La crédibilité vient après, pas avant."
+        </p>
+        <div class="h-px bg-vivid/30 mt-10"></div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       05 · APPROCHE — 3 étapes horizontales
+  ════════════════════════════════════════════ -->
+  <section id="approche" class="relative bg-white py-24 px-6 overflow-hidden">
+    <div class="section-num">05</div>
+    <div class="max-w-6xl mx-auto">
+
+      <div class="max-w-xl mb-16 fade-in section-bar">
+        <p class="text-muted text-xs font-semibold tracking-widest uppercase mb-4">Notre Approche</p>
+        <h2 class="text-marine font-black text-3xl md:text-4xl leading-tight">
+          Trois phases. Aucun flou.
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-0 md:gap-0">
+
+        <!-- Étape 1 -->
+        <div class="relative step-connector fade-in fade-in-delay-1 p-8 md:pr-12 border-b md:border-b-0 md:border-r border-gray-100">
+          <div class="text-vivid font-black text-5xl leading-none mb-6 tracking-tight opacity-20">01</div>
+          <div class="w-10 h-0.5 bg-vivid mb-5"></div>
+          <h3 class="text-marine font-bold text-2xl mb-3">Diagnostic</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Analyse de la position réelle : actifs, angles morts, fenêtres d'opportunité,
+            menaces imminentes. Carte du terrain sans filtre ni biais institutionnel.
+          </p>
+        </div>
+
+        <!-- Étape 2 -->
+        <div class="relative step-connector fade-in fade-in-delay-2 p-8 md:px-12 border-b md:border-b-0 md:border-r border-gray-100">
+          <div class="text-vivid font-black text-5xl leading-none mb-6 tracking-tight opacity-20">02</div>
+          <div class="w-10 h-0.5 bg-vivid mb-5"></div>
+          <h3 class="text-marine font-bold text-2xl mb-3">Architecture</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Construction du cadre stratégique : priorités séquencées, leviers d'action,
+            scénarios de risque. Structure décisionnelle adaptée à la vitesse AGI.
+          </p>
+        </div>
+
+        <!-- Étape 3 -->
+        <div class="relative fade-in fade-in-delay-3 p-8 md:pl-12">
+          <div class="text-vivid font-black text-5xl leading-none mb-6 tracking-tight opacity-20">03</div>
+          <div class="w-10 h-0.5 bg-vivid mb-5"></div>
+          <h3 class="text-marine font-bold text-2xl mb-3">Navigation</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Accompagnement en temps réel à travers l'exécution. Ajustements tactiques,
+            pivot sur signal faible, maintien de cap stratégique dans l'incertitude.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       06 · LOGIQUE HIÉRARCHIQUE — L0 → L4
+  ════════════════════════════════════════════ -->
+  <section id="logique" class="relative bg-bg py-24 px-6 overflow-hidden logic-grid-line">
+    <div class="section-num">06</div>
+    <div class="max-w-6xl mx-auto">
+
+      <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-start mb-16">
+        <div class="fade-in section-bar">
+          <p class="text-muted text-xs font-semibold tracking-widest uppercase mb-4">Pilier canonique</p>
+          <h2 class="text-marine font-black text-3xl md:text-5xl leading-tight mb-6">
+            La logique n'est pas un module.<br/>
+            <span class="text-vivid">C'est une hiérarchie ascendante.</span>
+          </h2>
+          <p class="text-muted text-base leading-relaxed max-w-2xl">
+            Toute logique structurée émerge d'une montée de couches. L0 reconnaît, L1 organise,
+            L2 sélectionne, L3 raisonne, L4 corrige. Sauter une couche produit soit un perroquet,
+            soit un système paralysé. Le rôle d'une architecture sérieuse est d'orchestrer cette montée sans rupture.
+          </p>
+        </div>
+
+        <div class="fade-in fade-in-delay-1 logic-card bg-white border border-gray-100 p-8 shadow-sm">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-4">Invariant fondamental</div>
+          <p class="text-marine font-bold text-2xl leading-tight mb-4">
+            Pattern-matching et logique structurée ne sont pas deux rails.
+          </p>
+          <p class="text-muted text-sm leading-relaxed mb-6">
+            C'est une seule échelle. Chaque couche englobe la précédente, dépend d'elle et oriente la suivante.
+            L'autonomie réelle n'apparaît qu'en L4, quand le système peut évaluer puis corriger sa propre logique.
+          </p>
+          <div class="grid sm:grid-cols-2 gap-4 text-sm">
+            <div class="sync-pill p-4">
+              <div class="text-marine font-semibold mb-1">Direction synthétique</div>
+              <div class="text-muted">L0 matière → L1 forme → L2 cohérence → L3 règle → L4 direction</div>
+            </div>
+            <div class="sync-pill p-4">
+              <div class="text-marine font-semibold mb-1">Risque critique</div>
+              <div class="text-muted">Toute couche absente casse la continuité cognitive et la stabilité décisionnelle.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-5 sm:grid-cols-2 gap-5 mb-16">
+        <article class="fade-in fade-in-delay-1 logic-card logic-tier bg-white border border-gray-100 p-6">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-3">L0 · Matière</div>
+          <h3 class="text-marine font-bold text-xl mb-2">Pattern brut</h3>
+          <p class="text-muted text-sm leading-relaxed mb-4">Reconnaissance automatique de formes, associations statistiques sans compréhension.</p>
+          <div class="text-marine text-sm font-semibold mb-1">Opérateur</div>
+          <div class="text-muted text-sm mb-3">Match(x)</div>
+          <div class="text-marine text-sm font-semibold mb-1">Boucle</div>
+          <div class="text-muted text-sm">Accumulation → Renforcement → Stabilisation</div>
+        </article>
+
+        <article class="fade-in fade-in-delay-2 logic-card logic-tier bg-white border border-gray-100 p-6">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-3">L1 · Forme</div>
+          <h3 class="text-marine font-bold text-xl mb-2">Pattern organisé</h3>
+          <p class="text-muted text-sm leading-relaxed mb-4">Catégorisation, regroupement, prototypes, schémas et compression des signaux.</p>
+          <div class="text-marine text-sm font-semibold mb-1">Opérateur</div>
+          <div class="text-muted text-sm mb-3">Cluster(P)</div>
+          <div class="text-marine text-sm font-semibold mb-1">Boucle</div>
+          <div class="text-muted text-sm">Regroupement → Compression → Prototype</div>
+        </article>
+
+        <article class="fade-in fade-in-delay-3 logic-card logic-tier bg-white border border-gray-100 p-6">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-3">L2 · Cohérence</div>
+          <h3 class="text-marine font-bold text-xl mb-2">Logique émergente</h3>
+          <p class="text-muted text-sm leading-relaxed mb-4">Relations implicites entre patterns et choix du bon pattern selon le contexte.</p>
+          <div class="text-marine text-sm font-semibold mb-1">Opérateur</div>
+          <div class="text-muted text-sm mb-3">Select(P, C)</div>
+          <div class="text-marine text-sm font-semibold mb-1">Boucle</div>
+          <div class="text-muted text-sm">Contexte → Sélection → Ajustement</div>
+        </article>
+
+        <article class="fade-in fade-in-delay-4 logic-card logic-tier bg-white border border-gray-100 p-6">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-3">L3 · Règle</div>
+          <h3 class="text-marine font-bold text-xl mb-2">Logique structurée</h3>
+          <p class="text-muted text-sm leading-relaxed mb-4">Raisonnement explicite, causalité, preuves et planification de problèmes nouveaux.</p>
+          <div class="text-marine text-sm font-semibold mb-1">Opérateur</div>
+          <div class="text-muted text-sm mb-3">Reason(R)</div>
+          <div class="text-marine text-sm font-semibold mb-1">Boucle</div>
+          <div class="text-muted text-sm">Hypothèse → Application → Vérification</div>
+        </article>
+
+        <article class="fade-in fade-in-delay-4 logic-card logic-tier bg-white border border-gray-100 p-6 sm:col-span-2 lg:col-span-1">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-3">L4 · Direction</div>
+          <h3 class="text-marine font-bold text-xl mb-2">Métalogique</h3>
+          <p class="text-muted text-sm leading-relaxed mb-4">Réflexion sur sa propre logique, auto-correction, arbitrage stratégique et optimisation.</p>
+          <div class="text-marine text-sm font-semibold mb-1">Opérateur</div>
+          <div class="text-muted text-sm mb-3">Meta(R)</div>
+          <div class="text-marine text-sm font-semibold mb-1">Boucle</div>
+          <div class="text-muted text-sm">Observation → Correction → Stabilisation</div>
+        </article>
+      </div>
+
+      <div class="grid lg:grid-cols-[0.95fr_1.05fr] gap-8 mb-16">
+        <div class="fade-in bg-white border border-gray-100 p-8">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-4">Version agent</div>
+          <h3 class="text-marine font-bold text-2xl mb-5">Pile cognitive interne</h3>
+          <div class="space-y-4">
+            <div class="sync-pill p-4 flex items-start justify-between gap-4">
+              <div>
+                <div class="text-marine font-semibold">Observe</div>
+                <div class="text-muted text-sm">Perception brute, signaux, captation</div>
+              </div>
+              <div class="text-vivid font-black text-lg">L0</div>
+            </div>
+            <div class="sync-pill p-4 flex items-start justify-between gap-4">
+              <div>
+                <div class="text-marine font-semibold">Interprète</div>
+                <div class="text-muted text-sm">Structuration, regroupement, prototypes</div>
+              </div>
+              <div class="text-vivid font-black text-lg">L1</div>
+            </div>
+            <div class="sync-pill p-4 flex items-start justify-between gap-4">
+              <div>
+                <div class="text-marine font-semibold">Décide</div>
+                <div class="text-muted text-sm">Sélection contextuelle et cohérence</div>
+              </div>
+              <div class="text-vivid font-black text-lg">L2</div>
+            </div>
+            <div class="sync-pill p-4 flex items-start justify-between gap-4">
+              <div>
+                <div class="text-marine font-semibold">Planifie</div>
+                <div class="text-muted text-sm">Règles, preuves, causalité, plan d'action</div>
+              </div>
+              <div class="text-vivid font-black text-lg">L3</div>
+            </div>
+            <div class="sync-pill p-4 flex items-start justify-between gap-4">
+              <div>
+                <div class="text-marine font-semibold">Évolue</div>
+                <div class="text-muted text-sm">Auto-correction, arbitrage, optimisation</div>
+              </div>
+              <div class="text-vivid font-black text-lg">L4</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fade-in fade-in-delay-1 bg-marine text-white p-8">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-4">Multi-agents</div>
+          <h3 class="font-bold text-2xl mb-5">Ce qui se synchronise. Ce qui reste local.</h3>
+          <p class="text-blue-100 text-sm leading-relaxed mb-6">
+            L0 et L1 restent locaux à chaque agent : perception et structuration propres. La stabilité collective exige une synchronisation L2-L4.
+          </p>
+          <div class="space-y-4 mb-6">
+            <div class="bg-white/5 border border-white/10 p-4">
+              <div class="flex items-center justify-between gap-4 mb-1">
+                <div class="font-semibold">Sync_L2(context)</div>
+                <div class="text-vivid text-xs font-bold tracking-widest uppercase">Aligner cohérence</div>
+              </div>
+              <div class="text-blue-100 text-sm">Aligner les interprétations contextuelles entre agents.</div>
+            </div>
+            <div class="bg-white/5 border border-white/10 p-4">
+              <div class="flex items-center justify-between gap-4 mb-1">
+                <div class="font-semibold">Sync_L3(rules)</div>
+                <div class="text-vivid text-xs font-bold tracking-widest uppercase">Aligner règles</div>
+              </div>
+              <div class="text-blue-100 text-sm">Partager plans, contraintes, causalités et arbitrages opératoires.</div>
+            </div>
+            <div class="bg-white/5 border border-white/10 p-4">
+              <div class="flex items-center justify-between gap-4 mb-1">
+                <div class="font-semibold">Sync_L4(direction)</div>
+                <div class="text-vivid text-xs font-bold tracking-widest uppercase">Aligner direction</div>
+              </div>
+              <div class="text-blue-100 text-sm">Unifier objectifs, priorités, attracteurs et corrections stratégiques.</div>
+            </div>
+          </div>
+          <p class="text-white text-sm font-semibold leading-relaxed">
+            Invariant critique : un système multi-agents stable synchronise L2-L4. Sans cela, la cohérence collective se fragmente.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid xl:grid-cols-[0.9fr_1.1fr] gap-8">
+        <div class="fade-in bg-white border border-gray-100 p-8">
+          <div class="text-vivid text-xs font-bold tracking-widest uppercase mb-4">Équipe canonique</div>
+          <h3 class="text-marine font-bold text-2xl mb-6">Chef · Observateur · Scribe · Correcteur</h3>
+          <div class="space-y-4 text-sm">
+            <div class="border-l-2 border-vivid pl-4">
+              <div class="text-marine font-semibold">Chef · L4 + L3</div>
+              <div class="text-muted">Direction, objectifs, arbitrage des conflits, gouvernance stratégique.</div>
+            </div>
+            <div class="border-l-2 border-vivid pl-4">
+              <div class="text-marine font-semibold">Observateur · L0 → L2</div>
+              <div class="text-muted">Capte l'environnement, détecte anomalies, fournit le contexte exploitable.</div>
+            </div>
+            <div class="border-l-2 border-vivid pl-4">
+              <div class="text-marine font-semibold">Scribe · L1 → L3</div>
+              <div class="text-muted">Organise, résume, structure et maintient la mémoire externe du système.</div>
+            </div>
+            <div class="border-l-2 border-vivid pl-4">
+              <div class="text-marine font-semibold">Correcteur · L3 + L4</div>
+              <div class="text-muted">Vérifie la cohérence, détecte les erreurs, stabilise la direction.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fade-in fade-in-delay-2 code-panel p-8 border border-cyan-500/20 shadow-xl">
+          <div class="text-cyan-300 text-xs font-bold tracking-widest uppercase mb-4">Orchestrateur Askio1</div>
+          <h3 class="text-white font-bold text-2xl mb-5">Boucle fermée L0→L4</h3>
+          <div class="text-sm leading-7">loop:
+    state = Observateur.observe()
+    rag   = Scribe.retrieve(state)
+    Chef.sync_all_agents()
+    plan  = LLM.plan(state, rag, Chef.objective())
+    plan  = Correcteur.check(plan)
+    Robot.execute(plan.actions)
+    Scribe.store(state, plan)
+end</div>
+          <div class="mt-6 pt-6 border-t border-white/10 text-blue-100 text-sm leading-relaxed">
+            Monde réel → capteurs → observateur → mémoire → LLM → équipe d'agents → plan d'action → exécution → feedback.
+            L'objectif public est simple : transformer des intentions en plans, actions et apprentissages continus.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       07 · CONTACT
+  ════════════════════════════════════════════ -->
+  <section id="contact" style="background:#003A5D;" class="py-24 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+
+      <div class="fade-in mb-3">
+        <span class="inline-block text-vivid text-xs font-semibold tracking-widest uppercase border border-vivid/40 px-3 py-1">
+          Contact
+        </span>
+      </div>
+
+      <h2 class="fade-in fade-in-delay-1 text-white font-black text-4xl md:text-5xl mt-6 mb-4 leading-tight">
+        Parlons direction.
+      </h2>
+
+      <p class="fade-in fade-in-delay-1 text-blue-200 text-base font-light mb-10 max-w-lg mx-auto leading-relaxed">
+        Votre organisation fait face à une transition majeure liée à l'AGI.
+        Nous clarifierons l'enjeu et la voie à suivre — sans ambiguïté.
+      </p>
+
+      <div class="fade-in fade-in-delay-2 mb-8">
+        <a href="mailto:contact@institutstlaurent.ca"
+           class="inline-flex items-center gap-3 bg-vivid text-white font-semibold px-10 py-4 text-sm tracking-wide hover:bg-blue-500 transition-colors">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          contact@institutstlaurent.ca
+        </a>
+      </div>
+
+      <div class="fade-in fade-in-delay-3 flex flex-col sm:flex-row items-center justify-center gap-6 text-white/50 text-sm">
+        <div class="flex items-center gap-2">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+            <circle cx="12" cy="9" r="2.5"/>
+          </svg>
+          Basé à Montréal, QC
+        </div>
+        <div class="hidden sm:block text-white/20">·</div>
+        <div class="flex items-center gap-2">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+          </svg>
+          Portée internationale
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════ -->
+  <footer style="background:#001e30;" class="py-6 px-6 border-t border-white/5">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-white/30 text-xs">
+      <div class="flex items-center gap-3">
+        <div class="logo-mark" style="width:28px;height:28px;font-size:0.65rem;">ISL</div>
+        <span>© 2026 Institut St-Laurent · Montréal, QC</span>
+      </div>
+      <div class="flex items-center gap-5">
+        <a href="#mission" class="hover:text-white/70 transition-colors">Mission</a>
+        <a href="#services" class="hover:text-white/70 transition-colors">Services</a>
+        <a href="#manifeste" class="hover:text-white/70 transition-colors">Manifeste</a>
+        <a href="#logique" class="hover:text-white/70 transition-colors">L0→L4</a>
+        <a href="#contact" class="hover:text-white/70 transition-colors">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════════════════════════════════════
+       JAVASCRIPT — Header + Fade-in Observer
+  ════════════════════════════════════════════ -->
+  <script>
+    // Header scroll shadow
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        header.classList.add('header-scrolled');
+      } else {
+        header.classList.remove('header-scrolled');
+      }
+    });
+
+    // Intersection Observer — fade-in
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    fadeEls.forEach(el => observer.observe(el));
+
+    // Trigger hero elements immediately (already in viewport)
+    document.querySelectorAll('#hero .fade-in').forEach(el => {
+      el.classList.add('visible');
+    });
+  </script>
+
+</body>
+</html>

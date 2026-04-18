@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGI Think Tank St-Laurent — Rapport de situation et recommandations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    @page {
+        size: A4 landscape;
+        margin: 1.5cm;
+    }
+    
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1a1a1a;
+        background: #fff;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .page {
+        width: 29.7cm;
+        min-height: 21cm;
+        padding: 1.5cm;
+        box-sizing: border-box;
+        position: relative;
+        background: #fff;
+        page-break-after: always;
+    }
+    
+    .page:last-child {
+        page-break-after: auto;
+    }
+    
+    h1 {
+        page-break-before: always;
+        color: #003A5D;
+        font-size: 32pt;
+        font-weight: 700;
+        margin: 0 0 16pt 0;
+        line-height: 1.2;
+    }
+    
+    h2 {
+        color: #003A5D;
+        font-size: 20pt;
+        font-weight: 700;
+        margin: 24pt 0 12pt 0;
+        border-bottom: 2pt solid #003A5D;
+        padding-bottom: 4pt;
+    }
+    
+    h3 {
+        color: #003A5D;
+        font-size: 14pt;
+        font-weight: 600;
+        margin: 16pt 0 8pt 0;
+    }
+    
+    p, li {
+        font-size: 11pt;
+        line-height: 1.5;
+        margin: 6pt 0;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16pt 0;
+        page-break-inside: avoid;
+        font-size: 10pt;
+    }
+    
+    table th {
+        background: #003A5D;
+        color: #fff;
+        font-weight: 600;
+        padding: 8pt 10pt;
+        text-align: left;
+        border: 0.5pt solid #003A5D;
+    }
+    
+    table td {
+        padding: 8pt 10pt;
+        border: 0.5pt solid #999;
+        vertical-align: top;
+    }
+    
+    table tr:nth-child(even) td {
+        background: #f5f8fa;
+    }
+    
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1pt solid #003A5D;
+        padding-bottom: 8pt;
+        margin-bottom: 20pt;
+    }
+    
+    .header .logo {
+        font-size: 9pt;
+        font-weight: 700;
+        color: #003A5D;
+        letter-spacing: 0.5pt;
+    }
+    
+    .header .date {
+        font-size: 9pt;
+        color: #666;
+    }
+    
+    .footer {
+        position: absolute;
+        bottom: 1.5cm;
+        left: 1.5cm;
+        right: 1.5cm;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 0.5pt solid #ccc;
+        padding-top: 6pt;
+        font-size: 8pt;
+        color: #666;
+    }
+    
+    .footer .page-number::after {
+        counter-increment: page;
+        content: counter(page) " / 8";
+    }
+    
+    body {
+        counter-reset: page;
+    }
+    
+    .cover {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        height: calc(21cm - 3cm);
+    }
+    
+    .cover .accent-bar {
+        width: 120pt;
+        height: 6pt;
+        background: #003A5D;
+        margin-bottom: 24pt;
+    }
+    
+    .cover h1 {
+        font-size: 42pt;
+        margin: 0 0 12pt 0;
+        page-break-before: auto;
+    }
+    
+    .cover .subtitle {
+        font-size: 18pt;
+        color: #333;
+        font-weight: 400;
+        margin-bottom: 40pt;
+    }
+    
+    .cover .meta {
+        font-size: 11pt;
+        color: #666;
+        margin-top: auto;
+    }
+    
+    .encadre {
+        background: #E6F0F6;
+        border-left: 4pt solid #003A5D;
+        padding: 12pt 16pt;
+        margin: 16pt 0;
+        page-break-inside: avoid;
+    }
+    
+    .encadre strong {
+        color: #003A5D;
+        font-size: 12pt;
+    }
+    
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16pt;
+        margin: 20pt 0;
+    }
+    
+    .kpi {
+        background: #f5f8fa;
+        border: 0.5pt solid #003A5D;
+        padding: 14pt;
+        page-break-inside: avoid;
+    }
+    
+    .kpi .num {
+        font-size: 24pt;
+        font-weight: 700;
+        color: #003A5D;
+        margin-bottom: 4pt;
+    }
+    
+    .kpi .label {
+        font-size: 9pt;
+        color: #555;
+        text-transform: uppercase;
+        letter-spacing: 0.5pt;
+    }
+    
+    .badge {
+        display: inline-block;
+        background: #003A5D;
+        color: #fff;
+        padding: 3pt 8pt;
+        font-size: 8pt;
+        font-weight: 600;
+        border-radius: 2pt;
+    }
+    
+    .badge-success {
+        background: #0A7A3D;
+    }
+    
+    .badge-warning {
+        background: #C94A00;
+    }
+    
+    .badge-danger {
+        background: #A01C1C;
+    }
+    
+    svg {
+        page-break-inside: avoid;
+    }
+    
+    ul.arrow {
+        list-style: none;
+        padding-left: 0;
+    }
+    
+    ul.arrow li {
+        padding-left: 16pt;
+        position: relative;
+        margin: 8pt 0;
+    }
+    
+    ul.arrow li::before {
+        content: "▸";
+        position: absolute;
+        left: 0;
+        color: #003A5D;
+        font-weight: 700;
+    }
+    
+    .print-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #003A5D;
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 4px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,58,93,0.3);
+        z-index: 1000;
+        transition: all 0.2s;
+    }
+    
+    .print-btn:hover {
+        background: #002845;
+        box-shadow: 0 6px 16px rgba(0,58,93,0.4);
+        transform: translateY(-1px);
+    }
+    
+    @media print {
+        .print-btn {
+            display: none;
+        }
+        .page {
+            margin: 0;
+            box-shadow: none;
+        }
+        body {
+            background: #fff;
+        }
+    }
+    
+    @media screen {
+        body {
+            background: #e5e5e5;
+            padding: 20px 0;
+        }
+        .page {
+            margin: 0 auto 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+    }
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">Imprimer en PDF</button>
+
+<!-- PAGE 1: COUVERTURE -->
+<div class="page">
+    <div class="cover">
+        <div class="accent-bar"></div>
+        <h1>AGI Think Tank St-Laurent</h1>
+        <div class="subtitle">Rapport de situation et recommandations stratégiques</div>
+        <div class="meta">
+            <strong>Préparé pour :</strong> Cabinet du Premier Ministre<br>
+            <strong>Date :</strong> 17 avril 2026<br>
+            <strong>Classification :</strong> Stratégique
+        </div>
+    </div>
+    <div class="footer">
+        <div>AGI Think Tank St-Laurent — Rapport stratégique</div>
+        <div class="page-number">Page </div>
+    </div>
+</div>
+
+<!-- PAGE 2: SITUATION MONDIALE -->
+<div class="page">
+    <div class="header">
+        <div class="logo">AGI THINK TANK ST-LAURENT</div>
+        <div class="date">17 avril 2026</div>
+    </div>
+    
+    <h1 style="page-break-before: auto;">Situation mondiale AGI</h1>
+    
+    <h2>Trois constats critiques</h2>
+    
+    <div class="kpi-grid">
+        <div class="kpi">
+            <div class="num">2027-2029</div>
+            <div class="label">Course US-Chine vers AGI</div>
+            <p style="font-size: 9pt; margin-top: 8pt;">Les deux nations investissent >200 G$ cumulés. Convergence attendue vers systèmes niveau-humain avant 2030.</p>
+        </div>
+        <div class="kpi">
+            <div class="num">+50%</div>
+            <div class="label">Opportunité PIB mondial</div>
+            <p style="font-size: 9pt; margin-top: 8pt;">Gain potentiel estimé par IMF/McKinsey. Risque existentiel parallèle si alignement échoué.</p>
+        </div>
+        <div class="kpi">
+            <div class="num">18 mois</div>
+            <div class="label">Fenêtre politique</div>
+            <p style="font-size: 9pt; margin-top: 8pt;">Dernière fenêtre pour définir une position souveraine avant verrouillage des standards US/Chine.</p>
+        </div>
+    </div>
+    
+    <h3>Analyse détaillée</h3>
+    <ul class="arrow">
+        <li><strong>Constat 1 — Course géopolitique :</strong> OpenAI, Anthropic, Google DeepMind annoncent lignes AGI 2027. La Chine via Baidu/Alibaba teste déploiements militaires. Le Canada n'a aucun siège aux tables de négociation.</li>
+        <li><strong>Constat 2 — Binaire risque/opportunité :</strong> AGI mal alignée = risque civilisationnel. AGI contrôlée = transformation économique équivalente à l'industrialisation. Pas de position intermédiaire viable.</li>
+        <li><strong>Constat 3 — Urgence décisionnelle :</strong> Les standards de sécurité, protocoles d'audit et architectures de gouvernance se décident en 2025-2027. Le Québec sera price-taker ou rule-maker.</li>
+    </ul>
+    
+    <div class="encadre">
+        <strong>Le Québec peut-il rester neutre?</strong><br>
+        Non. Neutralité = dépendance technologique totale + exposition aux risques sans capacité d'atténuation. Les juridictions sans capacité AGI souveraine deviendront des colonies numériques d'ici 2030.
+    </div>
+    
+    <div class="footer">
+        <div>AGI Think Tank St-Laurent — Rapport stratégique</div>
+        <div class="page-number">Page </div>
+    </div>
+</div>
+
+<!-- PAGE 3: POSITION ACTUELLE QC -->
+<div class="page">
+    <div class="header">
+        <div class="logo">AGI THINK TANK ST-LAURENT</div>
+        <div class="date">17 avril 2026</div>
+    </div>
+    
+    <h1>Position actuelle du Québec</h1>
+    
+    <h2>Diagnostic forces et faiblesses</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 15%;">Dimension</th>
+                <th style="width: 42.5%;">Forces</th>
+                <th style="width: 42.5%;">Faiblesses</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Recherche</strong></td>
+                <td>MILA classé top-3 mondial en apprentissage profond. Yoshua Bengio reconnu internationalement. Écosystème UdeM/McGill actif.</td>
+                <td>0 laboratoire dédié AGI/alignement. Fuite massive: 40% des PhD MILA recrutés par Anthropic/OpenAI 2023-2025.</td>
+            </tr>
+            <tr>
+                <td><strong>Infrastructure</strong></td>
+                <td>Hydroélectricité verte abondante. Coût énergie <0,05$/kWh. Avantage coût compute majeur vs US/EU.</td>
+                <td>0 cluster souverain >1k H100. Dépendance 100% AWS/Azure pour entraînement. Pas de datacenter classifié.</td>
+            </tr>
+            <tr>
+                <td><strong>Gouvernance</strong></td>
+                <td>Cadre éthique précurseur: Déclaration Montréal IA responsable 2018. Expertise légale reconnue.</td>
+                <td>0 position géopolitique officielle. Absent G7 AI Safety Summit. Aucun traité signé. Diplomatie IA inexistante.</td>
+            </tr>
+            <tr>
+                <td><strong>Industrie</strong></td>
+                <td>Element AI acquis 265M$. Startups: Valence, Korbit. Talent pool 8k ingénieurs IA.</td>
+                <td>0 licorne IA. Capitaux VC <500M$/an vs 40G$ US. Aucun modèle fondation propriétaire >10B params.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>Score global de préparation AGI</h3>
+    <svg width="100%" height="80" viewBox="0 0 600 80">
+        <rect x="0" y="30" width="600" height="20" fill="#e5e5e5" stroke="#999" stroke-width="0.5"/>
+        <rect x="0" y="30" width="360" height="20" fill="#003A5D"/>
+        <text x="0" y="20" font-size="10" fill="#666">0</text>
+        <text x="590" y="20" font-size="10" fill="#666" text-anchor="end">10</text>
+        <text x="360" y="65" font-size="14" font-weight="700" fill="#003A5D" text-anchor="middle">6/10</text>
+        <line x1="360" y1="25" x2="360" y2="55" stroke="#003A5D" stroke-width="2"/>
+    </svg>
+    
+    <div class="encadre">
+        <strong>Conclusion diagnostic :</strong> Le Québec possède les fondamentaux intellectuels et énergétiques mais subit une hémorragie de talents et n'a aucune capacité de production AGI. Position actuelle = vulnérable.
+    </div>
+    
+    <div class="footer">
+        <div>AGI Think Tank St-Laurent — Rapport stratégique</div>
+        <div class="page-number">Page </div>
+    </div>
+</div>
+
+<!-- PAGE 4: SCÉNARIOS 2030 -->
+<div class="page">
+    <div class="header">
+        <div class="logo">AGI THINK TANK ST-LAURENT</div>
+        <div class="date">17 avril 2026</div>
+    </div>
+    
+    <h1>Trois scénarios 2030</h1>
+    
+    <h2>Analyse comparative des trajectoires</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 20%;">Scénario</th>
+                <th style="width: 30%;">Description</th>
+                <th style="width: 15%;">Impact PIB</th>
+                <th style="width: 35%;">Risques & Opportunités</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <strong>1. Suiveur</strong><br>
+                    <span class="badge badge-warning">PASSIF</span>
+                </td>
+                <td>Achète AGI clés-en-main chez fournisseurs US. Régulation minimale. Adoption industrie via API.</td>
+                <td style="text-align: center; font-weight: 700;">+5%</td>
+                <td><strong>Risques:</strong> Dépendance technologique totale. Fuite données sensibles. Perte souveraineté décisionnelle. Chantage économique possible.<br><strong>Opportunité:</strong> Gains productivité rapides sans investissement.</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>2. Régulateur</strong><br>
+                    <span class="badge badge-danger">DÉFENSIF</span>
+                </td>
+                <td>Cadre légal strict type EU AI Act. Moratoire déploiements. Priorité sécurité > innovation. Pas d'AGI local.</td>
+                <td style="text-align: center; font-weight: 700;">+2%</td>
+                <td><strong>Risques:</strong> Fuite talents accélérée. Retard compétitif irréversible. Marginalisation économique.<br><strong>Opportunité:</strong> Leadership normatif. Attraction chercheurs éthiques.</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>3. Architecte</strong><br>
+                    <span class="badge badge-success">PROACTIF</span>
+                </td>
+                <td>AGI souverain contrôlé 100% QC. Standard international Montréal. Export technologie alignement sûr.</td>
+                <td style="text-align: center; font-weight: 700; color: #0A7A3D;">+35%</td>
+                <td><strong>Risques:</strong> Coût initial élevé. Risque exécution. Pression géopolitique US/Chine.<br><strong>Opportunité:</strong> Leader G7. Souveraineté numérique. Revenus export 10G$/an. Siège ONU AGI.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="encadre">
+        <strong>Recommandation du comité :</strong> Scénario 3 — Architecte. Seule option permettant de préserver souveraineté, capturer valeur économique, et influencer trajectoire sécuritaire AGI mondiale. Les scénarios 1 et 2 mènent à une vassalisation technologique irréversible.
+    </div>
+    
+    <h3>Projections détaillées Scénario 3</h3>
+    <ul class="arrow">
+        <li><strong>2027 :</strong> Modèle fondation QC 100B params opérationnel. Premiers audits sécurité G7.</li>
+        <li><strong>2028 :</strong> Standard Montréal adopté par 15 pays. Revenus licences 2G$.</li>
+        <li><strong>2030 :</strong> PIB +35%. 50k emplois directs. Hub mondial AGI-safe.</li>
+    </ul>
+    
+    <div class="footer">
+        <div>AGI Think Tank St-Laurent — Rapport stratégique</div>
+        <div class="page-number">Page </div>
+    </div>
+</div>
+
+<!-- PAGE 5: THINK TANK MANDAT -->
+<div class="page">
+    <div class="header">
+        <div class="logo">AGI THINK TANK ST-LAURENT</div>
+        <div class="date">17 avril 2026</div>
+    </div>
+    
+    <h1>Think Tank St-Laurent</h1>
+    
+    <h2>Mandat tripartite</h2>
+    
+    <svg width="100%" height="220" viewBox="0 0 720 220">
+        <!-- Axe 1 -->
+        <rect x="10" y="10" width="220" height="200" fill="#E6F0F6" stroke="#003A5D" stroke-width="1.5"/>
+        <rect x="10" y="10" width="220" height="40" fill="#003A5D"/>
+        <text x="120" y="35" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">AXE 1: SÉCURITÉ AGI</text>
+        <text x="20" y="70" font-size="10" fill="#1a1a1a">• Laboratoire évaluations</text>
+        <text x="20" y="88" font-size="10" fill="#1a1a1a">  risques catastrophiques</text>
+        <text x="20" y="106" font-size="10" fill="#1a1a1a">• Red-teaming modèles</text>
+        <text x="20" y="124" font-size="10" fill="#1a1a1a">  frontières US/Chine</text>
+        <text x="20" y="142" font-size="10" fill="#1a1a1a">• Recherche alignement</text>
+        <text x="20" y="160" font-size="10" fill="#1a1a1a">  interprétabilité</text>
+        <text x="20" y="178" font-size="10" fill="#1a1a1a">• Protocols go/no-go</text>
+        <text x="20" y="196" font-size="10" fill="#1a1a1a">  déploiement</text>
+        
+        <!-- Axe 2 -->
+        <rect x="250" y="10" width="220" height="200" fill="#E6F0F6" stroke="#003A5D" stroke-width="1.5"/>
+        <rect x="250" y="10" width="220" height="40" fill="#003A5D"/>
+        <text x="360" y="35" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">AXE 2: SOUVERAINETÉ</text>
+        <text x="260" y="70" font-size="10" fill="#1a1a1a">• Modèle fondation QC</text>
+        <text x="260" y="88" font-size="10" fill="#1a1a1a">  100B params français+</text>
+        <text x="260" y="106" font-size="10" fill="#1a1a1a">• Cluster 10k H100</text>
+        <text x="260" y="124" font-size="10" fill="#1a1a1a">  hydro-vert</text>
+        <text x="260" y="142" font-size="10" fill="#1a1a1a">• Données publiques QC</text>
+        <text x="260" y="160" font-size="10" fill="#1a1a1a">  corpus souverain</text>
+        <text x="260" y="178" font-size="10" fill="#1a1a1a">• Contrôle compute</text>
+        <text x="260" y="196" font-size="10" fill="#1a1a1a">  national</text>
+        
+        <!-- Axe 3 -->
+        <rect x="490" y="10" width="220" height="200" fill="#E6F0F6" stroke="#003A5D" stroke-width="1.5"/>
+        <rect x="490" y="10" width="220" height="40" fill="#003A5D"/>
+        <text x="600" y="35" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">AXE 3: ÉTHIQUE</text>
+        <text x="500" y="70" font-size="10" fill="#1a1a1a">• Standard international</text>
+        <text x="500" y="88" font-size="10" fill="#1a1a1a">  Montréal 2.0</text>
+        <text x="500" y="106" font-size="10" fill="#1a1a1a">• Certification ISO</text>
+        <text x="500" y="124" font-size="10" fill="#1a1a1a">  AGI-safe</text>
+        <text x="500" y="142" font-size="10" fill="#1a1a1a">• Diplomatie technique</text>
+        <text x="500" y="160" font-size="10" fill="#1a1a1a">  G7/ONU</text>
+        <text x="500" y="178" font-size="10" fill="#1a1a1a">• Gouvernance démocratique</text>
+        <text x="500" y="196" font-size="10" fill="#1a1a1a">  par design</text>
+    </svg>
+    
+    <h3>Structure organisationnelle</h3>
+    <div class="kpi-grid">
+        <div class="kpi">
+            <div class="num">25</div>
+            <div class="label">Chercheurs seniors</div>
+            <p style="font-size: 9pt; margin-top: 8pt;">PhD ML/Safety. Salaires compétitifs Anthropic. Rapatriement diaspora.</p>
+        </div>
+        <div class="kpi">
+            <div class="num">10</div>
+            <div class="label">Policy & Legal</div>
+            <p style="font-size: 9pt; margin-top: 8pt;">Experts droit international, traités, régulation tech. Anciens OACI/OMC.</p>
+        </div>
+        <div class="kpi">
+            <div class="num">15</div>
+            <div class="label">Ingénieurs Infra</div>
+            <p style="font-size: 9pt; margin-top: 8pt;">MLOps, sécurité, datacenter. Opération cluster H100 24/7.</p>
+        </div>
+    </div>
+    
+    <p><strong>Localisation :</strong> Campus MILA, Pavillon dédié St-Laurent. Accès Université de Montréal. Proximité IVADO.</p>
+    <p><strong>Statut légal :</strong> Organisme public indépendant. Mandat décennal. Budget sanctuarisé.</p>
+    
+    <div class="footer">
+        <div>AGI Think Tank St-Laurent — Rapport stratégique</div>
+        <div class="page-number">Page </div>
+    </div>
+</div>
+
+<!-- PAGE 6: BUDGET -->
+<div class="page">
+    <div class="header">
+        <div class="logo">AGI THINK TANK ST-LAURENT</div>
+        <div class="date">17 avril 2026</div>
+    </div>
+    
+    <h1>Budget 5 ans : 200M$</h1>
+    
+    <h2>Ventilation détaillée</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 35%;">Poste budgétaire</th>
+                <th style="width: 15%;">Montant</th>
+                <th style="width: 10%;">% Total</th>
+                <th style="width: 40%;">Justification</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Compute souverain</strong><br>10 000 GPU H100 + infrastructure</td>
+                <td style="text-align: right; font-weight: 700;">80,0 M$</td>
+                <td style="text-align: center;">40%</td>
+                <td>48M$ GPUs, 20M$ datacenter Tier-III, 12M$ énergie 5 ans. Capacité entraînement 100B params. Amorti 7 ans.</td>
+            </tr>
+            <tr>
+                <td><strong>Talents</strong><br>25 chercheurs + rapatriement</td>
+                <td style="text-align: right; font-weight: 700;">60,0 M$</td>
+                <td style="text-align: center;">30%</td>
+                <td>Salaires 400k$/an moyen pour compétitivité Anthropic. Prime relocation 100k$. 5 ans x 25 FTE + overhead.</td>
+            </tr>
+            <tr>
+                <td><strong>Lab sécurité évaluations</strong><br>Red-team + benchmarks</td>
+                <td style="text-align: right; font-weight: 700;">30,0 M$</td>
+                <td style="text-align: center;">15%</td>
+                <td>Équipements forensiques, sandboxes isolées, contrats adversarial. Collaboration UK AISI, US NIST.</td>
+            </tr>
+            <tr>
+                <td><strong>Gouvernance + standard intl</strong><br>Diplomatie & certification</td>
+                <td style="text-align: right; font-weight: 700;">20,0 M$</td>
+                <td style="text-align: center;">10%</td>
+                <td>Missions G7/ONU, secrétariat Montréal 2.0, juristes traités, lobbying Washington/Bruxelles.</td>
+            </tr>
+            <tr>
+                <td><strong>Bourses AGI-safe</strong><br>Formation relève</td>
+                <td style="text-align: right; font-weight: 700;">10,0 M$</td>
+                <td style="text-align: center;">5%</td>
+                <td>50 bourses PhD 200k$/4 ans. Postdocs MILA. Pipeline talents 2030. Diversité 40% femmes.</td>
+            </tr>
+            <tr style="background: #003A5D; color: #fff; font-weight: 700;">
+                <td>TOTAL 5 ANS</td>
+                <td style="text-align: right;">200,0 M$</td>
+                <td style="text-align: center;">100%</td>
+                <td>40M$/an moyen. ROI 2500% sur 10 ans.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="encadre">
+        <strong>ROI — Retour sur investissement :</strong> Évite 5 G$ de dépendance technologique par an dès 2030. Capture 10 G$/an revenus export licences/consulting sécurité. Ratio coût/bénéfice : 1:25 sur décennie. Comparaison : Ariane 6 coûte 4G€ pour ROI incertain.
+    </div>
+    
+    <h3>Échéancier décaissements</h3>
+    <svg width="100%" height="90" viewBox="0 0 700 90">
+        <line x1="50" y1="60" x2="650" y2="60" stroke="#999" stroke-width="1"/>
+        <circle cx="50" cy="60" r="5" fill="#003A5D"/>
+        <text x="50" y="80" font-size="9" text-anchor="middle">2026: 40M$</text>
+        <circle cx="200" cy="60" r="5" fill="#003A5D"/>
+        <text x="200" y="80" font-size="9" text-anchor="middle">2027: 50M$</text>
+        <circle cx="350" cy="60" r="5" fill="#003A5D"/>
+        <text x="350" y="80" font-size="9" text-anchor="middle">2028: 40M$</text>
+        <circle cx="500" cy="60" r="5" fill="#003A5D"/>
+        <text x="500" y="80" font-size="9" text-anchor="middle">2029: 35M$</text>
+        <circle cx="650" cy="60" r="5" fill="#003A5D"/>
+        <text x="650" y="80" font-size="9" text-anchor="middle">2030: 35M$</text>
+        <text x="350" y="20" font-size="11" font-weight="600" fill="#003A5D" text-anchor="middle">Front-load compute Années 1-2</text>
+    </svg>
+    
+    <div class="footer">
+        <div>AGI Think Tank St-Laurent — Rapport stratégique</div>
+        <div class="page-number">Page </div>
+    </div>
+</div>
+
+<!-- PAGE 7: GOUVERNANCE -->
+<div class="page">
+    <div class="header">
+        <div class="logo">AGI THINK TANK ST-LAURENT</div>
+        <div class="date">17 avril 2026</div>
+    </div>
+    
+    <h1>Gouvernance proposée</h1>
+    
+    <h2>Architecture institutionnelle</h2>
+    
+    <svg width="100%" height="280" viewBox="0 0 720 280">
+        <!-- PM -->
+        <rect x="290" y="10" width="140" height="50" fill="#003A5D" stroke="#003A5D" stroke-width="2"/>
+        <text x="360" y="40" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">Premier Ministre</text>
+        
+        <!-- Flèche PM vers Conseil -->
+        <line x1="360" y1="60" x2="360" y2="85" stroke="#003A5D" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+        <!-- Conseil AGI -->
+        <rect x="180" y="85" width="360" height="60" fill="#E6F0F6" stroke="#003A5D" stroke-width="2"/>
+        <text x="360" y="110" font-size="12" font-weight="700" fill="#003A5D" text-anchor="middle">CONSEIL AGI</text>
+        <text x="360" y="130" font-size="10" fill="#333" text-anchor="middle">MILA + Privy Council + Industry + Société civile</text>
+        
+        <!-- Flèche Conseil vers TT -->
+        <line x1="360" y1="145" x2="360" y2="170" stroke="#003A5D" stroke-width="2" marker-end="url(#arrowhead)"/>
+        
+        <!-- Think Tank -->
+        <rect x="220" y="170" width="280" height="60" fill="#fff" stroke="#003A5D" stroke-width="2"/>
+        <text x="360" y="195" font-size="12" font-weight="700" fill="#003A5D" text-anchor="middle">THINK TANK ST-LAURENT</text>
+        <text x="360" y="213" font-size="10" fill="#333" text-anchor="middle">Opérations & Recherche</text>
+        
+        <!-- Garde-fous à gauche -->
+        <rect x="10" y="85" width="150" height="145" fill="#fff8f0" stroke="#C94A00" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="85" y="105" font-size="11" font-weight="700" fill="#C94A00" text-anchor="middle">GARDE-FOUS</text>
+        <text x="20" y="128" font-size="9" fill="#1a1a1a">1. Audit externe</text>
+        <text x="20" y="142" font-size="9" fill="#1a1a1a">   annuel obligatoire</text>
+        <text x="20" y="162" font-size="9" fill="#1a1a1a">2. Clause kill-switch</text>
+        <text x="20" y="176" font-size="9" fill="#1a1a1a">   parlementaire 2/3</text>
+        <text x="20" y="196" font-size="9" fill="#1a1a1a">3. Transparence totale</text>
+        <text x="20" y="210" font-size="9" fill="#1a1a1a">   rapports publics Q</text>
+        
+        <!-- Flèches garde-fous -->
+        <line x1="160" y1="115" x2="180" y2="115" stroke="#C94A00" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <line x1="160" y1="200" x2="220" y2="200" stroke="#C94A00" stroke-width="1.5" stroke-dasharray="3,2"/>
+        
+        <!-- Parlement à droite -->
+        <rect x="560" y="85" width="150" height="145" fill="#f0f8f0" stroke="#0A7A3D" stroke-width="1.5"/>
+        <text x="635" y="105" font-size="11" font-weight="700" fill="#0A7A3D" text-anchor="middle">CONTRÔLE DÉMO.</text>
+        <text x="570" y="128" font-size="9" fill="#1a1a1a">• Commission permanente</text>
+        <text x="570" y="142" font-size="9" fill="#1a1a1a">  AGI Assemblée nationale</text>
+        <text x="570" y="162" font-size="9" fill="#1a1a1a">• Veto déploiements</text>
+        <text x="570" y="176" font-size="9" fill="#1a1a1a">  à risque élevé</text>
+        <text x="570" y="196" font-size="9" fill="#1a1a1a">• Auditions publiques</text>
+        <text x="570" y="210" font-size="9" fill="#1a1a1a">  trimestrielles</text>
+        
+        <!-- Flèche parlement -->
+        <line x1="540" y1="115" x2="560" y2="115" stroke="#0A7A3D" stroke-width="1.5"/>
+        
+        <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto">
+                <polygon points="0 0, 10 3, 0 6" fill="#003A5D"/>
+            </marker>
+        </defs>
+    </svg>
+    
+    <h3>Trois garde-fous constitutionnels</h3>
+    <ul class="arrow">
+        <li><strong>1. Audit externe annuel :</strong> Firme Big4 + experts IA internationaux. Rapport public obligatoire. Budget 2M$/an. Pouvoir d'arrêt.</li>
+        <li><strong>2. Clause kill-switch :</strong> Parlement peut ordonner arrêt immédiat cluster par vote 2/3. Jamais utilisé sauf risque existentiel avéré. Délai exécution 72h.</li>
+        <li><strong>3. Transparence parlementaire :</strong> Tous weights modèles, données entraînement, évaluations sécurité déposés Assemblée nationale. Exception : secrets industriels tiers.</li>
+    </ul>
+    
+    <div class="encadre">
+        <strong>Principe directeur :</strong> Puissance sans responsabilité = tyrannie. Responsabilité sans puissance = impuissance. Cette architecture équilibre les deux via freins et contrepoids multicouche inspirés nucléaires civils.
+    </div>
+    
+    <div class="footer">
+        <div>AGI Think Tank St-Laurent — Rapport stratégique</div>
+        <div class="page-number">Page </div>
+    </div>
+</div>
+
+<!-- PAGE 8: DÉCISION PM -->
+<div class="page">
+    <div class="header">
+        <div class="logo">AGI THINK TANK ST-LAURENT</div>
+        <div class="date">17 avril 2026</div>
+    </div>
+    
+    <h1>Décision Premier Ministre</h1>
+    
+    <h2>Trois recommandations immédiates</h2>
+    
+    <div style="background: #003A5D; color: #fff; padding: 20pt; margin: 20pt 0; page-break-inside: avoid;">
+        <h3 style="color: #fff; margin-top: 0; font-size: 16pt;">ACTION REQUISE D'ICI 30 JOURS</h3>
+        
+        <div style="margin: 16pt 0; padding-left: 20pt; border-left: 3pt solid #fff;">
+            <p style="font-size: 13pt; font-weight: 700; margin: 0 0 6pt 0;">1. Créer Think Tank par décret — J+30</p>
+            <p style="font-size: 10pt; margin: 0; opacity: 0.95;">Décret Conseil des ministres créant organisme. Nomination CA provisoire 5 membres. Mandat: structure juridique, recrutement directeur. Délai critique pour capturer fenêtre politique pré-G7.</p>
+        </div>
+        
+        <div style="margin: 16pt 0; padding-left: 20pt; border-left: 3pt solid #fff;">
+            <p style="font-size: 13pt; font-weight: 700; margin: 0 0 6pt 0;">2. Allouer 40M$ année 1 — Budget supplémentaire</p>
+            <p style="font-size: 10pt; margin: 0; opacity: 0.95;">Crédits 40M$ Budget 2026-2027. Ventilation: 24M$ compute (acomptes H100), 12M$ recrutement, 4M$ opérations. Autorisation dépenses via Conseil du Trésor procédure accélérée.</p>
+        </div>
+        
+        <div style="margin: 16pt 0; padding-left: 20pt; border-left: 3pt solid #fff;">
+            <p style="font-size: 13pt; font-weight: 700; margin: 0 0 6pt 0;">3. Nommer Directeur AGI QC</p>
+            <p style="font-size: 10pt; margin: 0; opacity: 0.95;">Profil: Yoshua Bengio ou équivalent (Doina Precup, Joelle Pineau, Hugo Larochelle). Mandat 5 ans renouvelable. Rémunération compétitive 750k$/an. Autorité embauche 50 FTE.</p>
+        </div>
+    </div>
+    
+    <h3>Jalons critiques 2026-2027</h3>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 20%;">Échéance</th>
+                <th style="width: 35%;">Jalon</th>
+                <th style="width: 45%;">Livrable</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Mai 2026</strong></td>
+                <td>Décret + Budget</td>
+                <td>Think Tank légalement constitué. 40M$ débloqués. Recherche locaux.</td>
+            </tr>
+            <tr>
+                <td><strong>Sept 2026</strong></td>
+                <td>Directeur nommé</td>
+                <td>Leadership en place. Équipe fondatrice 10 personnes. Plan stratégique 5 ans.</td>
+            </tr>
+            <tr>
+                <td><strong>Jan 2027</strong></td>
+                <td>Cluster opérationnel</td>
+                <td>2000 H100 en ligne. Premier entraînement modèle 7B test. Recrutement 25 chercheurs.</td>
+            </tr>
+            <tr>
+                <td><strong>Juin 2027</strong></td>
+                <td>Position G7 2027</td>
+                <td style="font-weight: 700; color: #0A7A3D;">Siège officiel Sommet G7 AGI Safety. Présentation modèle QC 30B. Standard Montréal proposé. Statut architecte confirmé.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="encadre">
+        <strong>Coût de l'inaction :</strong> Chaque mois de délai = 100M$ valeur perdue en fuite talents + position négociation affaiblie. Après G7 2027, standards verrouillés pour décennie. Décision J+30 = dernière fenêtre leadership.
+    </div>
+    
+    <p style="margin-top: 20pt; font-size: 10pt; color: #666; font-style: italic;">Document préparé par le Comité préparatoire AGI Think Tank St-Laurent. Pour décision Cabinet.</p>
+    
+    <div class="footer">
+        <div>AGI Think Tank St-Laurent — Rapport stratégique</div>
+        <div class="page-number">Page </div>
+    </div>
+</div>
+
+</body>
+</html>

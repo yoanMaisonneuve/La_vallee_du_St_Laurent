@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- Playables SDK -->
+<script>// Playables SDK v1.0.0
+// Game lifecycle bridge: rAF-based game-ready detection + event communication
+(function() {
+  'use strict';
+
+  // Idempotency: skip if already initialized (e.g., server-side injection
+  // followed by client-side inject-javascript via the Bloks webview component).
+  if (window.playablesSDK) return;
+
+  var HANDLER_NAME = 'playablesGameEventHandler';
+  var ANDROID_BRIDGE_NAME = '_MetaPlayablesBridge';
+  var RAF_FRAME_THRESHOLD = 3;
+
+  var gameReadySent = false;
+  var firstInteractionSent = false;
+  var errorSent = false;
+  var frameCount = 0;
+  var originalRAF = window.requestAnimationFrame;
+
+  // --- Transport Layer ---
+
+  function hasIOSBridge() {
+    return !!(window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers[HANDLER_NAME]);
+  }
+
+  function hasAndroidBridge() {
+    return !!(window[ANDROID_BRIDGE_NAME] &&
+              typeof window[ANDROID_BRIDGE_NAME].postEvent === 'function');
+  }
+
+  function isInIframe() {
+    return !!(window.parent && window.parent !== window);
+  }
+
+  function sendEvent(eventName, payload) {
+    var message = {
+      type: eventName,
+      payload: payload || {},
+      timestamp: Date.now()
+    };
+
+    if (hasIOSBridge()) {
+      try {
+        window.webkit.messageHandlers[HANDLER_NAME].postMessage(message);
+      } catch (e) { /* ignore */ }
+      return;
+    }
+
+    if (hasAndroidBridge()) {
+    try {
+      var p = payload || {};
+      p.__secureToken = window.__fbAndroidBridgeAuthToken || '';
+      window[ANDROID_BRIDGE_NAME].postEvent(
+        eventName,
+        JSON.stringify(p)
+      );
+    } catch (e) { /* ignore */ }
+    return;
+  }
+
+    if (isInIframe()) {
+      try {
+        window.parent.postMessage(message, '*');
+      } catch (e) { /* ignore */ }
+      return;
+    }
+  }
+
+  // --- rAF Game-Ready Detection ---
+
+  function onFrame() {
+    if (gameReadySent) return;
+
+    frameCount++;
+    if (frameCount >= RAF_FRAME_THRESHOLD) {
+      gameReadySent = true;
+      sendEvent('game_ready', {
+        frame_count: frameCount,
+        detected_at: Date.now()
+      });
+      return;
+    }
+
+    originalRAF.call(window, onFrame);
+  }
+
+  if (originalRAF) {
+    window.requestAnimationFrame = function(callback) {
+      if (!gameReadySent) {
+        return originalRAF.call(window, function(timestamp) {
+          frameCount++;
+          if (frameCount >= RAF_FRAME_THRESHOLD && !gameReadySent) {
+            gameReadySent = true;
+            sendEvent('game_ready', {
+              frame_count: frameCount,
+              detected_at: Date.now()
+            });
+          }
+          callback(timestamp);
+        });
+      }
+      return originalRAF.call(window, callback);
+    };
+  }
+
+  // --- First User Interaction Detection ---
+
+  function setupFirstInteractionDetection() {
+    var events = ['touchstart', 'mousedown', 'keydown'];
+
+    function onFirstInteraction() {
+      if (firstInteractionSent) return;
+      firstInteractionSent = true;
+      sendEvent('user_interaction_start', null);
+
+      for (var i = 0; i < events.length; i++) {
+        document.removeEventListener(events[i], onFirstInteraction, true);
+      }
+    }
+
+    for (var i = 0; i < events.length; i++) {
+      document.addEventListener(events[i], onFirstInteraction, true);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupFirstInteractionDetection);
+  } else {
+    setupFirstInteractionDetection();
+  }
+
+  // --- Auto Error Capture ---
+
+  window.addEventListener('error', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    sendEvent('error', {
+      message: event.message || 'Unknown error',
+      source: event.filename || '',
+      lineno: event.lineno || 0,
+      colno: event.colno || 0,
+      auto_captured: true
+    });
+  });
+
+  window.addEventListener('unhandledrejection', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    var reason = event.reason;
+    sendEvent('error', {
+      message: (reason instanceof Error) ? reason.message : String(reason),
+      type: 'unhandled_promise_rejection',
+      auto_captured: true
+    });
+  });
+
+  // --- Public API ---
+
+  window.playablesSDK = {
+    complete: function(score) {
+      sendEvent('game_ended', {
+        score: score,
+        completed: true
+      });
+    },
+
+    error: function(message) {
+      if (errorSent) return;
+      errorSent = true;
+      sendEvent('error', {
+        message: message || 'Unknown error',
+        auto_captured: false
+      });
+    },
+
+    sendEvent: function(eventName, payload) {
+      if (!eventName || typeof eventName !== 'string') return;
+      sendEvent(eventName, payload);
+    }
+  };
+
+  // Kick off rAF detection in case no game code calls rAF immediately
+  if (originalRAF) {
+    originalRAF.call(window, onFrame);
+  }
+})();</script>
+<script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vallée du Saint-Laurent IA - Feuille de Route d'Exécution</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    :root {
+        --primary: #003A5D;
+        --gray: #666666;
+        --light-gray: #F5F5F5;
+        --border: #DDDDDD;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 11pt;
+        line-height: 1.5;
+        color: #000;
+        background: #fff;
+    }
+
+    .print-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 58, 93, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .print-btn:hover {
+        background: #002A45;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 58, 93, 0.4);
+    }
+
+    .page {
+        width: 100%;
+        min-height: 29.7cm;
+        padding: 1.5cm;
+        background: white;
+        position: relative;
+        page-break-after: always;
+    }
+
+    .page:last-child {
+        page-break-after: auto;
+    }
+
+    h1 {
+        color: var(--primary);
+        font-size: 28pt;
+        font-weight: 700;
+        margin-bottom: 24pt;
+        page-break-before: always;
+        page-break-after: avoid;
+        letter-spacing: -0.5pt;
+    }
+
+    .page:first-of-type h1 {
+        page-break-before: auto;
+    }
+
+    h2 {
+        color: var(--primary);
+        font-size: 18pt;
+        font-weight: 600;
+        margin-top: 18pt;
+        margin-bottom: 12pt;
+        page-break-after: avoid;
+    }
+
+    h3 {
+        color: var(--gray);
+        font-size: 14pt;
+        font-weight: 600;
+        margin-top: 12pt;
+        margin-bottom: 8pt;
+        page-break-after: avoid;
+    }
+
+    p {
+        margin-bottom: 8pt;
+    }
+
+    .subtitle {
+        font-size: 14pt;
+        color: var(--gray);
+        margin-bottom: 12pt;
+        font-weight: 400;
+    }
+
+    .date {
+        font-size: 11pt;
+        color: var(--gray);
+        margin-bottom: 32pt;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16pt 0;
+        page-break-inside: avoid;
+        font-size: 10pt;
+    }
+
+    thead {
+        background: var(--primary);
+        color: white;
+    }
+
+    thead th {
+        padding: 8pt 6pt;
+        text-align: left;
+        font-weight: 600;
+        border: 0.5pt solid var(--primary);
+        font-size: 10pt;
+    }
+
+    tbody td {
+        padding: 7pt 6pt;
+        border: 0.5pt solid var(--border);
+        vertical-align: top;
+    }
+
+    tbody tr:nth-child(even) {
+        background: var(--light-gray);
+    }
+
+    .kpi-box {
+        display: inline-block;
+        background: var(--light-gray);
+        border-left: 4pt solid var(--primary);
+        padding: 12pt 16pt;
+        margin: 8pt 12pt 8pt 0;
+        page-break-inside: avoid;
+    }
+
+    .kpi-value {
+        font-size: 24pt;
+        font-weight: 700;
+        color: var(--primary);
+        line-height: 1.2;
+    }
+
+    .kpi-label {
+        font-size: 9pt;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5pt;
+        margin-top: 4pt;
+    }
+
+    .timeline-container {
+        margin: 20pt 0;
+        page-break-inside: avoid;
+    }
+
+    .timeline-svg {
+        width: 100%;
+        height: auto;
+    }
+
+    .milestone {
+        background: var(--primary);
+        color: white;
+        padding: 10pt 16pt;
+        border-radius: 4pt;
+        display: inline-block;
+        margin-top: 12pt;
+        font-weight: 600;
+        page-break-inside: avoid;
+    }
+
+    .budget-badge {
+        background: var(--primary);
+        color: white;
+        padding: 6pt 12pt;
+        border-radius: 4pt;
+        font-weight: 700;
+        display: inline-block;
+        font-size: 12pt;
+        margin-top: 8pt;
+    }
+
+    ul, ol {
+        margin-left: 20pt;
+        margin-bottom: 12pt;
+    }
+
+    li {
+        margin-bottom: 6pt;
+    }
+
+    .risk-box {
+        background: #FFF4E6;
+        border-left: 4pt solid #FF8C00;
+        padding: 12pt 16pt;
+        margin: 16pt 0;
+        page-break-inside: avoid;
+    }
+
+    .risk-title {
+        font-weight: 700;
+        color: #D67300;
+        margin-bottom: 6pt;
+        font-size: 11pt;
+    }
+
+    .contact-box {
+        background: var(--light-gray);
+        border: 1pt solid var(--border);
+        padding: 16pt;
+        margin-top: 24pt;
+        page-break-inside: avoid;
+    }
+
+    .footer {
+        position: absolute;
+        bottom: 1.5cm;
+        left: 1.5cm;
+        right: 1.5cm;
+        text-align: center;
+        font-size: 9pt;
+        color: var(--gray);
+        padding-top: 8pt;
+        border-top: 0.5pt solid var(--border);
+    }
+
+    .cover-page {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: calc(29.7cm - 3cm);
+    }
+
+    .cover-logo {
+        width: 80px;
+        height: 80px;
+        background: var(--primary);
+        margin-bottom: 40pt;
+    }
+
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 1.5cm;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        .print-btn {
+            display: none;
+        }
+
+        .page {
+            padding: 0;
+            min-height: calc(21cm - 3cm);
+        }
+
+        .footer::after {
+            content: counter(page);
+        }
+    }
+
+    @page {
+        size: A4 landscape;
+        margin: 1.5cm;
+        @bottom-center {
+            content: counter(page);
+            font-size: 9pt;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #666;
+        }
+    }
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">Imprimer en PDF</button>
+
+<!-- PAGE 1: COUVERTURE -->
+<div class="page">
+    <div class="cover-page">
+        <div class="cover-logo"></div>
+        <h1>Vallée du Saint-Laurent IA<br>Feuille de Route d'Exécution J+0 à J+365</h1>
+        <p class="subtitle">Plan approuvé par le Premier ministre</p>
+        <p class="date">17 avril 2026</p>
+    </div>
+    <div class="footer">Vallée du Saint-Laurent IA - Feuille de Route d'Exécution</div>
+</div>
+
+<!-- PAGE 2: PHASE 0 -->
+<div class="page">
+    <h1>Phase 0 : Semaine 1-2 – Gouvernance</h1>
+    
+    <div class="timeline-container">
+        <svg class="timeline-svg" viewBox="0 0 800 80" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="40" x2="750" y2="40" stroke="#003A5D" stroke-width="2"/>
+            <circle cx="50" cy="40" r="6" fill="#003A5D"/>
+            <text x="50" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+0</text>
+            <text x="50" y="25" text-anchor="middle" font-size="9" fill="#666">Lancement</text>
+            <circle cx="400" cy="40" r="6" fill="#003A5D"/>
+            <text x="400" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+7</text>
+            <text x="400" y="25" text-anchor="middle" font-size="9" fill="#666">Comité exécutif</text>
+            <circle cx="750" cy="40" r="6" fill="#003A5D"/>
+            <text x="750" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+14</text>
+            <text x="750" y="25" text-anchor="middle" font-size="9" fill="#666">Décision PM</text>
+        </svg>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 30%;">Action</th>
+                <th style="width: 25%;">Propriétaire</th>
+                <th style="width: 15%;">Échéance</th>
+                <th style="width: 15%;">Budget</th>
+                <th style="width: 15%;">Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Nomination du Sous-ministre champion IA</td>
+                <td>Cabinet du Premier ministre</td>
+                <td>J+3</td>
+                <td>-</td>
+                <td>À lancer</td>
+            </tr>
+            <tr>
+                <td>Création du Comité exécutif Vallée IA (5 membres)</td>
+                <td>Sous-ministre Économie</td>
+                <td>J+7</td>
+                <td>0.1 M$</td>
+                <td>À lancer</td>
+            </tr>
+            <tr>
+                <td>Signature protocole CRIM-MILA-IVADO avec instances</td>
+                <td>Ministère Économie, Innovation</td>
+                <td>J+10</td>
+                <td>-</td>
+                <td>À lancer</td>
+            </tr>
+            <tr>
+                <td>Validation enveloppe Go/No-Go Phase 1</td>
+                <td>Conseil du trésor</td>
+                <td>J+14</td>
+                <td>1.2 M$</td>
+                <td>Critique</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="milestone">
+        JALON DÉCISION PM J+14 : Validation Go/No-Go pour Phase 1
+    </div>
+    <div class="footer">Vallée du Saint-Laurent IA - Feuille de Route d'Exécution</div>
+</div>
+
+<!-- PAGE 3: PHASE 1 -->
+<div class="page">
+    <h1>Phase 1 : J+0 à J+30 – Noyau</h1>
+
+    <div class="timeline-container">
+        <svg class="timeline-svg" viewBox="0 0 800 80" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="40" x2="750" y2="40" stroke="#003A5D" stroke-width="2"/>
+            <circle cx="50" cy="40" r="6" fill="#003A5D"/>
+            <text x="50" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+0</text>
+            <circle cx="275" cy="40" r="6" fill="#003A5D"/>
+            <text x="275" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+10</text>
+            <circle cx="500" cy="40" r="6" fill="#003A5D"/>
+            <text x="500" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+20</text>
+            <circle cx="750" cy="40" r="6" fill="#003A5D"/>
+            <text x="750" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+30</text>
+            <text x="750" y="25" text-anchor="middle" font-size="9" fill="#666">3 HP lancés</text>
+        </svg>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 25%;">Chantier</th>
+                <th style="width: 35%;">Livrables</th>
+                <th style="width: 25%;">KPI J+30</th>
+                <th style="width: 15%;">Budget</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Infrastructure compute</td>
+                <td>Accès garanti 500 GPU-h/mois via Calcul Québec + crédits infonuagiques PME</td>
+                <td>50 GPU-h consommés<br>10 PME onboardées</td>
+                <td>0.4 M$</td>
+            </tr>
+            <tr>
+                <td>Recrutement équipe noyau</td>
+                <td>PMO + 3 leads sectoriels + 2 ingénieurs ML/Data embauchés</td>
+                <td>6 ETP recrutés<br>100% onboarding complété</td>
+                <td>0.3 M$</td>
+            </tr>
+            <tr>
+                <td>Pipeline données sectorielles</td>
+                <td>Accords partage données: CCQ, APCHQ, 3 hôpitaux CHU</td>
+                <td>3 jeux de données sécurisés<br>SOC2 Type 1 obtenu</td>
+                <td>0.3 M$</td>
+            </tr>
+            <tr>
+                <td>Cadrage 3 HP prioritaires</td>
+                <td>Cas d'usage détaillés + métriques succès + équipes dédiées</td>
+                <td>3 chartes projet signées<br>Budget validé</td>
+                <td>0.2 M$</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="budget-badge">Budget total Phase 1 : 1.2 M$</div>
+    <div class="footer">Vallée du Saint-Laurent IA - Feuille de Route d'Exécution</div>
+</div>
+
+<!-- PAGE 4: PHASE 2 -->
+<div class="page">
+    <h1>Phase 2 : J+30 à J+60 – Les 3 HP québécois</h1>
+
+    <div class="timeline-container">
+        <svg class="timeline-svg" viewBox="0 0 800 80" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="40" x2="750" y2="40" stroke="#003A5D" stroke-width="2"/>
+            <circle cx="50" cy="40" r="6" fill="#003A5D"/>
+            <text x="50" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+30</text>
+            <circle cx="400" cy="40" r="6" fill="#003A5D"/>
+            <text x="400" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+45</text>
+            <text x="400" y="25" text-anchor="middle" font-size="9" fill="#666">MVP V1</text>
+            <circle cx="750" cy="40" r="6" fill="#003A5D"/>
+            <text x="750" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+60</text>
+            <text x="750" y="25" text-anchor="middle" font-size="9" fill="#666">Pilotes clients</text>
+        </svg>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 16%;">Dimension</th>
+                <th style="width: 28%;">Robotique manufacturière</th>
+                <th style="width: 28%;">Construction IA</th>
+                <th style="width: 28%;">Santé IA</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Cas d'usage</strong></td>
+                <td>Vision par ordi + cobots: inspection qualité temps réel, maintenance prédictive lignes</td>
+                <td>Jumeau numérique chantiers: planification 4D, détection conflits BIM, estimation coûts</td>
+                <td>Aide diagnostic imagerie: triage radio/CT, annotation auto, réduction temps lecture</td>
+            </tr>
+            <tr>
+                <td><strong>Équipe projet</strong></td>
+                <td>Lead CRIM + 2 ing. ML<br>2 intégrateurs robot<br>1 PME manufacturière</td>
+                <td>Lead IVADO + 2 data scientists<br>1 archi BIM<br>2 entrepreneurs généraux</td>
+                <td>Lead MILA + 2 chercheurs<br>3 radiologues CHU<br>1 DPO Santé Québec</td>
+            </tr>
+            <tr>
+                <td><strong>Compute/Infra</strong></td>
+                <td>150 GPU-h entraînement<br>Edge devices 5 usines</td>
+                <td>200 GPU-h modèles 3D<br>Cloud Vertex/Neo</td>
+                <td>150 GPU-h DICOM<br>Environnement sécurisé</td>
+            </tr>
+            <tr>
+                <td><strong>Clients pilotes</strong></td>
+                <td>3 PME manufacturières Sherbrooke, Drummondville</td>
+                <td>2 chantiers Montréal: tour résidentielle + pont</td>
+                <td>CHUM + CHU Québec radiologie urgences</td>
+            </tr>
+            <tr>
+                <td><strong>KPI J+60</strong></td>
+                <td>Précision >92%<br>Temps cycle -15%</td>
+                <td>ROI détection conflits<br>2 semaines évitées/chantier</td>
+                <td>Sensibilité >95%<br>Temps lecture -30%</td>
+            </tr>
+            <tr>
+                <td><strong>Budget</strong></td>
+                <td>1.5 M$</td>
+                <td>1.5 M$</td>
+                <td>1.5 M$</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">Vallée du Saint-Laurent IA - Feuille de Route d'Exécution</div>
+</div>
+
+<!-- PAGE 5: PHASE 3 -->
+<div class="page">
+    <h1>Phase 3 : J+60 à J+90 – Essaimage</h1>
+
+    <div class="timeline-container">
+        <svg class="timeline-svg" viewBox="0 0 800 80" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="40" x2="750" y2="40" stroke="#003A5D" stroke-width="2"/>
+            <circle cx="50" cy="40" r="6" fill="#003A5D"/>
+            <text x="50" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+60</text>
+            <circle cx="300" cy="40" r="6" fill="#003A5D"/>
+            <text x="300" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+70</text>
+            <text x="300" y="25" text-anchor="middle" font-size="9" fill="#666">Démo Day</text>
+            <circle cx="550" cy="40" r="6" fill="#003A5D"/>
+            <text x="550" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+80</text>
+            <circle cx="750" cy="40" r="6" fill="#003A5D"/>
+            <text x="750" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">J+90</text>
+            <text x="750" y="25" text-anchor="middle" font-size="9" fill="#666">Roadmap 12m</text>
+        </svg>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 25%;">Action</th>
+                <th style="width: 35%;">Description</th>
+                <th style="width: 20%;">Échéance</th>
+                <th style="width: 20%;">Responsable</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Événement Démo Day Vallée IA</td>
+                <td>Présentation publique 3 HP à 200 dirigeants Québec + investisseurs. Couvrir: TVA, La Presse, Radio-Canada</td>
+                <td>J+70</td>
+                <td>Com. Cabinet PM + Économie</td>
+            </tr>
+            <tr>
+                <td>Lancement Fonds Accélération</td>
+                <td>Enveloppe 15 M$ pour 30 PME additionnelles (500k$/PME). Critères: secteur prioritaire, co-invest privé 1:1</td>
+                <td>J+75</td>
+                <td>Investissement Québec</td>
+            </tr>
+            <tr>
+                <td>Activation réseau ambassadeurs</td>
+                <td>50 dirigeants sectoriels engagés: manufacturier, construction, santé. 2 jours formation executive IA</td>
+                <td>J+85</td>
+                <td>Sous-ministre champion</td>
+            </tr>
+            <tr>
+                <td>Publication Roadmap J+90 à J+365</td>
+                <td>Plan détaillé mise à l'échelle: 450 emplois, 10 régions, 30 M$ déploiement. Validation Cabinet</td>
+                <td>J+90</td>
+                <td>PMO Vallée IA</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p style="margin-top: 16pt;"><strong>Objectif J+90 :</strong> 3 cas d'usage validés en production, 20 PME engagées, couverture médiatique nationale, momentum politique confirmé.</p>
+    <div class="footer">Vallée du Saint-Laurent IA - Feuille de Route d'Exécution</div>
+</div>
+
+<!-- PAGE 6: J+90 à J+365 -->
+<div class="page">
+    <h1>J+90 à J+365 – Mise à l'échelle</h1>
+
+    <div class="timeline-container">
+        <svg class="timeline-svg" viewBox="0 0 800 80" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="40" x2="750" y2="40" stroke="#003A5D" stroke-width="2"/>
+            <circle cx="50" cy="40" r="6" fill="#003A5D"/>
+            <text x="50" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">T2</text>
+            <text x="50" y="25" text-anchor="middle" font-size="9" fill="#666">J+90-180</text>
+            <circle cx="275" cy="40" r="6" fill="#003A5D"/>
+            <text x="275" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">T3</text>
+            <text x="275" y="25" text-anchor="middle" font-size="9" fill="#666">J+180-270</text>
+            <circle cx="525" cy="40" r="6" fill="#003A5D"/>
+            <text x="525" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">T4</text>
+            <text x="525" y="25" text-anchor="middle" font-size="9" fill="#666">J+270-365</text>
+            <circle cx="750" cy="40" r="6" fill="#003A5D"/>
+            <text x="750" y="65" text-anchor="middle" font-size="10" fill="#003A5D" font-weight="600">T1</text>
+            <text x="750" y="25" text-anchor="middle" font-size="9" fill="#666">Bilan 12m</text>
+        </svg>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 15%;">Période</th>
+                <th style="width: 35%;">Jalons clés</th>
+                <th style="width: 20%;">Budget déployé</th>
+                <th style="width: 30%;">KPI cumulés</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>T2<br>J+90 à J+180</strong></td>
+                <td>• 30 PME embarquées Fonds Accélération<br>• Centre excellence Construction IA Montréal<br>• 50 ingénieurs IA formés</td>
+                <td>8.0 M$<br>Cumul: 14.2 M$</td>
+                <td>33 PME totales<br>80 emplois IA créés<br>0.3 G$ PIB impact</td>
+            </tr>
+            <tr>
+                <td><strong>T3<br>J+180 à J+270</strong></td>
+                <td>• Déploiement 5 régions: Estrie, Centre-du-QC, Capitale-Nat, Sag-Lac, Mauricie<br>• Certification Santé Canada obtenue<br>• Sommet national IA Québec</td>
+                <td>10.0 M$<br>Cumul: 24.2 M$</td>
+                <td>100 PME totales<br>200 emplois créés<br>0.9 G$ PIB impact</td>
+            </tr>
+            <tr>
+                <td><strong>T4<br>J+270 à J+365</strong></td>
+                <td>• 150 PME additionnelles onboardées<br>• Export modèle Ontario/Alberta<br>• 200 étudiants stages rémunérés</td>
+                <td>5.8 M$<br>Cumul: 30.0 M$</td>
+                <td>250 PME totales<br>400 emplois créés<br>1.8 G$ PIB impact</td>
+            </tr>
+            <tr>
+                <td><strong>T1 suivant<br>Bilan 12 mois</strong></td>
+                <td>• Rapport impact indépendant<br>• Recommandation Phase 2 (2027-2030)<br>• Conférence internationale</td>
+                <td>-</td>
+                <td><strong>450 emplois IA<br>2.1 G$ PIB<br>30 M$ déployés</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="footer">Vallée du Saint-Laurent IA - Feuille de Route d'Exécution</div>
+</div>
+
+<!-- PAGE 7: ACTIONS IMMÉDIATES -->
+<div class="page">
+    <h1>Actions immédiates cette semaine</h1>
+
+    <h2>4 actions à signer par le Premier ministre</h2>
+    <ol style="font-size: 11pt; line-height: 1.8;">
+        <li><strong>Décret nomination Sous-ministre champion IA</strong> – Mandat transversal 3 ans, bureau Cabinet, autorité budget 30 M$</li>
+        <li><strong>Lettre engagement PDG CRIM-MILA-IVADO</strong> – Signature protocole collaboration, mise à disposition 6 chercheurs seniors</li>
+        <li><strong>Directive Conseil trésor : Enveloppe Phase 1 1.2 M$</strong> – Déblocage fonds immédiats, procédure accélérée marchés publics</li>
+        <li><strong>Annonce publique 22 avril</strong> – Point presse Assemblée nationale: "Québec lance Vallée Saint-Laurent IA, 450 emplois 12 mois"</li>
+    </ol>
+
+    <div class="risk-box">
+        <div class="risk-title">RISQUE #1 : Retards recrutement talents IA seniors</div>
+        <p><strong>Impact :</strong> Décalage calendrier Phase 1, crédibilité projet, perte momentum J+30</p>
+        <p><strong>Parade :</strong></p>
+        <ul style="margin-left: 16pt; margin-top: 4pt;">
+            <li>Activation ententes détachement CRIM-MILA-IVADO J+5</li>
+            <li>Prime recrutement 25% + visa 2 semaines talents internationaux</li>
+            <li>Contrats consultants séniors transition 3 mois si besoin</li>
+        </ul>
+    </div>
+
+    <h3>Prochaines 72h critiques</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Heure</th>
+                <th>Action</th>
+                <th>Responsable</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>L+0</td>
+                <td>Briefing sécurisé PM + Chef cabinet (30 min)</td>
+                <td>Initiateur projet</td>
+            </tr>
+            <tr>
+                <td>L+24h</td>
+                <td>Signature 4 décrets/lettres</td>
+                <td>Cabinet PM</td>
+            </tr>
+            <tr>
+                <td>L+48h</td>
+                <td>Notification PDG CRIM-MILA-IVADO + médias</td>
+                <td>Dir. comm. Cabinet</td>
+            </tr>
+            <tr>
+                <td>L+72h</td>
+                <td>Annonce publique + lancement site web</td>
+                <td>PM + Ministre Économie</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="footer">Vallée du Saint-Laurent IA - Feuille de Route d'Exécution</div>
+</div>
+
+<!-- PAGE 8: TABLEAU DE BORD SYNTHÈSE -->
+<div class="page">
+    <h1>Tableau de bord synthèse</h1>
+
+    <h2>3 KPI globaux 12 mois</h2>
+    
+    <div style="margin: 24pt 0;">
+        <div class="kpi-box">
+            <div class="kpi-value">30 M$</div>
+            <div class="kpi-label">Déployés</div>
+        </div>
+        <div class="kpi-box">
+            <div class="kpi-value">450</div>
+            <div class="kpi-label">Emplois IA créés</div>
+        </div>
+        <div class="kpi-box">
+            <div class="kpi-value">2.1 G$</div>
+            <div class="kpi-label">Impact PIB Québec</div>
+        </div>
+    </div>
+
+    <div class="timeline-container">
+        <svg class="timeline-svg" viewBox="0 0 800 100" xmlns="http://www.w3.org/2000/svg">
+            <text x="400" y="15" text-anchor="middle" font-size="11" fill="#003A5D" font-weight="600">Progression vers objectifs 12 mois</text>
+            <rect x="50" y="30" width="700" height="20" fill="#F5F5F5" stroke="#DDDDDD"/>
+            <rect x="50" y="30" width="70" height="20" fill="#003A5D"/>
+            <text x="400" y="45" text-anchor="middle" font-size="10" fill="white" font-weight="600">J+0: Démarrage</text>
+            <line x1="50" y1="60" x2="750" y2="60" stroke="#666" stroke-width="1" stroke-dasharray="2,2"/>
+            <text x="50" y="75" text-anchor="start" font-size="9" fill="#666">J+0</text>
+            <text x="400" y="75" text-anchor="middle" font-size="9" fill="#666">J+180</text>
+            <text x="750" y="75" text-anchor="end" font-size="9" fill="#666">J+365</text>
+            <circle cx="50" cy="60" r="3" fill="#003A5D"/>
+            <circle cx="400" cy="60" r="3" fill="#666"/>
+            <circle cx="750" cy="60" r="3" fill="#666"/>
+        </svg>
+    </div>
+
+    <h3>Répartition budget 30 M$</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Poste</th>
+                <th>Montant</th>
+                <th>%</th>
+                <th>Impact</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Fonds Accélération 250 PME</td>
+                <td>15.0 M$</td>
+                <td>50%</td>
+                <td>250 déploiements terrain</td>
+            </tr>
+            <tr>
+                <td>3 HP secteur stratégique</td>
+                <td>4.5 M$</td>
+                <td>15%</td>
+                <td>Cas vitrine internationaux</td>
+            </tr>
+            <tr>
+                <td>Infrastructure + Compute</td>
+                <td>4.0 M$</td>
+                <td>13%</td>
+                <td>500 GPU-h/mois garantis</td>
+            </tr>
+            <tr>
+                <td>Formation + Talents (450 emplois)</td>
+                <td>3.5 M$</td>
+                <td>12%</td>
+                <td>Écosystème durable</td>
+            </tr>
+            <tr>
+                <td>Gouvernance + PMO + Juridique</td>
+                <td>3.0 M$</td>
+                <td>10%</td>
+                <td>Exécution + conformité</td>
+            </tr>
+            <tr style="font-weight: 700;">
+                <td>TOTAL</td>
+                <td>30.0 M$</td>
+                <td>100%</td>
+                <td>ROI 70:1 sur PIB</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="contact-box">
+        <h3 style="margin-top: 0; color: #003A5D;">Contact – Sous-ministre champion</h3>
+        <p style="margin-bottom: 4pt;"><strong>Nomination prévue :</strong> J+3</p>
+        <p style="margin-bottom: 4pt;"><strong>Bureau :</strong> Cabinet du Premier ministre, Édifice Honoré-Mercier</p>
+        <p style="margin-bottom: 4pt;"><strong>Mandat :</strong> Pilotage exécutif Vallée Saint-Laurent IA, autorité budget 30 M$, rapport direct PM</p>
+        <p style="margin: 8pt 0 0 0; font-size: 9pt; color: #666;">Coordonnées détaillées transmises sous pli confidentiel après décret de nomination</p>
+    </div>
+
+    <div class="footer">Vallée du Saint-Laurent IA - Feuille de Route d'Exécution</div>
+</div>
+
+</body>
+</html>

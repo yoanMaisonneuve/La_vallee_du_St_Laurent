@@ -1,0 +1,3009 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Institut St-Laurent | Architecture digitale AGI + robotique</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://esm.sh/three@0.165.0",
+      "three/addons/": "https://esm.sh/three@0.165.0/examples/jsm/"
+    }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #03111f;
+      --bg-soft: #081b30;
+      --panel: rgba(10, 24, 40, 0.52);
+      --panel-strong: rgba(9, 24, 39, 0.78);
+      --line: rgba(166, 213, 255, 0.14);
+      --line-strong: rgba(166, 213, 255, 0.28);
+      --marine: #003A5D;
+      --marine-deep: #001f33;
+      --vivid: #009ADE;
+      --vivid-soft: rgba(0, 154, 222, 0.16);
+      --text: #EDF6FF;
+      --muted: #8EA7BE;
+      --white-soft: rgba(255, 255, 255, 0.78);
+      --shadow: 0 20px 70px rgba(0, 0, 0, 0.38);
+      --radius: 26px;
+      --radius-sm: 18px;
+      --nav-height: 82px;
+      --content: min(1240px, calc(100vw - 48px));
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(0, 154, 222, 0.24), transparent 26%),
+        radial-gradient(circle at 82% 12%, rgba(255, 255, 255, 0.08), transparent 18%),
+        radial-gradient(circle at 72% 74%, rgba(0, 154, 222, 0.14), transparent 24%),
+        linear-gradient(180deg, #020b14 0%, #04111e 38%, #07192b 100%);
+      font-family: 'IBM Plex Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(circle at center, black 40%, transparent 88%);
+      opacity: 0.35;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    canvas,
+    svg {
+      display: block;
+    }
+
+    .site-shell {
+      position: relative;
+      isolation: isolate;
+    }
+
+    .ambient-orb,
+    .ambient-orb::before,
+    .ambient-orb::after {
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(24px);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .ambient-orb {
+      inset: auto auto 16% 8%;
+      width: 320px;
+      height: 320px;
+      background: rgba(0, 154, 222, 0.12);
+      animation: drift 18s ease-in-out infinite;
+    }
+
+    .ambient-orb::before,
+    .ambient-orb::after {
+      content: '';
+    }
+
+    .ambient-orb::before {
+      inset: -80px auto auto 320px;
+      width: 180px;
+      height: 180px;
+      background: rgba(255, 255, 255, 0.08);
+      animation: drift 14s ease-in-out infinite reverse;
+    }
+
+    .ambient-orb::after {
+      inset: -200px auto auto 720px;
+      width: 260px;
+      height: 260px;
+      background: rgba(0, 154, 222, 0.09);
+      animation: drift 22s ease-in-out infinite;
+    }
+
+    .progress-rail {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      z-index: 80;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--vivid), #6ad4ff);
+      box-shadow: 0 0 18px rgba(0, 154, 222, 0.55);
+      transform-origin: left center;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 70;
+      display: flex;
+      justify-content: center;
+      padding: 20px 0 0;
+    }
+
+    .nav-shell {
+      width: var(--content);
+      min-height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 16px 20px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(4, 17, 30, 0.64);
+      backdrop-filter: blur(22px);
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+        linear-gradient(135deg, rgba(0, 154, 222, 0.54), rgba(0, 58, 93, 0.64));
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 12px 32px rgba(0, 0, 0, 0.32);
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-copy strong,
+    .hero-copy h1,
+    .section-head h2,
+    .stack-card h3,
+    .metric-value,
+    .timeline-year,
+    .signal-title,
+    .map-node strong,
+    .audio-pod-title,
+    .cta-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 0.96rem;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-copy span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.73rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: 0.92rem;
+      transition: color 180ms ease;
+    }
+
+    .nav-links a.is-current {
+      color: var(--text);
+      text-shadow: 0 0 18px rgba(0, 154, 222, 0.28);
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--text);
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--vivid), #29b7ff);
+      color: #03111f;
+      font-size: 0.9rem;
+      font-weight: 700;
+      box-shadow: 0 14px 36px rgba(0, 154, 222, 0.35);
+    }
+
+    main {
+      width: var(--content);
+      margin: 0 auto;
+      padding: 24px 0 120px;
+    }
+
+    .hero {
+      position: relative;
+      min-height: calc(100vh - 80px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(420px, 0.8fr);
+      gap: 28px;
+      padding: 40px 0 28px;
+      align-items: stretch;
+    }
+
+    .glass-panel {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .glass-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.1), transparent 35%, transparent 65%, rgba(106, 212, 255, 0.08));
+      pointer-events: none;
+    }
+
+    .hero-copy {
+      padding: clamp(30px, 4vw, 54px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 720px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #b6dfff;
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+    }
+
+    .eyebrow::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--vivid);
+      box-shadow: 0 0 0 8px rgba(0, 154, 222, 0.12);
+    }
+
+    .hero-copy h1 {
+      margin: 20px 0 20px;
+      font-size: clamp(3.2rem, 8vw, 7.2rem);
+      line-height: 0.94;
+      letter-spacing: -0.06em;
+      max-width: 10ch;
+    }
+
+    .hero-copy h1 span {
+      color: #78d6ff;
+      text-shadow: 0 0 38px rgba(0, 154, 222, 0.28);
+    }
+
+    .hero-lead {
+      max-width: 60ch;
+      color: var(--white-soft);
+      font-size: 1.08rem;
+      line-height: 1.8;
+      margin: 0 0 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .button-primary,
+    .button-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .button-primary {
+      background: linear-gradient(135deg, var(--vivid), #7dddff);
+      color: #02101b;
+      font-weight: 700;
+    }
+
+    .button-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .button-primary:hover,
+    .button-secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .meta-card {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .meta-card strong {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .meta-card span {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .hero-stage {
+      position: relative;
+      min-height: 720px;
+      padding: 24px;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 18px;
+      transform: translateY(calc(var(--hero-shift, 0) * -1px));
+      transition: transform 220ms ease;
+    }
+
+    .core-shell {
+      position: relative;
+      min-height: clamp(440px, 68vh, 620px);
+      overflow: hidden;
+      border-radius: calc(var(--radius) - 6px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        radial-gradient(circle at 40% 50%, rgba(0, 154, 222, 0.18), transparent 32%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+    }
+
+    .core-grid-plane,
+    .core-reticle,
+    .hero-scene-hud,
+    .hero-webgl-layer,
+    .robot-webgl-layer,
+    .timeline-webgl-layer {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .hero-webgl-layer,
+    .robot-webgl-layer,
+    .timeline-webgl-layer {
+      inset: 0;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 260ms ease;
+    }
+
+    .hero-webgl-layer canvas,
+    .robot-webgl-layer canvas,
+    .timeline-webgl-layer canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    body.webgl-ready .hero-webgl-layer,
+    body.webgl-ready .robot-webgl-layer,
+    body.webgl-ready .timeline-webgl-layer {
+      opacity: 1;
+    }
+
+    .core-grid-plane {
+      inset: 10% 8% 18%;
+      border-radius: 28px;
+      background:
+        linear-gradient(rgba(132, 220, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(132, 220, 255, 0.08) 1px, transparent 1px),
+        radial-gradient(circle at 50% 50%, rgba(0, 154, 222, 0.18), transparent 52%);
+      background-size: 44px 44px, 44px 44px, auto;
+      border: 1px solid rgba(132, 220, 255, 0.08);
+      transform: perspective(1200px) rotateX(73deg) translateY(calc(30px + var(--hero-shift, 0) * 0.5px)) scale(1.08);
+      transform-origin: center center;
+      opacity: calc(0.18 + var(--hero-intensity, 0) * 0.28);
+      mask-image: linear-gradient(180deg, transparent 0%, black 22%, black 70%, transparent 100%);
+    }
+
+    .core-grid-plane::before,
+    .core-grid-plane::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+
+    .core-grid-plane::before {
+      background: linear-gradient(180deg, rgba(0, 154, 222, 0.14), transparent 34%);
+      opacity: 0.7;
+    }
+
+    .core-grid-plane::after {
+      inset: 22% 12%;
+      border-radius: 999px;
+      border: 1px solid rgba(132, 220, 255, 0.14);
+      filter: blur(2px);
+    }
+
+    .core-reticle {
+      inset: 50% auto auto 50%;
+      width: 184px;
+      height: 184px;
+      border-radius: 999px;
+      transform: translate(-50%, -50%) scale(calc(0.96 + var(--hero-intensity, 0) * 0.06));
+      border: 1px solid rgba(132, 220, 255, 0.18);
+      box-shadow:
+        inset 0 0 0 18px rgba(132, 220, 255, 0.03),
+        inset 0 0 0 46px rgba(132, 220, 255, 0.015),
+        0 0 44px rgba(0, 154, 222, 0.08);
+      opacity: calc(0.42 + var(--hero-intensity, 0) * 0.26);
+    }
+
+    .core-reticle::before,
+    .core-reticle::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      background: rgba(132, 220, 255, 0.2);
+      transform: translate(-50%, -50%);
+    }
+
+    .core-reticle::before {
+      width: 1px;
+      height: 112%;
+    }
+
+    .core-reticle::after {
+      width: 112%;
+      height: 1px;
+    }
+
+    .hero-scene-hud {
+      top: 18px;
+      right: 18px;
+      width: 210px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(4, 17, 30, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+    }
+
+    .hero-scene-hud small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: #9edfff;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .hero-scene-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .hero-scene-stat {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .hero-scene-stat strong {
+      display: block;
+      margin-bottom: 4px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      color: #84dcff;
+    }
+
+    .hero-scene-stat span {
+      color: var(--muted);
+      font-size: 0.72rem;
+      line-height: 1.35;
+    }
+
+    #core-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      transition: opacity 260ms ease;
+    }
+
+    body.webgl-ready #core-canvas {
+      opacity: 0.12;
+    }
+
+    .core-shell::after {
+      content: '';
+      position: absolute;
+      inset: 14% 18%;
+      border-radius: 999px;
+      border: 1px solid rgba(132, 220, 255, 0.18);
+      box-shadow:
+        0 0 0 28px rgba(132, 220, 255, 0.03),
+        0 0 120px rgba(0, 154, 222, 0.08);
+      opacity: calc(0.4 + var(--hero-intensity, 0) * 0.35);
+      transform: scale(calc(1 + var(--hero-intensity, 0) * 0.08));
+      transition: transform 220ms ease, opacity 220ms ease;
+      pointer-events: none;
+    }
+
+    .core-overlay {
+      position: absolute;
+      inset: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .core-chip,
+    .signal-chip {
+      width: max-content;
+      max-width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(4, 17, 30, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(16px);
+      color: var(--text);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .core-caption {
+      align-self: end;
+      max-width: 320px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      background: rgba(4, 17, 30, 0.66);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      color: var(--white-soft);
+      font-size: 0.94rem;
+      line-height: 1.7;
+    }
+
+    .hero-command-deck {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      width: min(280px, calc(100% - 36px));
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(4, 17, 30, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+    }
+
+    .hero-command-deck small,
+    .decision-card small,
+    .briefing-note small,
+    .briefing-stat small {
+      display: inline-block;
+      color: #9edfff;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.68rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .hero-command-deck h3,
+    .decision-card h3,
+    .briefing-note h3,
+    .briefing-stat strong {
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-command-deck h3 {
+      font-size: 1.14rem;
+      margin-bottom: 8px;
+    }
+
+    .hero-command-deck p {
+      margin: 0;
+      color: var(--white-soft);
+      line-height: 1.7;
+      font-size: 0.92rem;
+    }
+
+    .hero-command-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .hero-command-item {
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .hero-command-item strong {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      margin-bottom: 4px;
+      color: #84dcff;
+    }
+
+    .hero-command-item span {
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.4;
+    }
+
+    .hero-stage-footer {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .footer-signal {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-signal strong {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      color: #7dddff;
+      margin-bottom: 4px;
+    }
+
+    .footer-signal span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .section {
+      margin-top: 30px;
+      padding: 28px;
+      transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+    }
+
+    .section.is-spotlit {
+      border-color: rgba(132, 220, 255, 0.24);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
+      transform: translateY(-2px);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.8fr);
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    .section-head h2 {
+      margin: 12px 0 0;
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.05em;
+    }
+
+    .section-head p,
+    .body-copy,
+    .stack-card p,
+    .signal-card p,
+    .timeline-item p,
+    .map-aside p,
+    .asset-card p,
+    .podcast-copy p,
+    .cta-card p {
+      color: var(--white-soft);
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .section-note {
+      padding: 18px 20px;
+      border-radius: 22px;
+      background: rgba(0, 154, 222, 0.08);
+      border: 1px solid rgba(0, 154, 222, 0.16);
+      color: #d5efff;
+      font-size: 0.95rem;
+    }
+
+    .stack-grid,
+    .signals-grid,
+    .assets-grid,
+    .cta-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .briefing-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .briefing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .decision-card,
+    .briefing-note,
+    .briefing-stat {
+      padding: 20px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .decision-card {
+      position: relative;
+      min-height: 240px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
+    }
+
+    .decision-card:hover,
+    .decision-card:focus-visible,
+    .decision-card.is-active {
+      transform: translateY(-4px);
+      border-color: rgba(132, 220, 255, 0.34);
+      background: rgba(6, 21, 37, 0.82);
+      box-shadow: 0 20px 42px rgba(0, 0, 0, 0.24);
+      outline: none;
+    }
+
+    .decision-card::after {
+      content: '';
+      position: absolute;
+      inset: auto -40px -80px auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      background: rgba(0, 154, 222, 0.09);
+      filter: blur(16px);
+      pointer-events: none;
+    }
+
+    .decision-card p,
+    .briefing-note p,
+    .briefing-stat span {
+      color: var(--white-soft);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .decision-card ul,
+    .briefing-note ul {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .decision-metric {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(0, 154, 222, 0.12);
+      border: 1px solid rgba(132, 220, 255, 0.18);
+      color: #d8f2ff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .briefing-note {
+      position: sticky;
+      top: 112px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .briefing-stats {
+      display: grid;
+      gap: 12px;
+    }
+
+    .briefing-stat strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1.08rem;
+      color: #84dcff;
+    }
+
+    .stack-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .stack-card,
+    .signal-card,
+    .asset-card,
+    .cta-card,
+    .podcast-copy,
+    .map-aside {
+      padding: 20px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stack-card small,
+    .signal-tag,
+    .asset-card small,
+    .timeline-item small {
+      display: inline-block;
+      color: #9edfff;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .stack-card h3,
+    .signal-title,
+    .asset-card h3,
+    .cta-card h3,
+    .podcast-copy h3,
+    .map-aside h3 {
+      margin: 0 0 10px;
+      font-size: 1.22rem;
+      letter-spacing: -0.03em;
+    }
+
+    .signal-card {
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .signals-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 22px;
+    }
+
+    .cluster-panel {
+      margin-top: 22px;
+      padding: 22px;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0, 154, 222, 0.12), transparent 28%),
+        rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .cluster-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+
+    .cluster-grid {
+      display: grid;
+      grid-template-columns: repeat(25, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .cluster-node {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+    }
+
+    .cluster-node.active {
+      background: linear-gradient(135deg, rgba(0, 154, 222, 0.88), rgba(106, 212, 255, 0.86));
+      box-shadow: 0 0 14px rgba(0, 154, 222, 0.28);
+    }
+
+    .cluster-node.is-live {
+      background: linear-gradient(135deg, rgba(159, 232, 255, 0.98), rgba(0, 154, 222, 0.94));
+      box-shadow: 0 0 18px rgba(106, 212, 255, 0.52);
+    }
+
+    .cluster-caption {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .timeline-shell {
+      position: relative;
+      margin-top: 26px;
+      padding: 26px;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(0, 154, 222, 0.06), transparent 38%),
+        rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .timeline-webgl-layer {
+      border-radius: 28px;
+      overflow: hidden;
+      opacity: 0;
+      z-index: 0;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.86));
+    }
+
+    .timeline-shell::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 12% 50%, rgba(0, 154, 222, 0.12), transparent 30%),
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+      pointer-events: none;
+    }
+
+    .timeline-track {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      z-index: 1;
+      perspective: 1200px;
+    }
+
+    .timeline-item {
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(4, 17, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      min-height: 230px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
+    }
+
+    .timeline-item:hover,
+    .timeline-item:focus-visible,
+    .timeline-item.is-active {
+      transform: translateY(-6px) rotateX(4deg);
+      border-color: rgba(106, 212, 255, 0.46);
+      background: rgba(6, 21, 37, 0.88);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+      outline: none;
+    }
+
+    .timeline-year {
+      font-size: 1.8rem;
+      letter-spacing: -0.04em;
+    }
+
+    .timeline-item ul,
+    .signal-card ul,
+    .asset-card ul,
+    .cta-card ul,
+    .podcast-copy ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .timeline-focus {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 0.7fr);
+      gap: 18px;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(4, 17, 30, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .timeline-focus-label {
+      color: #9edfff;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .timeline-focus h3 {
+      margin: 0 0 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: -0.03em;
+    }
+
+    .timeline-focus p,
+    .timeline-focus li {
+      color: var(--white-soft);
+      line-height: 1.75;
+    }
+
+    .timeline-focus ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .timeline-focus-stats {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline-scene-caption {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .timeline-focus-stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .timeline-focus-stat strong {
+      display: block;
+      margin-bottom: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      color: #84dcff;
+    }
+
+    .robotics-layout,
+    .corridor-layout,
+    .podcast-layout {
+      display: grid;
+      gap: 22px;
+      margin-top: 22px;
+    }
+
+    .robotics-layout {
+      grid-template-columns: minmax(420px, 0.96fr) minmax(0, 1.04fr);
+    }
+
+    .corridor-layout {
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.82fr);
+    }
+
+    .podcast-layout {
+      grid-template-columns: minmax(320px, 0.76fr) minmax(0, 1.24fr);
+      align-items: start;
+    }
+
+    .wireframe-panel,
+    .map-panel,
+    .podcast-player {
+      position: relative;
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .robot-scene-shell {
+      position: relative;
+      min-height: 0;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .robot-webgl-layer {
+      border-radius: 20px;
+      z-index: 0;
+      opacity: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(0, 154, 222, 0.1), transparent 64%);
+    }
+
+    .wireframe-meta,
+    .map-meta {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .wireframe-canvas {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1.05;
+    }
+
+    .wireframe-caption {
+      position: relative;
+      z-index: 1;
+      margin-top: 14px;
+      color: var(--white-soft);
+      line-height: 1.8;
+      font-size: 0.94rem;
+    }
+
+    .robot-metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .robot-metric {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .robot-metric:hover,
+    .robot-metric:focus-visible,
+    .robot-metric.is-active {
+      transform: translateY(-3px);
+      border-color: rgba(132, 220, 255, 0.34);
+      background: rgba(6, 21, 37, 0.82);
+      box-shadow: 0 18px 32px rgba(0, 0, 0, 0.18);
+      outline: none;
+    }
+
+    .metric-value {
+      display: block;
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+      color: #84dcff;
+    }
+
+    .map-svg {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1.6 / 1;
+    }
+
+    .map-node {
+      fill: rgba(3, 17, 31, 0.92);
+      stroke: rgba(0, 154, 222, 0.6);
+      stroke-width: 1.5;
+    }
+
+    .map-hotspot {
+      cursor: pointer;
+      transition: transform 180ms ease, fill 180ms ease, stroke 180ms ease, filter 180ms ease;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    .map-hotspot:hover,
+    .map-hotspot:focus-visible,
+    .map-hotspot.is-active {
+      fill: rgba(8, 27, 48, 0.98);
+      stroke: rgba(132, 220, 255, 0.95);
+      filter: drop-shadow(0 0 20px rgba(0, 154, 222, 0.35));
+      transform: translateY(-3px);
+      outline: none;
+    }
+
+    .map-path {
+      fill: none;
+      stroke: rgba(0, 154, 222, 0.44);
+      stroke-width: 4;
+      stroke-dasharray: 10 12;
+      animation: dash 18s linear infinite;
+      pointer-events: none;
+    }
+
+    .map-dot {
+      fill: #6ad4ff;
+      filter: drop-shadow(0 0 12px rgba(0, 154, 222, 0.55));
+      pointer-events: none;
+    }
+
+    .map-label {
+      fill: #edf6ff;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+    }
+
+    .map-aside ul {
+      margin: 16px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .map-inspector {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .map-inspector-kicker {
+      color: #9edfff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .map-inspector h4 {
+      margin: 0 0 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.34rem;
+      letter-spacing: -0.03em;
+    }
+
+    .map-inspector p {
+      margin: 0;
+      color: var(--white-soft);
+      line-height: 1.75;
+    }
+
+    .map-inspector-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .map-inspector-stat {
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .map-inspector-stat strong {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 4px;
+      color: #84dcff;
+    }
+
+    .corridor-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .corridor-selector button {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 180ms ease, color 180ms ease, transform 180ms ease, background 180ms ease;
+    }
+
+    .corridor-selector button:hover,
+    .corridor-selector button:focus-visible,
+    .corridor-selector button.is-active {
+      color: var(--text);
+      border-color: rgba(132, 220, 255, 0.55);
+      background: rgba(0, 154, 222, 0.12);
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .assets-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 22px;
+    }
+
+    .asset-preview {
+      margin-top: 16px;
+      min-height: 160px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(0, 154, 222, 0.24), transparent 24%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+      overflow: hidden;
+      position: relative;
+    }
+
+    .asset-preview.wave::before,
+    .asset-preview.tunnel::before,
+    .asset-preview.audio::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+    }
+
+    .asset-preview.wave::before {
+      background:
+        radial-gradient(circle at 55% 45%, rgba(255, 255, 255, 0.12), transparent 18%),
+        radial-gradient(circle at 46% 51%, rgba(0, 154, 222, 0.28), transparent 28%),
+        radial-gradient(circle at 50% 50%, rgba(0, 154, 222, 0.08), transparent 40%);
+      animation: pulse 10s ease-in-out infinite;
+    }
+
+    .asset-preview.tunnel::before {
+      background:
+        repeating-radial-gradient(circle at 50% 50%, rgba(0, 154, 222, 0.36) 0 2px, transparent 2px 26px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 40%, rgba(255, 255, 255, 0.04));
+      animation: tunnel 9s linear infinite;
+    }
+
+    .asset-preview.audio::before {
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 10%, transparent 20%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 154, 222, 0.18));
+      mask-image: repeating-linear-gradient(90deg, black 0 6px, transparent 6px 18px);
+      animation: audioBars 2.8s ease-in-out infinite;
+    }
+
+    .asset-preview.chassis::before,
+    .asset-preview.chassis::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+    }
+
+    .asset-preview.chassis::before {
+      background:
+        linear-gradient(90deg, transparent 49.4%, rgba(132, 220, 255, 0.45) 50%, transparent 50.6%),
+        linear-gradient(transparent 48%, rgba(132, 220, 255, 0.22) 48.6%, rgba(132, 220, 255, 0.22) 51.4%, transparent 52%),
+        radial-gradient(circle at 50% 18%, rgba(132, 220, 255, 0.85) 0 8px, transparent 9px),
+        radial-gradient(circle at 38% 42%, rgba(132, 220, 255, 0.55) 0 4px, transparent 5px),
+        radial-gradient(circle at 62% 42%, rgba(132, 220, 255, 0.55) 0 4px, transparent 5px),
+        linear-gradient(120deg, transparent 45%, rgba(132, 220, 255, 0.36) 46%, transparent 47%),
+        linear-gradient(240deg, transparent 45%, rgba(132, 220, 255, 0.36) 46%, transparent 47%);
+      opacity: 0.9;
+    }
+
+    .asset-preview.chassis::after {
+      background: radial-gradient(circle at 50% 50%, rgba(0, 154, 222, 0.14), transparent 48%);
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    .podcast-player {
+      position: sticky;
+      top: 112px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .audio-pod {
+      position: relative;
+      padding: 22px;
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(0, 154, 222, 0.18), rgba(255, 255, 255, 0.04));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .audio-pod::after {
+      content: '';
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      filter: blur(18px);
+    }
+
+    .audio-pod-title {
+      margin: 0 0 8px;
+      font-size: 1.28rem;
+    }
+
+    .audio-pod-copy {
+      position: relative;
+      z-index: 1;
+      color: var(--white-soft);
+      line-height: 1.7;
+      margin: 0 0 18px;
+    }
+
+    .audio-controls {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .play-button {
+      width: 64px;
+      height: 64px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 18px 34px rgba(0, 0, 0, 0.25);
+    }
+
+    .play-button::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-left: 16px solid currentColor;
+      margin-left: 4px;
+    }
+
+    .play-button.is-playing::before {
+      width: 16px;
+      height: 16px;
+      border: 0;
+      margin-left: 0;
+      background:
+        linear-gradient(90deg, currentColor 0 5px, transparent 5px 11px, currentColor 11px 16px);
+    }
+
+    .audio-track {
+      flex: 1;
+      display: grid;
+      gap: 10px;
+    }
+
+    .audio-track strong {
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .audio-status {
+      color: #9edfff;
+      font-size: 0.76rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .track-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      overflow: hidden;
+    }
+
+    .track-fill {
+      width: 38%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #7dddff, var(--vivid));
+      animation: trackPulse 4s ease-in-out infinite;
+    }
+
+    .track-fill.is-playing {
+      animation-duration: 1.8s;
+    }
+
+    .audio-wave {
+      display: flex;
+      align-items: end;
+      gap: 4px;
+      height: 28px;
+      margin-top: 4px;
+    }
+
+    .audio-wave span {
+      width: 4px;
+      height: 30%;
+      border-radius: 999px;
+      background: rgba(132, 220, 255, 0.36);
+      transform-origin: bottom center;
+      animation: waveIdle 2.4s ease-in-out infinite;
+    }
+
+    .audio-wave span:nth-child(2) { animation-delay: 0.12s; }
+    .audio-wave span:nth-child(3) { animation-delay: 0.24s; }
+    .audio-wave span:nth-child(4) { animation-delay: 0.36s; }
+    .audio-wave span:nth-child(5) { animation-delay: 0.48s; }
+    .audio-wave span:nth-child(6) { animation-delay: 0.6s; }
+
+    .audio-wave.is-playing span {
+      background: rgba(132, 220, 255, 0.86);
+      animation-name: waveLive;
+      animation-duration: 0.95s;
+    }
+
+    .podcast-copy ul {
+      margin-top: 16px;
+    }
+
+    .cta-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 22px;
+    }
+
+    .cta-card ul {
+      margin-top: 14px;
+    }
+
+    .footer {
+      width: var(--content);
+      margin: 0 auto 40px;
+      padding: 24px 0 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 600ms ease, transform 600ms ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(24px, -20px, 0) scale(1.08); }
+    }
+
+    @keyframes dash {
+      to { stroke-dashoffset: -260; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.92; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    @keyframes tunnel {
+      0% { transform: scale(0.94); opacity: 0.68; }
+      50% { transform: scale(1.04); opacity: 1; }
+      100% { transform: scale(0.94); opacity: 0.68; }
+    }
+
+    @keyframes audioBars {
+      0%, 100% { transform: translateX(-18px) scaleY(0.82); }
+      50% { transform: translateX(18px) scaleY(1.08); }
+    }
+
+    @keyframes trackPulse {
+      0%, 100% { width: 38%; }
+      50% { width: 58%; }
+    }
+
+    @keyframes waveIdle {
+      0%, 100% { transform: scaleY(0.5); }
+      50% { transform: scaleY(0.85); }
+    }
+
+    @keyframes waveLive {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1.3); }
+    }
+
+    @media (max-width: 1120px) {
+      .hero,
+      .briefing-shell,
+      .robotics-layout,
+      .corridor-layout,
+      .podcast-layout,
+      .section-head,
+      .stack-grid,
+      .signals-grid,
+      .assets-grid,
+      .cta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy,
+      .hero-stage {
+        min-height: auto;
+      }
+
+      .timeline-track {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .briefing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .podcast-player {
+        position: static;
+      }
+
+      .briefing-note {
+        position: static;
+      }
+    }
+
+    @media (max-width: 820px) {
+      :root {
+        --content: min(100vw - 28px, 100vw - 28px);
+      }
+
+      .site-header {
+        padding-top: 14px;
+      }
+
+      .nav-shell {
+        border-radius: 28px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .brand {
+        width: max-content;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+        gap: 12px 16px;
+      }
+
+      .nav-cta {
+        align-self: flex-start;
+      }
+
+      .hero-copy h1 {
+        max-width: none;
+      }
+
+      .hero-meta,
+      .hero-stage-footer,
+      .hero-command-grid,
+      .timeline-focus,
+      .robot-metric-row,
+      .timeline-track,
+      .map-inspector-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .section,
+      .cluster-panel,
+      .timeline-shell,
+      .wireframe-panel,
+      .map-panel,
+      .podcast-player,
+      .podcast-copy {
+        padding: 20px;
+      }
+
+      .cluster-grid {
+        grid-template-columns: repeat(20, minmax(0, 1fr));
+      }
+
+      .hero-command-deck {
+        position: static;
+        width: 100%;
+        margin-top: 14px;
+      }
+
+      .hero-scene-hud {
+        position: static;
+        width: 100%;
+        margin: 14px 0 0;
+      }
+
+      .footer {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <div class="ambient-orb"></div>
+    <div class="progress-rail"><div class="progress-bar" id="progress-bar"></div></div>
+
+    <header class="site-header">
+      <div class="nav-shell glass-panel">
+        <a class="brand" href="#top">
+          <div class="brand-mark">ISL</div>
+          <div class="brand-copy">
+            <strong>Institut St-Laurent</strong>
+            <span>Souverainete AGI · Robotique · Quebec</span>
+          </div>
+        </a>
+
+        <nav class="nav-links" aria-label="Navigation principale">
+          <a href="#stack" data-nav-target="stack">Stack</a>
+          <a href="#agi" data-nav-target="agi">Axe AGI</a>
+          <a href="#robotique" data-nav-target="robotique">Pivot robotique</a>
+          <a href="#corridor" data-nav-target="corridor">Corridor</a>
+          <a href="#assets" data-nav-target="assets">Assets</a>
+          <a href="#contact" data-nav-target="contact">Contact</a>
+        </nav>
+
+        <a class="nav-cta" href="#contact">Direction strategique</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <article class="hero-copy glass-panel reveal is-visible">
+          <div>
+            <span class="eyebrow">Blueprint Web · Institut St-Laurent</span>
+            <h1>Le site devient une <span>machine de gravite</span> strategique.</h1>
+            <p class="hero-lead">La refonte place l'Institut St-Laurent dans un registre ultra-premium, minimal et organique: une interface sombre en glassmorphism, une presence 3D reactive au scroll, et un recit unique qui relie souverainete AGI, robotique humanoide et industrialisation du corridor Saint-Laurent.</p>
+
+            <div class="hero-actions">
+              <a class="button-primary" href="#agi">Explorer le hub AGI</a>
+              <a class="button-secondary" href="#robotique">Voir le pivot robotique</a>
+            </div>
+          </div>
+
+          <div class="hero-meta">
+            <div class="meta-card">
+              <strong>2 000</strong>
+              <span>H100 visualises comme signal de souverainete compute des janvier 2027.</span>
+            </div>
+            <div class="meta-card">
+              <strong>100 M$</strong>
+              <span>Valeur perdue par mois de delai, mise en avant comme levier d'urgence politique.</span>
+            </div>
+            <div class="meta-card">
+              <strong>4 500</strong>
+              <span>Emplois IA directs relies au corridor Terman-Saint-Laurent sur 5 ans.</span>
+            </div>
+          </div>
+        </article>
+
+        <aside class="hero-stage glass-panel reveal is-visible">
+          <div class="core-shell">
+            <div class="core-grid-plane" aria-hidden="true"></div>
+            <div class="hero-webgl-layer" id="hero-webgl" aria-hidden="true"></div>
+            <canvas id="core-canvas" aria-label="Nuage de particules organiques"></canvas>
+            <div class="core-reticle" aria-hidden="true"></div>
+            <div class="core-overlay">
+              <div class="core-chip">Core · Particules reactives · Scroll native</div>
+              <div class="core-caption">Le hero remplace la vitrine statique par un noyau vivant: densite particulaire, halo compute, profondeur volumetrique et accroche institutionnelle a haute credibilite.</div>
+            </div>
+            <div class="hero-scene-hud">
+              <small>Scene telemetry</small>
+              <div class="hero-scene-grid">
+                <div class="hero-scene-stat">
+                  <strong id="hero-scene-depth">3.8x</strong>
+                  <span>Profondeur</span>
+                </div>
+                <div class="hero-scene-stat">
+                  <strong id="hero-scene-vector">+18</strong>
+                  <span>Vecteur</span>
+                </div>
+                <div class="hero-scene-stat">
+                  <strong id="hero-scene-nodes">128</strong>
+                  <span>Noeuds actifs</span>
+                </div>
+                <div class="hero-scene-stat">
+                  <strong id="hero-scene-mode">AGI</strong>
+                  <span>Mode de lecture</span>
+                </div>
+              </div>
+            </div>
+            <div class="hero-command-deck">
+              <small>Command deck</small>
+              <h3 id="hero-command-title">Fenetre critique 2026 → 2027</h3>
+              <p id="hero-command-copy">Le site doit parler comme une salle de situation: clarifier les signaux, montrer la capacite et fermer la distance entre these et execution.</p>
+              <div class="hero-command-grid">
+                <div class="hero-command-item">
+                  <strong id="hero-command-1">Compute</strong>
+                  <span id="hero-command-1-meta">2 000 H100</span>
+                </div>
+                <div class="hero-command-item">
+                  <strong id="hero-command-2">Flagship</strong>
+                  <span id="hero-command-2-meta">Rive-Nord</span>
+                </div>
+                <div class="hero-command-item">
+                  <strong id="hero-command-3">Corridor</strong>
+                  <span id="hero-command-3-meta">4 500 emplois</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-stage-footer">
+            <div class="footer-signal">
+              <strong>3D native</strong>
+              <span>Prefiguration Three.js / React Three Fiber avec prototype HTML autonome.</span>
+            </div>
+            <div class="footer-signal">
+              <strong>Glass UI</strong>
+              <span>Panneaux depolis, contours lumineux et couches translucides profondes.</span>
+            </div>
+            <div class="footer-signal">
+              <strong>Scroll story</strong>
+              <span>Chaque section avance une decision: compute, flagship, corridor, execution.</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="section glass-panel reveal" id="briefing">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Cabinet briefing</span>
+            <h2>Trois decisions doivent etre lisibles en moins d'une minute.</h2>
+          </div>
+          <p>La homepage ne doit pas seulement inspirer. Elle doit aider un ministre, un cabinet ou un partenaire industriel a comprendre quelle machine doit etre financee, ou, et dans quel ordre.</p>
+        </div>
+
+        <div class="briefing-shell">
+          <div class="briefing-grid">
+            <article class="decision-card is-active" data-briefing-key="compute" tabindex="0">
+              <small>Decision 01</small>
+              <h3>Securiser la souverainete compute</h3>
+              <p>Le site doit rendre visible que l'enjeu n'est pas abstrait: sans cluster souverain, il n'y a ni evaluation, ni entrainement, ni poids diplomatique durable.</p>
+              <div class="decision-metric">2 000 H100 · janvier 2027</div>
+              <ul>
+                <li>Compute comme actif politique, pas simple achat d'infrastructure.</li>
+                <li>Hydro + data center + modele test comme triptyque de credibilite.</li>
+              </ul>
+            </article>
+            <article class="decision-card" data-briefing-key="flagship" tabindex="0">
+              <small>Decision 02</small>
+              <h3>Montrer un flagship robotique achetable</h3>
+              <p>La Rive-Nord doit apparaitre comme premiere preuve industrielle: une scene claire, un usage visible, une promesse de cadence qui ne sonne pas speculative.</p>
+              <div class="decision-metric">10 pilotes · 100 unites / an</div>
+              <ul>
+                <li>Robotique humanoide comme interface publique de la these AGI.</li>
+                <li>Chassis, ligne d'assemblage et secteurs clients relies sans rupture.</li>
+              </ul>
+            </article>
+            <article class="decision-card" data-briefing-key="corridor" tabindex="0">
+              <small>Decision 03</small>
+              <h3>Orchestrer le corridor comme systeme</h3>
+              <p>Le corridor doit etre percu comme une architecture economique: recherche a Montreal, assemblage Rive-Nord, hardtech a Sherbrooke, contrats publics a Quebec et Ottawa.</p>
+              <div class="decision-metric">4 500 emplois directs · 5 ans</div>
+              <ul>
+                <li>Le Saint-Laurent sert de colonne de coordination et d'essaimage.</li>
+                <li>Chaque noeud doit raconter un role, une preuve et une sortie attendue.</li>
+              </ul>
+            </article>
+          </div>
+
+          <aside class="briefing-note">
+            <div>
+              <small>Lecture executive</small>
+              <h3 id="briefing-note-title">Securiser la souverainete compute</h3>
+              <p id="briefing-note-copy">La page doit ouvrir sur un langage de capacite: compute, energie, gouvernance et horizon de mise en ligne. C'est la cle d'entree institutionnelle du reste.</p>
+            </div>
+            <div class="briefing-stats">
+              <div class="briefing-stat">
+                <small>Signal principal</small>
+                <strong id="briefing-note-signal">Capacite immediate</strong>
+                <span>Le visiteur comprend que la machine peut exister vite, localement et a echelle.</span>
+              </div>
+              <div class="briefing-stat">
+                <small>Risque traite</small>
+                <strong id="briefing-note-risk">Dependance externe</strong>
+                <span>Le discours sort du commentaire et entre dans la construction d'autonomie.</span>
+              </div>
+              <div class="briefing-stat">
+                <small>Effet attendu</small>
+                <strong id="briefing-note-effect">Autorite</strong>
+                <span>Le site parle comme une structure capable de prendre date et de demander execution.</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section glass-panel reveal" id="stack">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Structure technique</span>
+            <h2>La stack Blueprint organise performance, SEO et experience sensorielle.</h2>
+          </div>
+          <div class="section-note">La maquette actuelle est volontairement autonome en HTML pour accelerer la direction artistique. La cible de production reste un front Next.js avec moteur 3D et orchestration motion dedies.</div>
+        </div>
+
+        <div class="stack-grid">
+          <article class="stack-card">
+            <small>Framework frontend</small>
+            <h3>Next.js</h3>
+            <p>SSR, routing contenu, instrumentation analytique et surface SEO capable de porter rapports, manifestes et contenus de think tank sans sacrifier les performances.</p>
+          </article>
+          <article class="stack-card">
+            <small>Moteur 3D</small>
+            <h3>Three.js / R3F / Spline</h3>
+            <p>Scenes scroll-linked pour le Core, le chassis humanoide et la timeline tunnel, avec fallback leger pour terminaux plus contraints.</p>
+          </article>
+          <article class="stack-card">
+            <small>Stylisation</small>
+            <h3>Tailwind CSS</h3>
+            <p>Systeme utilitaire pour accelerer la production tout en gardant des tokens stricts: marine, vivid blue, blanc optique et surfaces translucides.</p>
+          </article>
+          <article class="stack-card">
+            <small>Motion</small>
+            <h3>Framer Motion / GSAP</h3>
+            <p>Transitions structurelles, reveals synchronises, pinning des sections critiques et choregraphie des scenes 3D sans effet gadget.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section glass-panel reveal" id="agi">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Axe AGI · Hub de souverainete</span>
+            <h2>Le site doit montrer que l'ISL n'analyse pas la course AGI: il la structure pour le Quebec.</h2>
+          </div>
+          <p>Le contenu reprend la logique du rapport AGI Think Tank St-Laurent: compute souverain, gouvernance, urgence economique et trajectoire politique. Ici, ces signaux deviennent des objets visuels clairs plutot qu'un simple texte PDF.</p>
+        </div>
+
+        <div class="signals-grid">
+          <article class="signal-card">
+            <div>
+              <span class="signal-tag">Cluster</span>
+              <h3 class="signal-title">Visualisation du cluster H100</h3>
+              <p>Le compute apparait comme un bloc industriel concret: 2 000 H100 operationnels, energie hydro, cluster souverain et seuil critique pour l'autonomie du modele fondation.</p>
+            </div>
+            <div class="signal-chip">Janvier 2027 · Cluster operationnel</div>
+          </article>
+          <article class="signal-card">
+            <div>
+              <span class="signal-tag">Timeline</span>
+              <h3 class="signal-title">Navigation strategique immersive</h3>
+              <p>Septembre 2026: directeur nomme. Janvier 2027: compute en ligne. Juin 2027: siege officiel au sommet G7 AGI Safety. La progression visuelle doit ressembler a un tunnel de donnees, pas a un tableau plat.</p>
+            </div>
+            <div class="signal-chip">Jalons politiques rendus memorables</div>
+          </article>
+          <article class="signal-card">
+            <div>
+              <span class="signal-tag">Urgence</span>
+              <h3 class="signal-title">Cout de l'inaction</h3>
+              <p>Le chiffre de 100 M$ de valeur perdue par mois n'est pas secondaire. Il doit etre traite comme un signal d'alerte permanent, visible des les premieres secondes de navigation.</p>
+            </div>
+            <div class="signal-chip">100 M$ / mois de delai</div>
+          </article>
+        </div>
+
+        <div class="cluster-panel">
+          <div class="cluster-topline">
+            <div>
+              <span class="eyebrow">Compute signal</span>
+              <h3 style="margin:12px 0 0;font-size:1.8rem;letter-spacing:-0.04em;">Representation dense du cluster souverain</h3>
+            </div>
+            <div class="section-note" style="max-width:320px;">La grille ci-dessous encode 500 modules visuels. En production, elle peut etre remplacee par une scene WebGL reactant au scroll et au pointeur.</div>
+          </div>
+          <div class="cluster-grid" id="cluster-grid" aria-label="Visualisation du cluster H100"></div>
+          <div class="cluster-caption">
+            <span>Signal visuel: 2 000 H100 operationnels des janvier 2027</span>
+            <span>Equivalent narratif: souverainete compute + energie hydro + data center classe</span>
+          </div>
+        </div>
+
+        <div class="timeline-shell">
+          <div class="timeline-webgl-layer" id="timeline-webgl" aria-hidden="true"></div>
+          <div class="timeline-track">
+            <article class="timeline-item is-active" tabindex="0" data-timeline-title="Directeur nomme" data-timeline-copy="Installation du leadership AGI Quebec, capacite d'embauche et mandat d'execution. La page doit faire sentir qu'a partir de ce moment, la machine institutionnelle devient operable." data-timeline-signal="Leadership | Gouvernance | Autorite" data-timeline-metric="J+0 a J+90" data-timeline-proof="Equipe fondatrice et mandat public actives.">
+              <small>Sept 2026</small>
+              <div class="timeline-year">Directeur nomme</div>
+              <p>Installation du leadership AGI Quebec, capacite d'embauche et mandat d'execution.</p>
+              <ul>
+                <li>Nomination executive</li>
+                <li>Equipe fondatrice</li>
+                <li>Gouvernance activee</li>
+              </ul>
+            </article>
+            <article class="timeline-item" tabindex="0" data-timeline-title="Cluster en ligne" data-timeline-copy="Le compute devient visible, operable et credible pour l'entrainement local et l'evaluation securitaire. Le visiteur doit percevoir un saut de capacite, pas juste un jalon technique." data-timeline-signal="Compute | Souverainete | Infrastructure" data-timeline-metric="2 000 H100" data-timeline-proof="Data center souverain et modele test operationnel.">
+              <small>Jan 2027</small>
+              <div class="timeline-year">Cluster en ligne</div>
+              <p>Le compute devient visible, operable et credible pour l'entrainement local et l'evaluation securitaire.</p>
+              <ul>
+                <li>2 000 H100</li>
+                <li>Data center souverain</li>
+                <li>Modele test en operation</li>
+              </ul>
+            </article>
+            <article class="timeline-item" tabindex="0" data-timeline-title="Siege G7 Safety" data-timeline-copy="L'ISL apparait comme producteur de norme et non comme commentateur exterieur. Cette etape doit condenser diplomatie technique, credibilite et capacite d'influence." data-timeline-signal="Diplomatie | Normes | Influence" data-timeline-metric="Juin 2027" data-timeline-proof="Presence diplomatique et proposition du standard Montreal.">
+              <small>Juin 2027</small>
+              <div class="timeline-year">Siege G7 Safety</div>
+              <p>L'ISL apparait comme producteur de norme et non comme commentateur exterieur.</p>
+              <ul>
+                <li>Presence diplomatique</li>
+                <li>Standard Montreal</li>
+                <li>Position rule-maker</li>
+              </ul>
+            </article>
+            <article class="timeline-item" tabindex="0" data-timeline-title="Architecte" data-timeline-copy="Le recit de site se ferme sur la these centrale: le Quebec choisit l'architecture plutot que la dependance. Ce bloc doit jouer comme une projection de puissance ordonnee." data-timeline-signal="Projection | Export | Leadership" data-timeline-metric="2030" data-timeline-proof="Souverainete numerique et capacite d'export visibles.">
+              <small>2030</small>
+              <div class="timeline-year">Architecte</div>
+              <p>Le recit de site se ferme sur la these centrale: le Quebec choisit l'architecture plutot que la dependance.</p>
+              <ul>
+                <li>Souverainete numerique</li>
+                <li>Capacite d'export</li>
+                <li>Leadership normatif</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="timeline-focus" id="timeline-focus">
+            <div>
+              <div class="timeline-focus-label">Focus narratif</div>
+              <h3 id="timeline-focus-title">Directeur nomme</h3>
+              <p id="timeline-focus-copy">Installation du leadership AGI Quebec, capacite d'embauche et mandat d'execution. La page doit faire sentir qu'a partir de ce moment, la machine institutionnelle devient operable.</p>
+            </div>
+            <div class="timeline-focus-stats">
+              <div class="timeline-focus-stat">
+                <strong id="timeline-focus-signal">Leadership | Gouvernance | Autorite</strong>
+                <span>Signal percu par le visiteur</span>
+              </div>
+              <div class="timeline-focus-stat">
+                <strong id="timeline-focus-metric">J+0 a J+90</strong>
+                <span>Fenetre de concretisation</span>
+              </div>
+              <div class="timeline-focus-stat">
+                <strong id="timeline-focus-proof">Equipe fondatrice et mandat public actives.</strong>
+                <span>Preuve a rendre visible</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-scene-caption">
+            <span id="timeline-scene-label">Fenetre active · Directeur nomme</span>
+            <span id="timeline-scene-depth">Tunnel index 01</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section glass-panel reveal" id="robotique">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Axe robotique · Pivot industriel</span>
+            <h2>Le flagship du site doit montrer l'usine, le chassis et le rythme industriel du corridor.</h2>
+          </div>
+          <p>Le rapport unifie de la Vallee du Saint-Laurent impose une hierarchie claire: IA generale comme socle, robotique humanoide comme demonstrateur visible, hardtech comme couche d'autonomie.</p>
+        </div>
+
+        <div class="robotics-layout">
+          <article class="wireframe-panel">
+            <div class="wireframe-meta">
+              <span>Le chassis</span>
+              <span>Wireframe humanoide · Vue eclatee</span>
+            </div>
+            <div class="robot-scene-shell">
+              <div class="robot-webgl-layer" id="robot-webgl" aria-hidden="true"></div>
+              <svg class="wireframe-canvas" viewBox="0 0 500 520" aria-label="Schema wireframe du robot humanoide">
+                <defs>
+                  <linearGradient id="wire" x1="0" x2="1">
+                    <stop offset="0%" stop-color="#7dddff"></stop>
+                    <stop offset="100%" stop-color="#009ADE"></stop>
+                  </linearGradient>
+                </defs>
+                <g fill="none" stroke="url(#wire)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="250" cy="88" r="44"></circle>
+                  <path d="M224 78 L250 60 L276 78"></path>
+                  <path d="M208 126 L292 126 L316 178 L184 178 Z"></path>
+                  <path d="M208 126 L176 160"></path>
+                  <path d="M292 126 L324 160"></path>
+                  <path d="M184 178 L160 266"></path>
+                  <path d="M316 178 L340 266"></path>
+                  <path d="M160 266 L186 352"></path>
+                  <path d="M340 266 L314 352"></path>
+                  <path d="M232 178 L220 262 L250 286 L280 262 L268 178"></path>
+                  <path d="M220 262 L214 352"></path>
+                  <path d="M280 262 L286 352"></path>
+                  <path d="M214 352 L198 452"></path>
+                  <path d="M286 352 L302 452"></path>
+                  <path d="M198 452 L220 480 L246 462"></path>
+                  <path d="M302 452 L280 480 L254 462"></path>
+                  <path d="M176 160 L138 210 L160 266"></path>
+                  <path d="M324 160 L362 210 L340 266"></path>
+                  <path d="M138 210 L120 320 L152 334"></path>
+                  <path d="M362 210 L380 320 L348 334"></path>
+                  <path d="M120 320 L146 362 L178 352"></path>
+                  <path d="M380 320 L354 362 L322 352"></path>
+                </g>
+                <g fill="#7dddff" opacity="0.86">
+                  <circle cx="250" cy="88" r="5"></circle>
+                  <circle cx="208" cy="126" r="4"></circle>
+                  <circle cx="292" cy="126" r="4"></circle>
+                  <circle cx="160" cy="266" r="4"></circle>
+                  <circle cx="340" cy="266" r="4"></circle>
+                  <circle cx="214" cy="352" r="4"></circle>
+                  <circle cx="286" cy="352" r="4"></circle>
+                </g>
+                <g font-family="IBM Plex Sans, sans-serif" font-size="12" fill="#d3eeff">
+                  <text x="302" y="92">Vision stack</text>
+                  <text x="324" y="182">Actuateurs</text>
+                  <text x="74" y="324">Bras / outillage</text>
+                  <text x="284" y="494">Locomotion</text>
+                </g>
+              </svg>
+
+              <p class="wireframe-caption">Le chassis n'est pas un decor: il rend visible la chaine de valeur complete, du cerveau VLA francophone aux actuateurs, jusqu'a la ligne d'assemblage Rive-Nord.</p>
+            </div>
+          </article>
+
+          <div>
+            <div class="stack-card" style="height:100%;">
+              <small>Flagship industriel</small>
+              <h3>L'usine de la Rive-Nord comme scene centrale</h3>
+              <p>La section robotique doit basculer du recit abstrait a la preuve industrielle: infrastructure de montage dediee, 10 unites pilote, cadence cible de 100 unites par an et articulation claire avec construction, sante et logistique.</p>
+
+              <div class="robot-metric-row">
+                <div class="robot-metric is-active" tabindex="0" data-robot-focus="prototype">
+                  <span class="metric-value">18 mois</span>
+                  <span>Objectif de passage du prototype a la cadence usine.</span>
+                </div>
+                <div class="robot-metric" tabindex="0" data-robot-focus="cadence">
+                  <span class="metric-value">100/an</span>
+                  <span>Cadence cible affichee comme promesse industrielle visible.</span>
+                </div>
+                <div class="robot-metric" tabindex="0" data-robot-focus="terrain">
+                  <span class="metric-value">10 pilotes</span>
+                  <span>Etape terrain necessaire avant toute narration de masse.</span>
+                </div>
+              </div>
+
+              <ul style="margin-top:18px;">
+                <li>Montrer l'usine comme actif gouvernemental et industriel, pas comme simple atelier conceptuel.</li>
+                <li>Faire apparaitre la these "socle IA, flagship robotique, couche hardtech" sans jargon excessif.</li>
+                <li>Utiliser une scene eclatee du robot pour relier software, composants et capacite locale d'assemblage.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section glass-panel reveal" id="corridor">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Corridor Terman-Saint-Laurent</span>
+            <h2>Une carte interactive doit relier recherche, industrie et execution territoriale.</h2>
+          </div>
+          <p>Le corridor n'est pas une abstraction geographique. Le site doit le mettre en scene comme une architecture de flux: Montreal pour la recherche et le capital, Rive-Nord pour l'assemblage, Sherbrooke pour la hardtech, Quebec et Ottawa pour les clients publics et la gouvernance.</p>
+        </div>
+
+        <div class="corridor-layout">
+          <article class="map-panel">
+            <div class="map-meta">
+              <span>Carte</span>
+              <span>Recherche -> industrie -> clients ancre</span>
+            </div>
+
+            <svg class="map-svg" viewBox="0 0 860 520" aria-label="Carte du corridor Saint-Laurent">
+              <path class="map-path" d="M92 306 C176 242, 260 214, 336 230 S494 286, 576 276 S726 224, 794 156"></path>
+              <path class="map-path" d="M336 230 C402 170, 504 124, 620 126"></path>
+
+              <circle class="map-dot" cx="112" cy="294" r="8"></circle>
+              <circle class="map-dot" cx="260" cy="238" r="8"></circle>
+              <circle class="map-dot" cx="350" cy="230" r="8"></circle>
+              <circle class="map-dot" cx="470" cy="258" r="8"></circle>
+              <circle class="map-dot" cx="616" cy="126" r="8"></circle>
+              <circle class="map-dot" cx="792" cy="156" r="8"></circle>
+
+              <rect class="map-node map-hotspot is-active" x="34" y="318" rx="18" ry="18" width="146" height="88" tabindex="0" data-node="montreal"></rect>
+              <text class="map-label" x="58" y="348">Montreal</text>
+              <text class="map-label" x="58" y="370">Recherche, modeles, capital</text>
+
+              <rect class="map-node map-hotspot" x="192" y="138" rx="18" ry="18" width="154" height="88" tabindex="0" data-node="rive-nord"></rect>
+              <text class="map-label" x="216" y="168">Rive-Nord</text>
+              <text class="map-label" x="216" y="190">Usine, assemblage, demo</text>
+
+              <rect class="map-node map-hotspot" x="286" y="250" rx="18" ry="18" width="162" height="88" tabindex="0" data-node="trois-rivieres"></rect>
+              <text class="map-label" x="310" y="280">Trois-Rivieres</text>
+              <text class="map-label" x="310" y="302">Manufacturier, extensions</text>
+
+              <rect class="map-node map-hotspot" x="444" y="312" rx="18" ry="18" width="156" height="88" tabindex="0" data-node="quebec"></rect>
+              <text class="map-label" x="468" y="342">Quebec</text>
+              <text class="map-label" x="468" y="364">Etat, sante, contrats</text>
+
+              <rect class="map-node map-hotspot" x="534" y="36" rx="18" ry="18" width="160" height="88" tabindex="0" data-node="sherbrooke"></rect>
+              <text class="map-label" x="558" y="66">Sherbrooke</text>
+              <text class="map-label" x="558" y="88">Photonique, hardtech</text>
+
+              <rect class="map-node map-hotspot" x="658" y="188" rx="18" ry="18" width="156" height="88" tabindex="0" data-node="ottawa"></rect>
+              <text class="map-label" x="682" y="218">Ottawa</text>
+              <text class="map-label" x="682" y="240">Cybers, federal, safety</text>
+            </svg>
+          </article>
+
+          <aside class="map-aside">
+            <h3>Le corridor devient un objet navigable</h3>
+            <p>Cette section doit convertir la these Terman en experience. Le visiteur comprend en un coup d'oeil comment le corridor produit 4 500 emplois directs a 5 ans: densite territoriale, ancre industrielle, catalyseur d'essaimage et boucle recherche-marche.</p>
+            <ul>
+              <li>Le trajet visuel suit le Saint-Laurent comme colonne de coordination economique.</li>
+              <li>Chaque noeud active un panneau contextuel: actifs, role, capacite, contrats possibles.</li>
+              <li>Le scroll peut faire apparaitre successivement recherche, fabrication, clients et souverainete.</li>
+            </ul>
+
+            <div class="corridor-selector" aria-label="Selection des noeuds du corridor">
+              <button type="button" class="is-active" data-node-trigger="montreal">Montreal</button>
+              <button type="button" data-node-trigger="rive-nord">Rive-Nord</button>
+              <button type="button" data-node-trigger="trois-rivieres">Trois-Rivieres</button>
+              <button type="button" data-node-trigger="quebec">Quebec</button>
+              <button type="button" data-node-trigger="sherbrooke">Sherbrooke</button>
+              <button type="button" data-node-trigger="ottawa">Ottawa</button>
+            </div>
+
+            <div class="map-inspector" id="map-inspector">
+              <div class="map-inspector-kicker">Noeud actif</div>
+              <h4 id="map-inspector-title">Montreal</h4>
+              <p id="map-inspector-copy">Recherche, modeles, capital et attraction des talents. Montreal reste le coeur scientifique et la chambre de compression narrative du projet.</p>
+              <div class="map-inspector-stats">
+                <div class="map-inspector-stat">
+                  <strong id="map-inspector-role">Recherche</strong>
+                  <span>Role principal</span>
+                </div>
+                <div class="map-inspector-stat">
+                  <strong id="map-inspector-proof">MILA / IVADO</strong>
+                  <span>Actifs pivots</span>
+                </div>
+                <div class="map-inspector-stat">
+                  <strong id="map-inspector-outcome">Pipeline</strong>
+                  <span>Sortie attendue</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section glass-panel reveal" id="assets">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Assets 3D & medias</span>
+            <h2>Les objets visuels doivent servir la these politique, pas juste l'impression technologique.</h2>
+          </div>
+          <p>La liste d'assets devient un plan de production clair pour design et motion: chaque scene porte une fonction rhetorique, un type d'interaction et un usage editorial.</p>
+        </div>
+
+        <div class="assets-grid">
+          <article class="asset-card">
+            <small>Hero core</small>
+            <h3>Le Core</h3>
+            <p>Nuage de particules organiques utilise comme signature de page d'accueil, respirant avec la souris et densifie par le scroll.</p>
+            <div class="asset-preview wave"></div>
+          </article>
+          <article class="asset-card">
+            <small>Robot scene</small>
+            <h3>Le Chassis</h3>
+            <p>Modele 3D wireframe du robot humanoide, vue eclatee, annotations systeme et transitions entre software, capteurs et assemblage.</p>
+            <div class="asset-preview chassis"></div>
+          </article>
+          <article class="asset-card">
+            <small>Temporal layer</small>
+            <h3>La Timeline</h3>
+            <p>Tunnel de donnees infini reliant les jalons politiques et industriels, avec emphasis sur 2026-2027 comme fenetre critique.</p>
+            <div class="asset-preview tunnel"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section glass-panel reveal" id="contact">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Audio overview</span>
+            <h2>Le podcast NotebookLM devient une couche flottante de comprehension rapide.</h2>
+          </div>
+          <p>L'audio ne remplace pas la lecture. Il agit comme une rampe d'acces executive: resume vocal du raisonnement, disponible en continu pendant la navigation.</p>
+        </div>
+
+        <div class="podcast-layout">
+          <aside class="podcast-player">
+            <div class="audio-pod">
+              <h3 class="audio-pod-title">Audio Overview · NotebookLM</h3>
+              <p class="audio-pod-copy">Pod flottant prevu pour accueillir le fichier final du briefing audio. La version UI est deja structuree pour recevoir une source reelle sans repenser l'interface.</p>
+              <div class="audio-controls">
+                <button class="play-button" id="audio-toggle" type="button" aria-label="Lecture de demonstration"></button>
+                <div class="audio-track">
+                  <strong>Executive Brief · 08:24</strong>
+                  <div class="audio-status" id="audio-status">Standby institutionnel</div>
+                  <div class="track-bar"><div class="track-fill" id="track-fill"></div></div>
+                  <div class="audio-wave" id="audio-wave" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <div>
+            <div class="podcast-copy">
+              <h3>Ce que cette couche ajoute</h3>
+              <p>Le visiteur institutionnel n'arrive pas toujours avec la disponibilite cognitive necessaire pour absorber un rapport dense. Une synthese audio flottante permet de convertir le site en interface executive, consultable pendant les deplacements et les revues rapides.</p>
+              <ul>
+                <li>Resume vocal des trois theses: AGI souveraine, robotique flagship, corridor executeur.</li>
+                <li>Lecture flottante persistante entre les sections, sans casser l'immersion.</li>
+                <li>Point d'ancrage naturel pour contacts, rendez-vous et diffusion cabinet.</li>
+              </ul>
+            </div>
+
+            <div class="cta-grid">
+              <article class="cta-card">
+                <h3>Direction design</h3>
+                <p>Ultra-premium, minimalisme absolu, surfaces translucides, zero bruit visuel inutile, typographie dense et contrastes tres maitrises.</p>
+                <ul>
+                  <li>Fond sombre profond</li>
+                  <li>Accent vivid blue controle</li>
+                  <li>Motion lisible, jamais decorative</li>
+                </ul>
+              </article>
+              <article class="cta-card">
+                <h3>Prochaine translation</h3>
+                <p>Cette maquette peut etre portee vers Next.js en composants: hero scene, compute grid, timeline tunnel, map corridor, pod audio et CMS des rapports strategiques.</p>
+                <ul>
+                  <li>Hero WebGL en React Three Fiber</li>
+                  <li>Sections MDX ou CMS headless</li>
+                  <li>Instrumentation analytics executive</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Institut St-Laurent · Direction strategique AGI · Prototype editorial immersif</span>
+      <span>Base de contenu: AGI Think Tank St-Laurent + Rapport unifie Vallee du Saint-Laurent</span>
+    </footer>
+  </div>
+
+  <script>
+    const progressBar = document.getElementById('progress-bar');
+    const revealNodes = document.querySelectorAll('.reveal');
+    const clusterGrid = document.getElementById('cluster-grid');
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    const timelineFocusTitle = document.getElementById('timeline-focus-title');
+    const timelineFocusCopy = document.getElementById('timeline-focus-copy');
+    const timelineFocusSignal = document.getElementById('timeline-focus-signal');
+    const timelineFocusMetric = document.getElementById('timeline-focus-metric');
+    const timelineFocusProof = document.getElementById('timeline-focus-proof');
+    const mapHotspots = document.querySelectorAll('.map-hotspot');
+    const nodeTriggerButtons = document.querySelectorAll('[data-node-trigger]');
+    const audioToggle = document.getElementById('audio-toggle');
+    const audioStatus = document.getElementById('audio-status');
+    const audioWave = document.getElementById('audio-wave');
+    const trackFill = document.getElementById('track-fill');
+    const navLinks = document.querySelectorAll('[data-nav-target]');
+    const robotFocusCards = document.querySelectorAll('[data-robot-focus]');
+    const heroCommandTitle = document.getElementById('hero-command-title');
+    const heroCommandCopy = document.getElementById('hero-command-copy');
+    const heroCommandPrimary = document.getElementById('hero-command-1');
+    const heroCommandSecondary = document.getElementById('hero-command-2');
+    const heroCommandTertiary = document.getElementById('hero-command-3');
+    const heroCommandPrimaryMeta = document.getElementById('hero-command-1-meta');
+    const heroCommandSecondaryMeta = document.getElementById('hero-command-2-meta');
+    const heroCommandTertiaryMeta = document.getElementById('hero-command-3-meta');
+    const heroSceneDepth = document.getElementById('hero-scene-depth');
+    const heroSceneVector = document.getElementById('hero-scene-vector');
+    const heroSceneNodes = document.getElementById('hero-scene-nodes');
+    const heroSceneMode = document.getElementById('hero-scene-mode');
+    const briefingCards = document.querySelectorAll('[data-briefing-key]');
+    const briefingNoteTitle = document.getElementById('briefing-note-title');
+    const briefingNoteCopy = document.getElementById('briefing-note-copy');
+    const briefingNoteSignal = document.getElementById('briefing-note-signal');
+    const briefingNoteRisk = document.getElementById('briefing-note-risk');
+    const briefingNoteEffect = document.getElementById('briefing-note-effect');
+    const timelineSceneLabel = document.getElementById('timeline-scene-label');
+    const timelineSceneDepth = document.getElementById('timeline-scene-depth');
+
+    const robotFocusData = {
+      prototype: { label: 'Prototype -> usine', index: 0 },
+      cadence: { label: 'Cadence visible', index: 1 },
+      terrain: { label: 'Pilotes terrain', index: 2 }
+    };
+
+    const briefingData = {
+      compute: {
+        title: 'Securiser la souverainete compute',
+        copy: 'La page doit ouvrir sur un langage de capacite: compute, energie, gouvernance et horizon de mise en ligne. C\'est la cle d\'entree institutionnelle du reste.',
+        signal: 'Capacite immediate',
+        risk: 'Dependance externe',
+        effect: 'Autorite',
+        heroTitle: 'Fenetre critique 2026 → 2027',
+        heroCopy: 'Le site doit parler comme une salle de situation: clarifier les signaux, montrer la capacite et fermer la distance entre these et execution.',
+        heroPrimary: 'Compute',
+        heroSecondary: 'Hydro',
+        heroTertiary: 'Gouvernance',
+        heroPrimaryMeta: '2 000 H100',
+        heroSecondaryMeta: 'Energie locale',
+        heroTertiaryMeta: 'Mandat public',
+        sceneMode: 'AGI'
+      },
+      flagship: {
+        title: 'Montrer un flagship robotique achetable',
+        copy: 'La Rive-Nord doit prendre le relais visuel du compute: l\'enjeu devient concret, montrable, pilotable et vendable a partir d\'une scene industrielle credible.',
+        signal: 'Preuve terrain',
+        risk: 'Concept sans usine',
+        effect: 'Desir de demonstration',
+        heroTitle: 'Pivot robotique visible',
+        heroCopy: 'Le prototype doit fermer le doute entre IA et industrie: le robot n\'est pas une promesse vague, mais une interface d\'achat, de test et de diplomatie economique.',
+        heroPrimary: 'Rive-Nord',
+        heroSecondary: '10 pilotes',
+        heroTertiary: '100/an',
+        heroPrimaryMeta: 'Usine pilote',
+        heroSecondaryMeta: 'Phase terrain',
+        heroTertiaryMeta: 'Cadence cible',
+        sceneMode: 'ROBOT'
+      },
+      corridor: {
+        title: 'Orchestrer le corridor comme systeme',
+        copy: 'La homepage doit montrer une chaine coherente plutot qu\'une addition de villes. Chaque noeud doit activer une comprehension immediate du role territorial.',
+        signal: 'Coordination',
+        risk: 'Dispersion',
+        effect: 'Projection economique',
+        heroTitle: 'Le Saint-Laurent comme colonne active',
+        heroCopy: 'La lecture doit passer d\'une institution a un dispositif: recherche, assemblage, hardtech, clients publics et diplomatie relies par une meme logique.',
+        heroPrimary: 'Montreal',
+        heroSecondary: 'Sherbrooke',
+        heroTertiary: 'Quebec/Ottawa',
+        heroPrimaryMeta: 'Recherche',
+        heroSecondaryMeta: 'Hardtech',
+        heroTertiaryMeta: 'Contrats / Safety',
+        sceneMode: 'CORRIDOR'
+      }
+    };
+
+    const mapData = {
+      'montreal': {
+        title: 'Montreal',
+        copy: 'Recherche, modeles, capital et attraction des talents. Montreal reste le coeur scientifique et la chambre de compression narrative du projet.',
+        role: 'Recherche',
+        proof: 'MILA / IVADO',
+        outcome: 'Pipeline'
+      },
+      'rive-nord': {
+        title: 'Rive-Nord',
+        copy: 'Assemblage, site pilote et demonstration industrielle. C\'est ici que la these robotique devient visible, testable et achetable.',
+        role: 'Assemblage',
+        proof: 'Usine pilote',
+        outcome: 'Flagship'
+      },
+      'trois-rivieres': {
+        title: 'Trois-Rivieres',
+        copy: 'Extension manufacturiere et profondeur d\'execution. Ce noeud materialise la capacite du corridor a sortir de la concentration montreal-quebec.',
+        role: 'Manufacturier',
+        proof: 'Extensions',
+        outcome: 'Capacite'
+      },
+      'quebec': {
+        title: 'Quebec',
+        copy: 'Clients publics, sante, contrats et impulsion gouvernementale. Quebec fournit les premiers terrains d\'usage et la legitimite d\'amorçage.',
+        role: 'Clients',
+        proof: 'Etat / Sante',
+        outcome: 'Contrats'
+      },
+      'sherbrooke': {
+        title: 'Sherbrooke',
+        copy: 'Photonique, hardtech et bancs d\'essai. Le noeud Sherbrooke ancre la couche d\'autonomie technologique du corridor.',
+        role: 'Hardtech',
+        proof: 'Photonique',
+        outcome: 'Souverainete'
+      },
+      'ottawa': {
+        title: 'Ottawa',
+        copy: 'Cybers, federal et safety. Ottawa connecte le dispositif a la couche institutionnelle large et a la diplomatie de securite.',
+        role: 'Safety',
+        proof: 'Federal',
+        outcome: 'Influence'
+      }
+    };
+
+    for (let index = 0; index < 500; index += 1) {
+      const node = document.createElement('span');
+      node.className = index % 3 === 0 || index % 11 === 0 ? 'cluster-node active' : 'cluster-node';
+      clusterGrid.appendChild(node);
+    }
+
+    const clusterNodes = Array.from(clusterGrid.children);
+
+    const pulseCluster = () => {
+      clusterNodes.forEach((node) => node.classList.remove('is-live'));
+      const liveCount = Math.min(16, Math.max(8, Math.round(clusterNodes.length * 0.025)));
+      for (let index = 0; index < liveCount; index += 1) {
+        const node = clusterNodes[Math.floor(Math.random() * clusterNodes.length)];
+        node.classList.add('is-live');
+      }
+    };
+
+    pulseCluster();
+    window.setInterval(pulseCluster, 1400);
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    }, { threshold: 0.18 });
+
+    revealNodes.forEach((node) => revealObserver.observe(node));
+
+    const setTimelineFocus = (item) => {
+      timelineItems.forEach((timelineItem) => timelineItem.classList.toggle('is-active', timelineItem === item));
+      const activeIndex = Array.from(timelineItems).indexOf(item);
+      timelineFocusTitle.textContent = item.dataset.timelineTitle;
+      timelineFocusCopy.textContent = item.dataset.timelineCopy;
+      timelineFocusSignal.textContent = item.dataset.timelineSignal;
+      timelineFocusMetric.textContent = item.dataset.timelineMetric;
+      timelineFocusProof.textContent = item.dataset.timelineProof;
+      timelineSceneLabel.textContent = `Fenetre active · ${item.dataset.timelineTitle}`;
+      timelineSceneDepth.textContent = `Tunnel index ${String(activeIndex + 1).padStart(2, '0')}`;
+      window.ISLThreeScenes?.setTimelineIndex?.(activeIndex);
+    };
+
+    const setRobotFocus = (key) => {
+      const data = robotFocusData[key];
+      if (!data) return;
+
+      robotFocusCards.forEach((card) => card.classList.toggle('is-active', card.dataset.robotFocus === key));
+      window.ISLThreeScenes?.setRobotFocus?.(key);
+    };
+
+    const setBriefingFocus = (key) => {
+      const data = briefingData[key];
+      if (!data) return;
+
+      briefingCards.forEach((card) => card.classList.toggle('is-active', card.dataset.briefingKey === key));
+      briefingNoteTitle.textContent = data.title;
+      briefingNoteCopy.textContent = data.copy;
+      briefingNoteSignal.textContent = data.signal;
+      briefingNoteRisk.textContent = data.risk;
+      briefingNoteEffect.textContent = data.effect;
+      heroCommandTitle.textContent = data.heroTitle;
+      heroCommandCopy.textContent = data.heroCopy;
+      heroCommandPrimary.textContent = data.heroPrimary;
+      heroCommandSecondary.textContent = data.heroSecondary;
+      heroCommandTertiary.textContent = data.heroTertiary;
+      heroCommandPrimaryMeta.textContent = data.heroPrimaryMeta;
+      heroCommandSecondaryMeta.textContent = data.heroSecondaryMeta;
+      heroCommandTertiaryMeta.textContent = data.heroTertiaryMeta;
+      heroSceneMode.textContent = data.sceneMode;
+      window.ISLThreeScenes?.setMode?.(data.sceneMode);
+    };
+
+    timelineItems.forEach((item) => {
+      ['mouseenter', 'focus', 'click'].forEach((eventName) => {
+        item.addEventListener(eventName, () => setTimelineFocus(item));
+      });
+    });
+
+    briefingCards.forEach((card) => {
+      ['mouseenter', 'focus', 'click'].forEach((eventName) => {
+        card.addEventListener(eventName, () => setBriefingFocus(card.dataset.briefingKey));
+      });
+    });
+
+    robotFocusCards.forEach((card) => {
+      ['mouseenter', 'focus', 'click'].forEach((eventName) => {
+        card.addEventListener(eventName, () => setRobotFocus(card.dataset.robotFocus));
+      });
+    });
+
+    setBriefingFocus('compute');
+    setTimelineFocus(timelineItems[0]);
+    setRobotFocus('prototype');
+
+    const mapInspectorTitle = document.getElementById('map-inspector-title');
+    const mapInspectorCopy = document.getElementById('map-inspector-copy');
+    const mapInspectorRole = document.getElementById('map-inspector-role');
+    const mapInspectorProof = document.getElementById('map-inspector-proof');
+    const mapInspectorOutcome = document.getElementById('map-inspector-outcome');
+
+    const setMapFocus = (key) => {
+      const data = mapData[key];
+      if (!data) return;
+
+      mapHotspots.forEach((hotspot) => hotspot.classList.toggle('is-active', hotspot.dataset.node === key));
+      nodeTriggerButtons.forEach((button) => button.classList.toggle('is-active', button.dataset.nodeTrigger === key));
+      mapInspectorTitle.textContent = data.title;
+      mapInspectorCopy.textContent = data.copy;
+      mapInspectorRole.textContent = data.role;
+      mapInspectorProof.textContent = data.proof;
+      mapInspectorOutcome.textContent = data.outcome;
+    };
+
+    mapHotspots.forEach((hotspot) => {
+      const activate = () => setMapFocus(hotspot.dataset.node);
+      hotspot.addEventListener('mouseenter', activate);
+      hotspot.addEventListener('focus', activate);
+      hotspot.addEventListener('click', activate);
+    });
+
+    nodeTriggerButtons.forEach((button) => {
+      button.addEventListener('click', () => setMapFocus(button.dataset.nodeTrigger));
+    });
+
+    let audioPlaying = false;
+    let audioProgress = 38;
+    let audioTimerId = 0;
+
+    const renderAudio = () => {
+      audioToggle.classList.toggle('is-playing', audioPlaying);
+      audioWave.classList.toggle('is-playing', audioPlaying);
+      trackFill.classList.toggle('is-playing', audioPlaying);
+      trackFill.style.width = `${audioProgress}%`;
+      audioStatus.textContent = audioPlaying ? 'Lecture de demonstration' : 'Standby institutionnel';
+    };
+
+    const stopAudioLoop = () => {
+      if (audioTimerId) {
+        window.clearInterval(audioTimerId);
+        audioTimerId = 0;
+      }
+    };
+
+    const startAudioLoop = () => {
+      stopAudioLoop();
+      audioTimerId = window.setInterval(() => {
+        audioProgress += 1.8;
+        if (audioProgress >= 100) {
+          audioProgress = 14;
+        }
+        renderAudio();
+      }, 280);
+    };
+
+    audioToggle.addEventListener('click', () => {
+      audioPlaying = !audioPlaying;
+      if (audioPlaying) {
+        startAudioLoop();
+      } else {
+        stopAudioLoop();
+      }
+      renderAudio();
+    });
+
+    renderAudio();
+
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
+      progressBar.style.width = `${Math.min(progress * 100, 100)}%`;
+      document.documentElement.style.setProperty('--hero-shift', `${Math.min(progress * 40, 18)}`);
+      document.documentElement.style.setProperty('--hero-intensity', `${Math.min(progress * 1.4, 1)}`);
+    };
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle('is-spotlit', entry.isIntersecting);
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        navLinks.forEach((link) => link.classList.toggle('is-current', link.dataset.navTarget === id));
+      });
+    }, { threshold: 0.45, rootMargin: '-8% 0px -42% 0px' });
+
+    document.querySelectorAll('main section[id]').forEach((section) => sectionObserver.observe(section));
+
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    const canvas = document.getElementById('core-canvas');
+    const context = canvas.getContext('2d');
+    const particles = [];
+    const pointer = { x: 0, y: 0, active: false };
+    let canvasWidth = 0;
+    let canvasHeight = 0;
+    let animationFrameId = 0;
+    let sceneDrift = 0;
+
+    const resizeCanvas = () => {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvasWidth = rect.width;
+      canvasHeight = rect.height;
+      canvas.width = Math.round(rect.width * ratio);
+      canvas.height = Math.round(rect.height * ratio);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    };
+
+    const buildParticles = () => {
+      particles.length = 0;
+      const count = Math.max(120, Math.round((canvasWidth * canvasHeight) / 6800));
+      for (let index = 0; index < count; index += 1) {
+        particles.push({
+          x: (Math.random() - 0.5) * 2.2,
+          y: (Math.random() - 0.5) * 1.8,
+          z: (Math.random() - 0.5) * 2.4,
+          radius: Math.random() * 2.2 + 0.6,
+          alpha: Math.random() * 0.42 + 0.16,
+          speedX: (Math.random() - 0.5) * 0.0028,
+          speedY: (Math.random() - 0.5) * 0.0024,
+          speedZ: (Math.random() - 0.5) * 0.0032,
+          phase: Math.random() * Math.PI * 2,
+          band: Math.random() > 0.28 ? 'core' : 'ring'
+        });
+      }
+    };
+
+    const rotatePoint = (point, yaw, pitch) => {
+      const cosYaw = Math.cos(yaw);
+      const sinYaw = Math.sin(yaw);
+      const cosPitch = Math.cos(pitch);
+      const sinPitch = Math.sin(pitch);
+
+      const xzX = point.x * cosYaw - point.z * sinYaw;
+      const xzZ = point.x * sinYaw + point.z * cosYaw;
+      const yzY = point.y * cosPitch - xzZ * sinPitch;
+      const yzZ = point.y * sinPitch + xzZ * cosPitch;
+
+      return { x: xzX, y: yzY, z: yzZ };
+    };
+
+    const drawCore = () => {
+      if (document.body.classList.contains('webgl-ready')) {
+        return;
+      }
+      context.clearRect(0, 0, canvasWidth, canvasHeight);
+
+      const gradient = context.createRadialGradient(
+        canvasWidth * 0.5,
+        canvasHeight * 0.5,
+        20,
+        canvasWidth * 0.5,
+        canvasHeight * 0.5,
+        canvasWidth * 0.4
+      );
+      gradient.addColorStop(0, 'rgba(122, 221, 255, 0.18)');
+      gradient.addColorStop(0.45, 'rgba(0, 154, 222, 0.10)');
+      gradient.addColorStop(1, 'rgba(3, 17, 31, 0)');
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      const tunnelGradient = context.createLinearGradient(0, canvasHeight * 0.15, 0, canvasHeight * 0.94);
+      tunnelGradient.addColorStop(0, 'rgba(122, 221, 255, 0.02)');
+      tunnelGradient.addColorStop(0.55, 'rgba(0, 154, 222, 0.07)');
+      tunnelGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      context.fillStyle = tunnelGradient;
+      context.beginPath();
+      context.moveTo(canvasWidth * 0.18, canvasHeight * 0.2);
+      context.lineTo(canvasWidth * 0.82, canvasHeight * 0.2);
+      context.lineTo(canvasWidth * 0.96, canvasHeight * 0.98);
+      context.lineTo(canvasWidth * 0.04, canvasHeight * 0.98);
+      context.closePath();
+      context.fill();
+
+      const scrollFactor = window.scrollY * 0.00035;
+      const time = Date.now() * 0.001;
+      sceneDrift += 0.0025;
+      const yaw = sceneDrift + (pointer.active ? (pointer.x / canvasWidth - 0.5) * 0.85 : Math.sin(time * 0.33) * 0.18);
+      const pitch = (pointer.active ? (pointer.y / canvasHeight - 0.5) * 0.4 : Math.cos(time * 0.24) * 0.08) + scrollFactor * 0.12;
+      const depthBase = 360 + Math.sin(time * 0.42) * 18;
+      const centerX = canvasWidth * 0.5;
+      const centerY = canvasHeight * 0.48;
+      const projectedPoints = [];
+      let liveNodes = 0;
+
+      particles.forEach((particle) => {
+        particle.phase += 0.006;
+        const ringBias = particle.band === 'ring' ? 1.28 : 0.74;
+        particle.x += particle.speedX + Math.cos(particle.phase * 0.9) * 0.0009 * ringBias;
+        particle.y += particle.speedY + Math.sin(particle.phase * 1.2) * 0.0008;
+        particle.z += particle.speedZ + Math.cos(particle.phase * 0.7) * 0.0014;
+
+        if (particle.x < -1.6) particle.x = 1.6;
+        if (particle.x > 1.6) particle.x = -1.6;
+        if (particle.y < -1.3) particle.y = 1.3;
+        if (particle.y > 1.3) particle.y = -1.3;
+        if (particle.z < -1.8) particle.z = 1.8;
+        if (particle.z > 1.8) particle.z = -1.8;
+
+        const rotated = rotatePoint({
+          x: particle.x + Math.cos(particle.phase) * (particle.band === 'ring' ? 0.1 : 0.03),
+          y: particle.y + Math.sin(particle.phase * 1.4) * 0.04,
+          z: particle.z
+        }, yaw, pitch);
+
+        const depth = depthBase + rotated.z * 130;
+        const perspective = depth / (depth + 220);
+        const drawX = centerX + rotated.x * canvasWidth * 0.28 * perspective;
+        const drawY = centerY + rotated.y * canvasHeight * 0.34 * perspective;
+        const drawRadius = particle.radius * (0.72 + perspective * 1.3);
+        const drawAlpha = particle.alpha * (0.4 + perspective * 0.8);
+
+        if (drawX < -40 || drawX > canvasWidth + 40 || drawY < -40 || drawY > canvasHeight + 40) return;
+
+        projectedPoints.push({ x: drawX, y: drawY, depth, alpha: drawAlpha, radius: drawRadius });
+        if (drawAlpha > 0.28) {
+          liveNodes += 1;
+        }
+      });
+
+      projectedPoints.sort((first, second) => first.depth - second.depth);
+
+      for (let i = 0; i < projectedPoints.length; i += 1) {
+        const point = projectedPoints[i];
+        context.beginPath();
+        context.fillStyle = `rgba(132, 220, 255, ${point.alpha})`;
+        context.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      for (let i = 0; i < projectedPoints.length; i += 1) {
+        for (let j = i + 1; j < projectedPoints.length; j += 1) {
+          const first = projectedPoints[i];
+          const second = projectedPoints[j];
+          const distance = Math.hypot(first.x - second.x, first.y - second.y);
+          if (distance < 74) {
+            context.beginPath();
+            context.strokeStyle = `rgba(106, 212, 255, ${(1 - distance / 74) * Math.min(first.alpha, second.alpha) * 0.55})`;
+            context.lineWidth = 1;
+            context.moveTo(first.x, first.y);
+            context.lineTo(second.x, second.y);
+            context.stroke();
+          }
+        }
+      }
+
+      context.strokeStyle = 'rgba(132, 220, 255, 0.16)';
+      context.lineWidth = 1;
+      context.beginPath();
+      context.ellipse(centerX, centerY, 166, 166, 0, 0, Math.PI * 2);
+      context.stroke();
+
+      context.beginPath();
+      context.ellipse(centerX, centerY, 244, 98, -0.12, 0, Math.PI * 2);
+      context.strokeStyle = 'rgba(132, 220, 255, 0.12)';
+      context.stroke();
+
+      heroSceneDepth.textContent = `${(3.2 + (Math.sin(time * 0.4) + 1) * 0.45).toFixed(1)}x`;
+      heroSceneVector.textContent = `${Math.round(yaw * 38) >= 0 ? '+' : ''}${Math.round(yaw * 38)}`;
+      heroSceneNodes.textContent = String(liveNodes);
+
+      animationFrameId = window.requestAnimationFrame(drawCore);
+    };
+
+    const resetScene = () => {
+      if (document.body.classList.contains('webgl-ready')) {
+        return;
+      }
+      resizeCanvas();
+      buildParticles();
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+      drawCore();
+    };
+
+    canvas.addEventListener('pointermove', (event) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = event.clientX - rect.left;
+      pointer.y = event.clientY - rect.top;
+      pointer.active = true;
+    });
+
+    canvas.addEventListener('pointerleave', () => {
+      pointer.active = false;
+    });
+
+    window.addEventListener('isl:webgl-ready', () => {
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+        animationFrameId = 0;
+      }
+      context.clearRect(0, 0, canvasWidth, canvasHeight);
+    }, { once: true });
+
+    window.addEventListener('resize', resetScene);
+    resetScene();
+  </script>
+  <script type="module" src="./three-scenes.js"></script>
+</body>
+</html>
