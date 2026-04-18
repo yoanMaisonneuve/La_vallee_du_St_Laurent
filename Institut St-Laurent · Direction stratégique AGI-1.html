@@ -1241,6 +1241,126 @@
       font-size: 0.94rem;
     }
 
+    .chassis-layers {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chassis-layer-btn {
+      padding: 6px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      cursor: pointer;
+      transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+    }
+
+    .chassis-layer-btn:hover,
+    .chassis-layer-btn.is-active {
+      color: var(--text);
+      border-color: rgba(132, 220, 255, 0.55);
+      background: rgba(0, 154, 222, 0.12);
+    }
+
+    .chassis-zone {
+      fill: transparent;
+      cursor: pointer;
+      transition: fill 180ms ease;
+    }
+
+    .chassis-zone:hover,
+    .chassis-zone.is-active {
+      fill: rgba(0, 154, 222, 0.15);
+    }
+
+    .chassis-highlight {
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+
+    .chassis-highlight.is-visible {
+      opacity: 1;
+    }
+
+    .chassis-label {
+      pointer-events: none;
+      transition: opacity 220ms ease;
+    }
+
+    .chassis-label.is-dimmed {
+      opacity: 0.22;
+    }
+
+    .chassis-detail {
+      position: relative;
+      z-index: 1;
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      background: rgba(0, 154, 222, 0.07);
+      border: 1px solid rgba(0, 154, 222, 0.2);
+      min-height: 96px;
+      transition: border-color 220ms ease, background 220ms ease;
+    }
+
+    .chassis-detail-kicker {
+      color: #9edfff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .chassis-detail h4 {
+      margin: 0 0 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.14rem;
+      letter-spacing: -0.02em;
+    }
+
+    .chassis-detail-system {
+      color: var(--white-soft);
+      font-size: 0.88rem;
+      margin: 0 0 10px;
+    }
+
+    .chassis-detail-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chassis-detail-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--muted);
+      font-size: 0.74rem;
+    }
+
+    .chassis-detail-chip.is-spec {
+      border-color: rgba(132, 220, 255, 0.22);
+      color: #b6dfff;
+    }
+
+    .chassis-detail-chip.is-sector {
+      border-color: rgba(0, 154, 222, 0.3);
+      color: #7dddff;
+    }
+
     .robot-metric-row {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2183,17 +2303,32 @@
           <article class="wireframe-panel">
             <div class="wireframe-meta">
               <span>Le chassis</span>
-              <span>Wireframe humanoide · Vue eclatee</span>
+              <span id="chassis-zone-meta">Vue eclatee interactive · 8 zones</span>
             </div>
+
+            <div class="chassis-layers" role="group" aria-label="Filtrer par couche">
+              <button class="chassis-layer-btn is-active" data-layer="all" type="button">Tout</button>
+              <button class="chassis-layer-btn" data-layer="vla" type="button">VLA</button>
+              <button class="chassis-layer-btn" data-layer="perception" type="button">Perception</button>
+              <button class="chassis-layer-btn" data-layer="actionneurs" type="button">Actionneurs</button>
+              <button class="chassis-layer-btn" data-layer="mecanique" type="button">Mecanique</button>
+            </div>
+
             <div class="robot-scene-shell">
               <div class="robot-webgl-layer" id="robot-webgl" aria-hidden="true"></div>
-              <svg class="wireframe-canvas" viewBox="0 0 500 520" aria-label="Schema wireframe du robot humanoide">
+              <svg class="wireframe-canvas" viewBox="0 0 500 520" aria-label="Schema wireframe interactif du robot humanoide">
                 <defs>
                   <linearGradient id="wire" x1="0" x2="1">
                     <stop offset="0%" stop-color="#7dddff"></stop>
                     <stop offset="100%" stop-color="#009ADE"></stop>
                   </linearGradient>
+                  <filter id="zone-glow">
+                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
                 </defs>
+
+                <!-- Skeleton (unchanged) -->
                 <g fill="none" stroke="url(#wire)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="250" cy="88" r="44"></circle>
                   <path d="M224 78 L250 60 L276 78"></path>
@@ -2218,6 +2353,8 @@
                   <path d="M120 320 L146 362 L178 352"></path>
                   <path d="M380 320 L354 362 L322 352"></path>
                 </g>
+
+                <!-- Joint dots -->
                 <g fill="#7dddff" opacity="0.86">
                   <circle cx="250" cy="88" r="5"></circle>
                   <circle cx="208" cy="126" r="4"></circle>
@@ -2227,15 +2364,79 @@
                   <circle cx="214" cy="352" r="4"></circle>
                   <circle cx="286" cy="352" r="4"></circle>
                 </g>
-                <g font-family="IBM Plex Sans, sans-serif" font-size="12" fill="#d3eeff">
-                  <text x="302" y="92">Vision stack</text>
-                  <text x="324" y="182">Actuateurs</text>
-                  <text x="74" y="324">Bras / outillage</text>
-                  <text x="284" y="494">Locomotion</text>
+
+                <!-- Highlights (shown on zone activation) -->
+                <g id="chassis-highlights-group">
+                  <circle class="chassis-highlight" id="hl-tete" cx="250" cy="88" r="50" fill="rgba(120,214,255,0.18)" stroke="#78d6ff" stroke-width="1.4" filter="url(#zone-glow)"></circle>
+                  <circle class="chassis-highlight" id="hl-perception" cx="250" cy="72" r="18" fill="rgba(0,229,201,0.22)" stroke="#00e5c9" stroke-width="1.2"></circle>
+                  <path class="chassis-highlight" id="hl-torse" d="M188 180 L312 180 L304 268 L196 268 Z" fill="rgba(0,154,222,0.2)" stroke="rgba(132,220,255,0.8)" stroke-width="1.4" filter="url(#zone-glow)"></path>
+                  <path class="chassis-highlight" id="hl-bras-gauche" d="M174 158 L106 215 L117 338 L162 348 L183 264 Z" fill="rgba(0,154,222,0.18)" stroke="rgba(132,220,255,0.7)" stroke-width="1.4" filter="url(#zone-glow)"></path>
+                  <path class="chassis-highlight" id="hl-bras-droit" d="M326 158 L394 215 L383 338 L338 348 L317 264 Z" fill="rgba(0,154,222,0.18)" stroke="rgba(132,220,255,0.7)" stroke-width="1.4" filter="url(#zone-glow)"></path>
+                  <path class="chassis-highlight" id="hl-hanches" d="M208 265 L292 265 L290 356 L210 356 Z" fill="rgba(108,143,168,0.22)" stroke="rgba(132,220,255,0.6)" stroke-width="1.4" filter="url(#zone-glow)"></path>
+                  <path class="chassis-highlight" id="hl-jambe-gauche" d="M196 355 L228 355 L214 490 L188 490 Z" fill="rgba(0,154,222,0.18)" stroke="rgba(132,220,255,0.7)" stroke-width="1.4" filter="url(#zone-glow)"></path>
+                  <path class="chassis-highlight" id="hl-jambe-droite" d="M272 355 L304 355 L312 490 L286 490 Z" fill="rgba(0,154,222,0.18)" stroke="rgba(132,220,255,0.7)" stroke-width="1.4" filter="url(#zone-glow)"></path>
+                </g>
+
+                <!-- Labels -->
+                <g font-family="IBM Plex Sans, sans-serif" fill="#d3eeff">
+                  <g class="chassis-label" data-label-zone="tete">
+                    <line x1="300" y1="65" x2="278" y2="76" stroke="rgba(120,214,255,0.4)" stroke-width="1"></line>
+                    <text x="306" y="58" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.12em">VLA</text>
+                    <text x="306" y="71" font-size="11">Cerveau + vision</text>
+                  </g>
+                  <g class="chassis-label" data-label-zone="torse">
+                    <line x1="320" y1="198" x2="314" y2="210" stroke="rgba(132,220,255,0.4)" stroke-width="1"></line>
+                    <text x="326" y="195" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.1em">COMPUTE</text>
+                    <text x="326" y="208" font-size="11">SoC + batterie</text>
+                  </g>
+                  <g class="chassis-label" data-label-zone="bras-gauche">
+                    <line x1="64" y1="248" x2="130" y2="254" stroke="rgba(132,220,255,0.4)" stroke-width="1"></line>
+                    <text x="4" y="244" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.1em">END-EFFECTOR</text>
+                    <text x="4" y="257" font-size="11">6 DoF · 5 kg</text>
+                  </g>
+                  <g class="chassis-label" data-label-zone="bras-droit">
+                    <line x1="435" y1="248" x2="372" y2="254" stroke="rgba(132,220,255,0.4)" stroke-width="1"></line>
+                    <text x="438" y="244" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.1em">OUTILLAGE</text>
+                    <text x="438" y="257" font-size="11">Modulaire</text>
+                  </g>
+                  <g class="chassis-label" data-label-zone="hanches">
+                    <line x1="320" y1="304" x2="294" y2="310" stroke="rgba(132,220,255,0.4)" stroke-width="1"></line>
+                    <text x="326" y="301" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.1em">IMU</text>
+                    <text x="326" y="314" font-size="11">Équilibre dynamique</text>
+                  </g>
+                  <g class="chassis-label" data-label-zone="jambe-gauche">
+                    <line x1="130" y1="430" x2="196" y2="424" stroke="rgba(132,220,255,0.4)" stroke-width="1"></line>
+                    <text x="4" y="427" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.1em">LOCOMOTION</text>
+                    <text x="4" y="440" font-size="11">1.5 m/s · 4 DoF</text>
+                  </g>
+                  <g class="chassis-label" data-label-zone="perception">
+                    <line x1="300" y1="80" x2="272" y2="74" stroke="rgba(0,229,201,0.5)" stroke-width="1"></line>
+                    <text x="306" y="84" font-size="10" fill="#00e5c9" font-weight="600" letter-spacing="0.12em">VISION</text>
+                  </g>
+                </g>
+
+                <!-- Clickable zones (transparent, on top) -->
+                <g id="chassis-zones-group">
+                  <circle class="chassis-zone" data-zone="tete" tabindex="0" role="button" aria-label="Zone tête — VLA" cx="250" cy="88" r="52"></circle>
+                  <circle class="chassis-zone" data-zone="perception" tabindex="0" role="button" aria-label="Zone perception — vision" cx="250" cy="70" r="22"></circle>
+                  <path class="chassis-zone" data-zone="torse" tabindex="0" role="button" aria-label="Zone torse — compute" d="M184 176 L316 176 L308 272 L192 272 Z"></path>
+                  <path class="chassis-zone" data-zone="bras-gauche" tabindex="0" role="button" aria-label="Zone bras gauche" d="M170 154 L106 214 L114 342 L164 352 L184 266 Z"></path>
+                  <path class="chassis-zone" data-zone="bras-droit" tabindex="0" role="button" aria-label="Zone bras droit" d="M330 154 L394 214 L386 342 L336 352 L316 266 Z"></path>
+                  <path class="chassis-zone" data-zone="hanches" tabindex="0" role="button" aria-label="Zone hanches — IMU" d="M206 262 L294 262 L292 358 L208 358 Z"></path>
+                  <path class="chassis-zone" data-zone="jambe-gauche" tabindex="0" role="button" aria-label="Zone jambe gauche" d="M194 355 L230 355 L216 492 L186 492 Z"></path>
+                  <path class="chassis-zone" data-zone="jambe-droite" tabindex="0" role="button" aria-label="Zone jambe droite" d="M270 355 L306 355 L314 492 L284 492 Z"></path>
                 </g>
               </svg>
 
-              <p class="wireframe-caption">Le chassis n'est pas un decor: il rend visible la chaine de valeur complete, du cerveau VLA francophone aux actuateurs, jusqu'a la ligne d'assemblage Rive-Nord.</p>
+              <div class="chassis-detail" id="chassis-detail">
+                <div class="chassis-detail-kicker" id="chassis-detail-kicker">Survoler une zone</div>
+                <h4 id="chassis-detail-title">Vue eclatee interactive</h4>
+                <p class="chassis-detail-system" id="chassis-detail-system">8 zones · 4 couches systeme · 3 secteurs clients</p>
+                <div class="chassis-detail-row">
+                  <span class="chassis-detail-chip is-spec" id="chassis-detail-spec">Survoler ou cliquer une zone du chassis</span>
+                  <span class="chassis-detail-chip is-sector" id="chassis-detail-sector"></span>
+                </div>
+              </div>
             </div>
           </article>
 
@@ -2700,6 +2901,165 @@
     setBriefingFocus('compute');
     setTimelineFocus(timelineItems[0]);
     setRobotFocus('prototype');
+
+    // ── Chassis interactif ──────────────────────────────────────────────
+    const chassisData = {
+      tete: {
+        label: 'Cerveau VLA',
+        layer: 'vla',
+        system: 'Vision-Language-Action Model — modele fondation francophone',
+        spec: 'LLM embarque · 7B params · inference locale',
+        sector: 'Tous secteurs · interface decision',
+        metricKey: 'terrain',
+        robotFocus: 'prototype'
+      },
+      perception: {
+        label: 'Perception sensorielle',
+        layer: 'perception',
+        system: 'Vision stereo · LiDAR · capteurs inertiels',
+        spec: 'RGB-D 60 fps · champ 180° · latence < 8ms',
+        sector: 'Construction · Sante · Logistique',
+        metricKey: 'terrain',
+        robotFocus: 'prototype'
+      },
+      torse: {
+        label: 'Compute + Energie',
+        layer: 'actionneurs',
+        system: 'SoC dedie · batterie haute densite · refroidissement passif',
+        spec: 'Autonomie 6-8h · puissance 450W',
+        sector: 'Logistique · Assemblage industriel',
+        metricKey: 'prototype',
+        robotFocus: 'prototype'
+      },
+      'bras-gauche': {
+        label: 'Bras gauche · Manipulation',
+        layer: 'actionneurs',
+        system: 'End-effector modulaire 6 DoF — prehension et assemblage',
+        spec: 'Charge 5 kg · precision ±0.5mm',
+        sector: 'Sante · Assemblage · Manutention',
+        metricKey: 'cadence',
+        robotFocus: 'cadence'
+      },
+      'bras-droit': {
+        label: 'Bras droit · Outillage',
+        layer: 'actionneurs',
+        system: 'End-effector modulaire 6 DoF — outillage adaptatif',
+        spec: 'Charge 5 kg · precision ±0.5mm',
+        sector: 'Sante · Assemblage · Manutention',
+        metricKey: 'cadence',
+        robotFocus: 'cadence'
+      },
+      hanches: {
+        label: 'Centre gravite · IMU',
+        layer: 'mecanique',
+        system: 'Gyroscope 6 axes · coordination posturale dynamique',
+        spec: 'Latence < 2ms · stabilisation active',
+        sector: 'Terrain accidente · Construction',
+        metricKey: 'prototype',
+        robotFocus: 'prototype'
+      },
+      'jambe-gauche': {
+        label: 'Locomotion gauche',
+        layer: 'actionneurs',
+        system: 'Actuateurs jambe + pied · 4 DoF · amortissement actif',
+        spec: 'Vitesse max 1.5 m/s · charge 80 kg',
+        sector: 'Logistique · Construction · Terrain',
+        metricKey: 'cadence',
+        robotFocus: 'cadence'
+      },
+      'jambe-droite': {
+        label: 'Locomotion droite',
+        layer: 'actionneurs',
+        system: 'Actuateurs jambe + pied · 4 DoF · amortissement actif',
+        spec: 'Vitesse max 1.5 m/s · charge 80 kg',
+        sector: 'Logistique · Construction · Terrain',
+        metricKey: 'cadence',
+        robotFocus: 'cadence'
+      }
+    };
+
+    const chassisZoneEls = document.querySelectorAll('.chassis-zone');
+    const chassisHighlights = document.querySelectorAll('.chassis-highlight');
+    const chassisLabels = document.querySelectorAll('.chassis-label');
+    const chassisLayerBtns = document.querySelectorAll('.chassis-layer-btn');
+    const chassisDetailKicker = document.getElementById('chassis-detail-kicker');
+    const chassisDetailTitle = document.getElementById('chassis-detail-title');
+    const chassisDetailSystem = document.getElementById('chassis-detail-system');
+    const chassisDetailSpec = document.getElementById('chassis-detail-spec');
+    const chassisDetailSector = document.getElementById('chassis-detail-sector');
+    const chassisZoneMeta = document.getElementById('chassis-zone-meta');
+    let activeChassisLayer = 'all';
+
+    const setChassisZone = (key) => {
+      const data = chassisData[key];
+      if (!data) return;
+
+      chassisZoneEls.forEach((el) => el.classList.toggle('is-active', el.dataset.zone === key));
+      chassisHighlights.forEach((hl) => hl.classList.toggle('is-visible', hl.id === `hl-${key}`));
+      chassisLabels.forEach((lbl) => {
+        const isZone = lbl.dataset.labelZone === key;
+        lbl.classList.toggle('is-dimmed', !isZone && lbl.dataset.labelZone !== undefined);
+      });
+
+      chassisDetailKicker.textContent = `Couche ${data.layer.toUpperCase()}`;
+      chassisDetailTitle.textContent = data.label;
+      chassisDetailSystem.textContent = data.system;
+      chassisDetailSpec.textContent = data.spec;
+      chassisDetailSector.textContent = data.sector;
+      chassisZoneMeta.textContent = `Zone active · ${data.label}`;
+
+      setRobotFocus(data.robotFocus);
+
+      robotFocusCards.forEach((card) => {
+        card.style.boxShadow = card.dataset.robotFocus === data.metricKey
+          ? '0 0 0 1px rgba(132,220,255,0.55), 0 12px 28px rgba(0,154,222,0.18)'
+          : '';
+      });
+    };
+
+    const clearChassisZone = () => {
+      chassisZoneEls.forEach((el) => el.classList.remove('is-active'));
+      chassisHighlights.forEach((hl) => hl.classList.remove('is-visible'));
+      chassisLabels.forEach((lbl) => lbl.classList.remove('is-dimmed'));
+      chassisDetailKicker.textContent = 'Survoler une zone';
+      chassisDetailTitle.textContent = 'Vue eclatee interactive';
+      chassisDetailSystem.textContent = '8 zones · 4 couches systeme · 3 secteurs clients';
+      chassisDetailSpec.textContent = 'Survoler ou cliquer une zone du chassis';
+      chassisDetailSector.textContent = '';
+      chassisZoneMeta.textContent = 'Vue eclatee interactive · 8 zones';
+      robotFocusCards.forEach((card) => { card.style.boxShadow = ''; });
+    };
+
+    const setChassisLayer = (layer) => {
+      activeChassisLayer = layer;
+      chassisLayerBtns.forEach((btn) => btn.classList.toggle('is-active', btn.dataset.layer === layer));
+      chassisZoneEls.forEach((el) => {
+        const data = chassisData[el.dataset.zone];
+        const match = layer === 'all' || (data && data.layer === layer);
+        el.style.pointerEvents = match ? 'auto' : 'none';
+        el.style.opacity = match ? '1' : '0.28';
+      });
+      chassisLabels.forEach((lbl) => {
+        const zone = lbl.dataset.labelZone;
+        const data = chassisData[zone];
+        const match = layer === 'all' || (data && data.layer === layer);
+        lbl.style.opacity = match ? '1' : '0.18';
+      });
+    };
+
+    chassisZoneEls.forEach((el) => {
+      el.addEventListener('mouseenter', () => setChassisZone(el.dataset.zone));
+      el.addEventListener('focus', () => setChassisZone(el.dataset.zone));
+      el.addEventListener('click', () => setChassisZone(el.dataset.zone));
+      el.addEventListener('mouseleave', clearChassisZone);
+      el.addEventListener('blur', clearChassisZone);
+      el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') setChassisZone(el.dataset.zone); });
+    });
+
+    chassisLayerBtns.forEach((btn) => {
+      btn.addEventListener('click', () => setChassisLayer(btn.dataset.layer));
+    });
+    // ── Fin chassis ─────────────────────────────────────��───────────────
 
     const mapInspectorTitle = document.getElementById('map-inspector-title');
     const mapInspectorCopy = document.getElementById('map-inspector-copy');
