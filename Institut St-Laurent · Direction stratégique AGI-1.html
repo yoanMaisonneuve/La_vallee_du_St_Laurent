@@ -3,7 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Institut St-Laurent | Architecture digitale AGI + robotique</title>
+  <title>Institut St-Laurent · Think Tank AGI & Robotique · Vallée du Saint-Laurent</title>
+  <meta name="description" content="Think tank indépendant pour la souveraineté AGI du Québec. Cluster 2 000 H100, usine robotique Rive-Nord, corridor Saint-Laurent. Fenêtre critique 2026-2027.">
+  <meta name="author" content="Institut St-Laurent">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Institut St-Laurent">
+  <meta property="og:title" content="Institut St-Laurent · Direction stratégique AGI">
+  <meta property="og:description" content="18 mois pour sécuriser la souveraineté AGI du Québec. Cluster compute, pivot robotique, corridor Saint-Laurent.">
+  <meta property="og:locale" content="fr_CA">
+  <meta property="og:locale:alternate" content="en_CA">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Institut St-Laurent · Think Tank AGI & Robotique">
+  <meta name="twitter:description" content="Architecture de décision souveraine pour le Québec face à l'AGI. Rapports publics, méthodologie L0→L4, corridor Saint-Laurent.">
+  <meta name="theme-color" content="#03111f">
+  <link rel="canonical" href="https://institut-saint-laurent.org/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Institut St-Laurent",
+    "alternateName": "ISL",
+    "description": "Think tank indépendant consacré à la souveraineté AGI du Québec et au corridor technologique de la Vallée du Saint-Laurent.",
+    "foundingDate": "2026",
+    "foundingLocation": {"@type": "Place", "name": "Montréal, Québec, Canada"},
+    "knowsAbout": ["Intelligence artificielle", "AGI", "Robotique humanoïde", "Souveraineté numérique", "Politique industrielle"],
+    "areaServed": {"@type": "AdministrativeArea", "name": "Québec"},
+    "sameAs": []
+  }
+  </script>
   <script type="importmap">
   {
     "imports": {
@@ -14,7 +42,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #03111f;
@@ -910,6 +938,223 @@
       color: #84dcff;
     }
 
+    /* ── Briefing polish ── */
+    .briefing-shell { position: relative; counter-reset: briefing-num; }
+    .briefing-shell::before {
+      content: '';
+      position: absolute;
+      top: -16px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(132,220,255,0.32) 14%, rgba(132,220,255,0.32) 86%, transparent);
+      pointer-events: none;
+    }
+    .decision-card { counter-increment: briefing-num; }
+    .decision-card::before {
+      content: '0' counter(briefing-num);
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 200;
+      font-size: 2.6rem;
+      color: rgba(132, 220, 255, 0.1);
+      letter-spacing: -0.04em;
+      pointer-events: none;
+      transition: color 240ms ease;
+      z-index: 1;
+    }
+    .decision-card:hover::before,
+    .decision-card.is-active::before { color: rgba(132, 220, 255, 0.3); }
+    .decision-card.is-active {
+      border-left: 2px solid #00e5c9;
+      padding-left: 19px;
+    }
+    .decision-card small {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 0.66rem !important;
+      letter-spacing: 0.2em !important;
+      font-weight: 500 !important;
+      color: rgba(132, 220, 255, 0.78) !important;
+    }
+    .decision-card small::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(132, 220, 255, 0.45);
+      flex-shrink: 0;
+    }
+    .decision-card.is-active small::before {
+      background: #00e5c9;
+      box-shadow: 0 0 8px rgba(0, 229, 201, 0.65);
+      animation: briefingDot 2.4s ease-in-out infinite;
+    }
+    @keyframes briefingDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(0.82); }
+    }
+    .decision-metric {
+      position: relative;
+      padding-left: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.06em;
+    }
+    .decision-metric::before {
+      content: '▸';
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #84dcff;
+      font-size: 0.7rem;
+    }
+    .briefing-note {
+      border: 1px solid rgba(132, 220, 255, 0.18);
+      background: linear-gradient(180deg, rgba(6, 21, 37, 0.55), rgba(6, 21, 37, 0.32));
+    }
+    .briefing-note::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 22px;
+      right: 22px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 229, 201, 0.55), transparent);
+    }
+    .briefing-note > div:first-child small {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 0.66rem !important;
+      letter-spacing: 0.22em !important;
+      font-weight: 500 !important;
+      color: rgba(0, 229, 201, 0.82) !important;
+    }
+    .briefing-note > div:first-child small::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #00e5c9;
+      box-shadow: 0 0 8px rgba(0, 229, 201, 0.7);
+      animation: briefingDot 2.4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    .briefing-stat {
+      position: relative;
+      padding-left: 24px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+    .briefing-stat::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      bottom: 20px;
+      left: 12px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(132, 220, 255, 0.55), transparent);
+    }
+    .briefing-stat small {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 0.62rem !important;
+      letter-spacing: 0.2em !important;
+      font-weight: 500 !important;
+      color: rgba(207, 232, 255, 0.5) !important;
+    }
+    .briefing-stat strong {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+    }
+    /* — Briefing v2 — */
+    .briefing-shell::after {
+      content: 'CABINET · DOSSIER ACTIF · T+30';
+      position: absolute;
+      top: -34px;
+      right: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
+      color: rgba(132, 220, 255, 0.5);
+      font-weight: 500;
+      pointer-events: none;
+    }
+    .decision-card {
+      overflow: hidden;
+    }
+    .decision-card > * { position: relative; z-index: 1; }
+    .decision-card .scan-overlay,
+    .decision-card::before { z-index: 2; }
+    .decision-card.is-active::after {
+      width: 280px;
+      height: 280px;
+      background: rgba(0, 229, 201, 0.14);
+      filter: blur(22px);
+    }
+    .decision-card .sweep {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(115deg, transparent 40%, rgba(132, 220, 255, 0.18) 50%, transparent 60%);
+      transition: opacity 220ms ease;
+      z-index: 0;
+    }
+    .decision-card:hover .sweep,
+    .decision-card.is-active .sweep {
+      opacity: 1;
+      animation: decisionSweep 3.4s ease-in-out infinite;
+    }
+    @keyframes decisionSweep {
+      0%   { transform: translateX(-30%); }
+      100% { transform: translateX(30%); }
+    }
+    .decision-card.is-active h3::after {
+      content: '● ACTIF';
+      display: inline-block;
+      margin-left: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(0, 229, 201, 0.16);
+      border: 1px solid rgba(0, 229, 201, 0.4);
+      color: #00e5c9;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem;
+      letter-spacing: 0.2em;
+      font-weight: 500;
+      vertical-align: middle;
+      transform: translateY(-2px);
+    }
+    .briefing-note { overflow: hidden; }
+    .briefing-note::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 22px 22px 0;
+      border-color: transparent rgba(0, 229, 201, 0.18) transparent transparent;
+      pointer-events: none;
+    }
+    .briefing-stats { counter-reset: stat-num; position: relative; }
+    .briefing-stat { counter-increment: stat-num; }
+    .briefing-stat small::after {
+      content: ' · 0' counter(stat-num) '/03';
+      opacity: 0.55;
+      letter-spacing: 0.16em;
+    }
+
     .stack-grid {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
@@ -1164,6 +1409,223 @@
       color: #84dcff;
     }
 
+    /* ── #agi polish ── */
+    .cluster-panel { position: relative; overflow: hidden; }
+    .cluster-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        180deg,
+        transparent 0,
+        transparent 3px,
+        rgba(132, 220, 255, 0.022) 3px,
+        rgba(132, 220, 255, 0.022) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+    .cluster-panel > * { position: relative; z-index: 1; }
+    .cluster-topline {
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(132, 220, 255, 0.18);
+      margin-bottom: 18px;
+    }
+    .cluster-caption {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(132, 220, 255, 0.18);
+    }
+    .cluster-node.is-live { animation: clusterLive 2.6s ease-in-out infinite; }
+    @keyframes clusterLive {
+      0%, 100% { box-shadow: 0 0 18px rgba(106, 212, 255, 0.52); }
+      50% { box-shadow: 0 0 26px rgba(159, 232, 255, 0.78); }
+    }
+
+    .timeline-shell::after {
+      content: '';
+      position: absolute;
+      top: 12px; left: 12px; right: 12px; bottom: 12px;
+      pointer-events: none;
+      background:
+        linear-gradient(to right,  rgba(132,220,255,0.5) 0 14px, transparent 14px) top    left  / 14px 1px no-repeat,
+        linear-gradient(to bottom, rgba(132,220,255,0.5) 0 14px, transparent 14px) top    left  / 1px 14px no-repeat,
+        linear-gradient(to left,   rgba(132,220,255,0.5) 0 14px, transparent 14px) top    right / 14px 1px no-repeat,
+        linear-gradient(to bottom, rgba(132,220,255,0.5) 0 14px, transparent 14px) top    right / 1px 14px no-repeat,
+        linear-gradient(to right,  rgba(132,220,255,0.5) 0 14px, transparent 14px) bottom left  / 14px 1px no-repeat,
+        linear-gradient(to top,    rgba(132,220,255,0.5) 0 14px, transparent 14px) bottom left  / 1px 14px no-repeat,
+        linear-gradient(to left,   rgba(132,220,255,0.5) 0 14px, transparent 14px) bottom right / 14px 1px no-repeat,
+        linear-gradient(to top,    rgba(132,220,255,0.5) 0 14px, transparent 14px) bottom right / 1px 14px no-repeat;
+      z-index: 2;
+    }
+
+    .timeline-track { counter-reset: timeline-num; }
+    .timeline-item {
+      counter-increment: timeline-num;
+      position: relative;
+    }
+    .timeline-item small {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 0.66rem !important;
+      letter-spacing: 0.18em !important;
+      font-weight: 500 !important;
+      color: rgba(207, 232, 255, 0.7) !important;
+    }
+    .timeline-item small::before {
+      content: '[T+0' counter(timeline-num) '] ';
+      color: rgba(132, 220, 255, 0.85);
+    }
+    .timeline-year {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500;
+    }
+    .timeline-item.is-active::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 18px;
+      right: 18px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #00e5c9, transparent);
+      z-index: 2;
+    }
+
+    .timeline-focus-label {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.22em !important;
+      font-weight: 500 !important;
+      font-size: 0.66rem !important;
+    }
+    .timeline-focus-label::before { content: '['; color: rgba(132,220,255,0.6); padding-right: 2px; }
+    .timeline-focus-label::after  { content: ']'; color: rgba(132,220,255,0.6); padding-left:  2px; }
+
+    .timeline-focus-stat {
+      position: relative;
+      padding-left: 24px;
+    }
+    .timeline-focus-stat::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      bottom: 18px;
+      left: 12px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(132, 220, 255, 0.55), transparent);
+    }
+    .timeline-focus-stat small {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 0.62rem !important;
+      letter-spacing: 0.2em !important;
+      font-weight: 500 !important;
+      color: rgba(207, 232, 255, 0.5) !important;
+    }
+    .timeline-scene-caption {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+    }
+    /* — #agi v2 — */
+    .cluster-panel::after {
+      content: 'CAPACITY · 87% · 2k H100 · CIBLE 2027';
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      color: rgba(0, 229, 201, 0.7);
+      font-weight: 500;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .cluster-topline { padding-right: 220px; }
+    .cluster-grid {
+      position: relative;
+      padding: 8px 24px 8px 28px;
+    }
+    .cluster-grid::before {
+      content: 'R01 · R10 · R20 · R25';
+      position: absolute;
+      top: -12px;
+      left: 28px;
+      right: 24px;
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: rgba(132, 220, 255, 0.4);
+      pointer-events: none;
+    }
+    .cluster-grid::after {
+      content: 'R01';
+      position: absolute;
+      top: 8px;
+      left: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      color: rgba(132, 220, 255, 0.4);
+      writing-mode: vertical-rl;
+      pointer-events: none;
+    }
+
+    .timeline-shell {
+      counter-reset: tphase;
+    }
+    .timeline-shell > .timeline-track::before {
+      content: 'PHASE TRANSITION · CONTINUOUS';
+      position: absolute;
+      top: -22px;
+      left: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.24em;
+      color: rgba(132, 220, 255, 0.5);
+      font-weight: 500;
+    }
+    .timeline-track::after {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: 22px;
+      right: 22px;
+      height: 1px;
+      background: repeating-linear-gradient(90deg, rgba(132, 220, 255, 0.32) 0 6px, transparent 6px 12px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .timeline-item.is-active::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #00e5c9;
+      box-shadow: 0 0 14px rgba(0, 229, 201, 0.7);
+      z-index: 3;
+      animation: briefingDot 2.4s ease-in-out infinite;
+    }
+    .timeline-focus {
+      position: relative;
+      overflow: hidden;
+    }
+    .timeline-focus::after {
+      content: 'SIGNATURE · ISL/STRAT-2026 · J+0';
+      position: absolute;
+      bottom: 8px;
+      right: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem;
+      letter-spacing: 0.22em;
+      color: rgba(132, 220, 255, 0.35);
+      pointer-events: none;
+    }
+
     .robotics-layout,
     .corridor-layout,
     .podcast-layout {
@@ -1394,6 +1856,139 @@
       color: #84dcff;
     }
 
+    /* ── Chassis HUD — polish pass (scan lines, brackets, breath) ─── */
+    .wireframe-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(132, 220, 255, 0.035) 0 1px, transparent 1px 4px);
+      opacity: 0.85;
+    }
+    .wireframe-panel::after {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        linear-gradient(#78d6ff, #78d6ff) left top / 16px 1px no-repeat,
+        linear-gradient(#78d6ff, #78d6ff) left top / 1px 16px no-repeat,
+        linear-gradient(#78d6ff, #78d6ff) right top / 16px 1px no-repeat,
+        linear-gradient(#78d6ff, #78d6ff) right top / 1px 16px no-repeat,
+        linear-gradient(#78d6ff, #78d6ff) left bottom / 16px 1px no-repeat,
+        linear-gradient(#78d6ff, #78d6ff) left bottom / 1px 16px no-repeat,
+        linear-gradient(#78d6ff, #78d6ff) right bottom / 16px 1px no-repeat,
+        linear-gradient(#78d6ff, #78d6ff) right bottom / 1px 16px no-repeat;
+      opacity: 0.65;
+    }
+
+    .wireframe-panel .wireframe-meta {
+      padding: 9px 14px;
+      border: 1px solid rgba(132, 220, 255, 0.16);
+      border-radius: 8px;
+      background: rgba(3, 14, 24, 0.55);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      color: #9edfff;
+      position: relative;
+      z-index: 2;
+    }
+    .wireframe-panel .wireframe-meta > span:first-child::before {
+      content: '●';
+      color: #40f8c4;
+      font-size: 0.72em;
+      margin-right: 8px;
+      animation: chassisLivePulse 1.8s ease-in-out infinite;
+      display: inline-block;
+      vertical-align: middle;
+      text-shadow: 0 0 6px rgba(64, 248, 196, 0.7);
+    }
+    .wireframe-panel .wireframe-meta > span:last-child {
+      opacity: 0.78;
+    }
+    .wireframe-panel .wireframe-meta > span:last-child::before {
+      content: '// ';
+      color: rgba(132, 220, 255, 0.7);
+    }
+    @keyframes chassisLivePulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.25); }
+    }
+
+    .robot-scene-shell::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(120, 214, 255, 0.75) 50%, transparent 100%);
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(120, 214, 255, 0.45);
+      animation: chassisScanSweep 7s linear infinite;
+      z-index: 2;
+    }
+    @keyframes chassisScanSweep {
+      0% { top: -2%; opacity: 0; }
+      6% { opacity: 0.6; }
+      94% { opacity: 0.6; }
+      100% { top: 102%; opacity: 0; }
+    }
+
+    .chassis-layer-btn {
+      position: relative;
+    }
+    .chassis-layer-btn::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -6px;
+      transform: translateX(-50%) scaleX(0);
+      width: 22px;
+      height: 2px;
+      background: #78d6ff;
+      box-shadow: 0 0 6px rgba(120, 214, 255, 0.7);
+      transition: transform 240ms ease;
+      transform-origin: center;
+    }
+    .chassis-layer-btn.is-active::after {
+      transform: translateX(-50%) scaleX(1);
+    }
+
+    .chassis-highlight.is-visible {
+      animation: chassisHighlightPulse 2.4s ease-in-out infinite;
+    }
+    @keyframes chassisHighlightPulse {
+      0%, 100% { opacity: 0.78; }
+      50% { opacity: 1; }
+    }
+
+    .chassis-joints circle {
+      transform-origin: center;
+      transform-box: fill-box;
+      animation: chassisJointBreathe 2.8s ease-in-out infinite;
+    }
+    .chassis-joints circle:nth-child(2) { animation-delay: 0.18s; }
+    .chassis-joints circle:nth-child(3) { animation-delay: 0.36s; }
+    .chassis-joints circle:nth-child(4) { animation-delay: 0.54s; }
+    .chassis-joints circle:nth-child(5) { animation-delay: 0.72s; }
+    .chassis-joints circle:nth-child(6) { animation-delay: 0.9s; }
+    .chassis-joints circle:nth-child(7) { animation-delay: 1.08s; }
+    @keyframes chassisJointBreathe {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.25); }
+    }
+
+    .chassis-detail-kicker::before {
+      content: '> ';
+      color: rgba(120, 214, 255, 0.65);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      margin-right: 2px;
+    }
+
     .map-svg {
       width: 100%;
       height: auto;
@@ -1502,6 +2097,174 @@
       font-family: 'Space Grotesk', sans-serif;
       margin-bottom: 4px;
       color: #84dcff;
+    }
+
+    /* ── #corridor polish ── */
+    .map-panel { position: relative; }
+    .map-panel::before {
+      content: '';
+      position: absolute;
+      top: 14px; left: 14px; right: 14px; bottom: 14px;
+      pointer-events: none;
+      background:
+        linear-gradient(to right,  rgba(132,220,255,0.45) 0 12px, transparent 12px) top    left  / 12px 1px no-repeat,
+        linear-gradient(to bottom, rgba(132,220,255,0.45) 0 12px, transparent 12px) top    left  / 1px 12px no-repeat,
+        linear-gradient(to left,   rgba(132,220,255,0.45) 0 12px, transparent 12px) top    right / 12px 1px no-repeat,
+        linear-gradient(to bottom, rgba(132,220,255,0.45) 0 12px, transparent 12px) top    right / 1px 12px no-repeat,
+        linear-gradient(to right,  rgba(132,220,255,0.45) 0 12px, transparent 12px) bottom left  / 12px 1px no-repeat,
+        linear-gradient(to top,    rgba(132,220,255,0.45) 0 12px, transparent 12px) bottom left  / 1px 12px no-repeat,
+        linear-gradient(to left,   rgba(132,220,255,0.45) 0 12px, transparent 12px) bottom right / 12px 1px no-repeat,
+        linear-gradient(to top,    rgba(132,220,255,0.45) 0 12px, transparent 12px) bottom right / 1px 12px no-repeat;
+      z-index: 4;
+    }
+    .map-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed rgba(132, 220, 255, 0.22);
+    }
+    .map-hotspot.is-active {
+      animation: mapPing 2.6s ease-out infinite;
+    }
+    @keyframes mapPing {
+      0%, 100% { filter: drop-shadow(0 0 18px rgba(0, 154, 222, 0.35)); }
+      50%      { filter: drop-shadow(0 0 28px rgba(132, 220, 255, 0.8)); }
+    }
+    .map-dot { animation: mapDotPulse 2.2s ease-in-out infinite; }
+    @keyframes mapDotPulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.55; }
+    }
+    .map-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+    .map-inspector-kicker {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 0.66rem !important;
+      letter-spacing: 0.22em !important;
+      font-weight: 500 !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .map-inspector-kicker::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #00e5c9;
+      box-shadow: 0 0 8px rgba(0, 229, 201, 0.7);
+      animation: briefingDot 2.4s ease-in-out infinite;
+    }
+    .map-inspector-kicker::after { content: ' · LIVE NODE'; opacity: 0.55; }
+    .map-inspector {
+      position: relative;
+      border: 1px solid rgba(132, 220, 255, 0.18);
+    }
+    .map-inspector::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 18px;
+      right: 18px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 229, 201, 0.55), transparent);
+    }
+    .map-inspector-stat {
+      position: relative;
+      padding-left: 22px;
+    }
+    .map-inspector-stat::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      bottom: 16px;
+      left: 10px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(132, 220, 255, 0.55), transparent);
+    }
+    .map-inspector-stat small {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 0.6rem !important;
+      letter-spacing: 0.2em !important;
+      color: rgba(207, 232, 255, 0.5) !important;
+    }
+    /* — #corridor v2 — */
+    .map-panel::after {
+      content: 'GEO · 46.81N 71.21W · CORRIDOR ST-LAURENT';
+      position: absolute;
+      top: 16px;
+      right: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      color: rgba(132, 220, 255, 0.55);
+      pointer-events: none;
+      z-index: 5;
+    }
+    .map-panel .map-meta {
+      padding-right: 280px;
+    }
+    .map-svg {
+      position: relative;
+    }
+    .map-svg + .map-svg-overlay,
+    .map-panel > .map-scan {
+      position: absolute;
+      pointer-events: none;
+      left: 22px;
+      right: 22px;
+      top: 60px;
+      bottom: 60px;
+      z-index: 3;
+      overflow: hidden;
+    }
+    .map-panel::before {
+      z-index: 4;
+    }
+    .map-panel > svg.map-svg {
+      position: relative;
+      z-index: 1;
+    }
+    .map-panel > .map-scan-sweep {
+      content: '';
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 60px;
+      bottom: 60px;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent 0%, rgba(132, 220, 255, 0.1) 48%, rgba(132, 220, 255, 0.22) 50%, rgba(132, 220, 255, 0.1) 52%, transparent 100%);
+      mix-blend-mode: screen;
+      animation: mapScanSweep 6.4s ease-in-out infinite;
+      z-index: 2;
+    }
+    @keyframes mapScanSweep {
+      0%   { transform: translateX(-100%); opacity: 0; }
+      40%  { opacity: 0.85; }
+      60%  { opacity: 0.85; }
+      100% { transform: translateX(100%); opacity: 0; }
+    }
+    .map-path { stroke-width: 4.5; }
+    .map-path-glow {
+      stroke: rgba(0, 229, 201, 0.55);
+      stroke-width: 1.5;
+      fill: none;
+      filter: drop-shadow(0 0 6px rgba(0, 229, 201, 0.6));
+    }
+    .map-inspector::after {
+      content: 'TRANSIT · 287 km · 3h12 · CORRIDOR ACTIF';
+      display: block;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(132, 220, 255, 0.2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      color: rgba(207, 232, 255, 0.55);
     }
 
     .corridor-selector {
@@ -1825,6 +2588,1716 @@
       50% { transform: scaleY(1.3); }
     }
 
+    /* ── Nouveaux composants ──────────────────────────────────── */
+    .lang-toggle {
+      display: inline-flex;
+      gap: 2px;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-right: 8px;
+    }
+    .lang-toggle button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease;
+    }
+    .lang-toggle button.is-active {
+      background: rgba(0, 154, 222, 0.22);
+      color: var(--text);
+    }
+
+    .video-player-shell {
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      background: rgba(4, 17, 30, 0.82);
+      border: 1px solid rgba(132, 220, 255, 0.18);
+      aspect-ratio: 16 / 9;
+    }
+    .video-player-shell video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+    .video-kicker {
+      display: inline-block;
+      color: #9edfff;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.68rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .video-selector {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .video-selector button {
+      text-align: left;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 180ms ease, color 180ms ease, background 180ms ease, transform 180ms ease;
+    }
+    .video-selector button strong {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      color: #84dcff;
+      font-size: 0.94rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .video-selector button span {
+      display: block;
+      font-size: 0.76rem;
+      line-height: 1.45;
+    }
+    .video-selector button.is-active,
+    .video-selector button:hover,
+    .video-selector button:focus-visible {
+      color: var(--text);
+      border-color: rgba(132, 220, 255, 0.55);
+      background: rgba(0, 154, 222, 0.1);
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .governance-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 22px;
+    }
+    .governance-card {
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .governance-card h3 {
+      margin: 10px 0 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.18rem;
+      letter-spacing: -0.02em;
+    }
+    .governance-card p {
+      color: var(--white-soft);
+      line-height: 1.75;
+      margin: 0;
+    }
+    .governance-card ul {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .disclosure-note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: rgba(0, 154, 222, 0.06);
+      border: 1px solid rgba(0, 154, 222, 0.14);
+      color: var(--white-soft);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+    .disclosure-note strong {
+      color: #9edfff;
+    }
+
+    /* ── #about polish ── */
+    .governance-grid { counter-reset: gov-num; }
+    .governance-card {
+      position: relative;
+      counter-increment: gov-num;
+      overflow: hidden;
+    }
+    .governance-card::before {
+      content: '0' counter(gov-num);
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 200;
+      font-size: 2.4rem;
+      color: rgba(132, 220, 255, 0.1);
+      letter-spacing: -0.04em;
+      pointer-events: none;
+    }
+    .governance-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 22px;
+      width: 36px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(132, 220, 255, 0.55), transparent);
+    }
+    .governance-card .video-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(132, 220, 255, 0.8);
+      font-weight: 500;
+    }
+    .governance-card .video-kicker::before {
+      content: '§';
+      color: rgba(132, 220, 255, 0.5);
+      font-weight: 400;
+      font-size: 0.9rem;
+    }
+    .governance-card h3 {
+      font-family: 'Source Serif 4', 'Source Serif Pro', serif;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+      font-size: 1.24rem;
+    }
+    .governance-card ul li {
+      position: relative;
+      padding-left: 4px;
+    }
+    .governance-card ul li::marker { content: '— '; color: rgba(132, 220, 255, 0.6); }
+    .disclosure-note {
+      position: relative;
+      padding-left: 48px;
+    }
+    .disclosure-note::before {
+      content: '⚐';
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      font-size: 1.2rem;
+      color: rgba(132, 220, 255, 0.65);
+    }
+    .disclosure-note strong {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 500;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    /* — #about v2 — */
+    .governance-card {
+      transition: transform 240ms ease, border-color 240ms ease, background 240ms ease;
+    }
+    .governance-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(132, 220, 255, 0.32);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .governance-card p { font-size: 0.96rem; }
+    .governance-card p:first-of-type::first-letter {
+      font-family: 'Source Serif 4', serif;
+      font-size: 2.2rem;
+      line-height: 0.85;
+      float: left;
+      margin: 4px 8px 0 0;
+      color: rgba(132, 220, 255, 0.85);
+      font-weight: 500;
+    }
+    .governance-card ul {
+      border-top: 1px dashed rgba(132, 220, 255, 0.14);
+      padding-top: 14px;
+      margin-top: 16px;
+    }
+    .governance-card::after {
+      width: 48px;
+      background: linear-gradient(90deg, rgba(132, 220, 255, 0.65), transparent);
+    }
+    .governance-grid + .disclosure-note {
+      position: relative;
+    }
+    .disclosure-note::after {
+      content: 'ISL · CHARTE D\'INDÉPENDANCE · v 2026.04 · ymaisonneuve';
+      display: block;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(132, 220, 255, 0.22);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: rgba(132, 220, 255, 0.45);
+      text-align: right;
+    }
+    .governance-card h3 + p {
+      position: relative;
+    }
+    .governance-card:hover::before { color: rgba(132, 220, 255, 0.32); }
+
+    .risks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 22px;
+    }
+    .risk-card {
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+    }
+    .risk-card small {
+      display: inline-block;
+      color: #ffb6b6;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .risk-card h3 {
+      margin: 0 0 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.18rem;
+      letter-spacing: -0.02em;
+    }
+    .risk-card p {
+      color: var(--white-soft);
+      line-height: 1.75;
+      margin: 0 0 10px;
+    }
+    .risk-card .mitigation {
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .risk-card .mitigation strong {
+      color: #9edfff;
+      display: block;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+    }
+
+    .contact-form {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .contact-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .contact-form label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 6px;
+    }
+    .contact-form input,
+    .contact-form select,
+    .contact-form textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(4, 17, 30, 0.55);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.94rem;
+      transition: border-color 180ms ease;
+    }
+    .contact-form textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+    .contact-form input:focus,
+    .contact-form select:focus,
+    .contact-form textarea:focus {
+      border-color: rgba(132, 220, 255, 0.6);
+      outline: none;
+    }
+    .contact-form button {
+      justify-self: start;
+    }
+
+    .download-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .download-list a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: rgba(0, 154, 222, 0.08);
+      border: 1px solid rgba(0, 154, 222, 0.18);
+      color: var(--text);
+      font-size: 0.9rem;
+      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+    .download-list a:hover {
+      background: rgba(0, 154, 222, 0.16);
+      border-color: rgba(132, 220, 255, 0.45);
+      transform: translateX(3px);
+    }
+    .download-list a span:last-child {
+      font-size: 0.76rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .source-citation {
+      display: inline-block;
+      margin-left: 4px;
+      padding: 1px 6px;
+      border-radius: 6px;
+      background: rgba(132, 220, 255, 0.14);
+      color: #9edfff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-decoration: none;
+      vertical-align: super;
+    }
+    .source-citation:hover {
+      background: rgba(132, 220, 255, 0.28);
+    }
+
+    .footer-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      padding: 28px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.7;
+    }
+    .footer-meta h4 {
+      margin: 0 0 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.92rem;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+    .footer-meta a {
+      color: #9edfff;
+      border-bottom: 1px solid rgba(132, 220, 255, 0.3);
+    }
+
+    /* ── Footer-meta polish (colophon style) ── */
+    .footer-meta {
+      counter-reset: meta-num;
+      position: relative;
+    }
+    .footer-meta::before {
+      content: '— COLOPHON —';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0 14px;
+      background: var(--ink, #03101e);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.32em;
+      color: rgba(132, 220, 255, 0.55);
+      font-weight: 500;
+    }
+    .footer-meta > div {
+      counter-increment: meta-num;
+      position: relative;
+      padding-left: 22px;
+    }
+    .footer-meta > div::before {
+      content: '§ 0' counter(meta-num);
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      color: rgba(132, 220, 255, 0.5);
+      font-weight: 500;
+    }
+    .footer-meta h4 {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 0.7rem !important;
+      letter-spacing: 0.22em !important;
+      text-transform: uppercase;
+      color: rgba(207, 232, 255, 0.85) !important;
+      font-weight: 500 !important;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(132, 220, 255, 0.18);
+      margin-bottom: 12px !important;
+    }
+    .footer-meta a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+    .footer-meta a:hover {
+      color: #d3eeff;
+      border-bottom-color: rgba(132, 220, 255, 0.7);
+    }
+    .footer {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+    }
+    /* — Footer-meta v2 — */
+    .footer-meta {
+      padding: 36px 28px 28px;
+    }
+    .footer-meta::after {
+      content: '';
+      position: absolute;
+      top: 6px; left: 6px; right: 6px; bottom: 6px;
+      pointer-events: none;
+      background:
+        linear-gradient(to right,  rgba(132,220,255,0.45) 0 8px, transparent 8px) top    left  / 8px 1px no-repeat,
+        linear-gradient(to bottom, rgba(132,220,255,0.45) 0 8px, transparent 8px) top    left  / 1px 8px no-repeat,
+        linear-gradient(to left,   rgba(132,220,255,0.45) 0 8px, transparent 8px) top    right / 8px 1px no-repeat,
+        linear-gradient(to bottom, rgba(132,220,255,0.45) 0 8px, transparent 8px) top    right / 1px 8px no-repeat,
+        linear-gradient(to right,  rgba(132,220,255,0.45) 0 8px, transparent 8px) bottom left  / 8px 1px no-repeat,
+        linear-gradient(to top,    rgba(132,220,255,0.45) 0 8px, transparent 8px) bottom left  / 1px 8px no-repeat,
+        linear-gradient(to left,   rgba(132,220,255,0.45) 0 8px, transparent 8px) bottom right / 8px 1px no-repeat,
+        linear-gradient(to top,    rgba(132,220,255,0.45) 0 8px, transparent 8px) bottom right / 1px 8px no-repeat;
+    }
+    .footer {
+      position: relative;
+      padding: 18px 0 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+    }
+    .footer::before {
+      content: '◐ ISL ◑';
+      display: block;
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.4em;
+      color: rgba(132, 220, 255, 0.7);
+      padding-bottom: 8px;
+    }
+    .footer::after {
+      content: 'BUILD · 2026.04.20 · b8f3a2c · render OK · git: clean';
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      color: rgba(132, 220, 255, 0.35);
+      padding-top: 6px;
+      border-top: 1px dashed rgba(132, 220, 255, 0.18);
+      width: min(560px, 80%);
+    }
+
+    /* ── Vallée — Signature landscape strip ─────────────────── */
+    .valley-strip {
+      width: var(--content);
+      margin: 40px auto 32px;
+      position: relative;
+      height: 420px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(132, 220, 255, 0.18);
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.65), inset 0 0 0 1px rgba(132, 220, 255, 0.08);
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(0, 154, 222, 0.18), transparent 60%),
+        linear-gradient(180deg, #010509 0%, #020b14 55%, #031321 100%);
+    }
+    .valley-webgl-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .valley-webgl-layer canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+    .valley-labels {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .valley-label {
+      position: absolute;
+      top: 0; left: 0;
+      transform: translate3d(-999px, -999px, 0);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 5px 9px 5px 11px;
+      background: rgba(3, 18, 33, 0.72);
+      border-left: 2px solid #84dcff;
+      backdrop-filter: blur(4px);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.18em;
+      opacity: 0;
+      transition: opacity 300ms ease;
+      white-space: nowrap;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+    }
+    .valley-label.is-visible { opacity: 1; }
+    .valley-label em {
+      font-style: normal;
+      font-size: 0.62rem;
+      color: #eaf8ff;
+      font-weight: 600;
+    }
+    .valley-label i {
+      font-style: normal;
+      font-size: 0.5rem;
+      color: rgba(132, 220, 255, 0.78);
+      letter-spacing: 0.14em;
+      margin-top: 1px;
+    }
+    .valley-label::before {
+      content: '';
+      position: absolute;
+      left: -7px;
+      top: 50%;
+      width: 10px;
+      height: 1px;
+      background: #84dcff;
+      transform: translateY(-50%);
+    }
+    /* Corner brackets (CAD HUD) */
+    .valley-strip::before,
+    .valley-strip::after {
+      content: '';
+      position: absolute;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .valley-strip::before {
+      top: 14px; left: 14px; right: 14px; bottom: 14px;
+      background:
+        linear-gradient(to right,  rgba(132,220,255,0.55) 0 16px, transparent 16px) top    left  / 16px 1px no-repeat,
+        linear-gradient(to bottom, rgba(132,220,255,0.55) 0 16px, transparent 16px) top    left  / 1px 16px no-repeat,
+        linear-gradient(to left,   rgba(132,220,255,0.55) 0 16px, transparent 16px) top    right / 16px 1px no-repeat,
+        linear-gradient(to bottom, rgba(132,220,255,0.55) 0 16px, transparent 16px) top    right / 1px 16px no-repeat,
+        linear-gradient(to right,  rgba(132,220,255,0.55) 0 16px, transparent 16px) bottom left  / 16px 1px no-repeat,
+        linear-gradient(to top,    rgba(132,220,255,0.55) 0 16px, transparent 16px) bottom left  / 1px 16px no-repeat,
+        linear-gradient(to left,   rgba(132,220,255,0.55) 0 16px, transparent 16px) bottom right / 16px 1px no-repeat,
+        linear-gradient(to top,    rgba(132,220,255,0.55) 0 16px, transparent 16px) bottom right / 1px 16px no-repeat;
+    }
+    .valley-strip::after {
+      /* subtle scan-lines */
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent 0 3px,
+        rgba(132, 220, 255, 0.018) 3px 4px
+      );
+      mix-blend-mode: screen;
+    }
+    .valley-hud {
+      position: absolute;
+      z-index: 3;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 6px 10px;
+    }
+    .valley-hud-tl { top: 22px; left: 28px; }
+    .valley-hud-tr { top: 22px; right: 28px; text-align: right; align-items: flex-end; }
+    .valley-hud-bl { bottom: 90px; left: 28px; }
+    .valley-hud-br { bottom: 90px; right: 28px; text-align: right; align-items: flex-end; }
+    .valley-hud-label {
+      font-size: 0.56rem;
+      letter-spacing: 0.28em;
+      color: rgba(132, 220, 255, 0.55);
+      text-transform: uppercase;
+    }
+    .valley-hud-value {
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      color: #cfe8ff;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .valley-hud-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #00e5c9;
+      box-shadow: 0 0 8px rgba(0, 229, 201, 0.7);
+      animation: valleyHudDot 2s ease-in-out infinite;
+    }
+    @keyframes valleyHudDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.5; transform: scale(0.82); }
+    }
+    .valley-caption {
+      position: absolute;
+      left: clamp(24px, 3vw, 40px);
+      bottom: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .valley-caption-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      color: rgba(132, 220, 255, 0.85);
+    }
+    .valley-caption-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+      color: #fafafa;
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 1120px) {
+      .valley-strip { height: 320px; }
+      .valley-hud-bl, .valley-hud-br { bottom: 72px; }
+    }
+    @media (max-width: 720px) {
+      .valley-strip { height: 280px; }
+      .valley-hud { padding: 4px 8px; }
+      .valley-hud-label { font-size: 0.5rem; }
+      .valley-hud-value { font-size: 0.64rem; }
+    }
+
+    /* ── Partenaires — Bande institutionnelle ───────────────── */
+    .section.partners-band .section-head { margin-bottom: 24px; }
+    .partners-header-note {
+      background: rgba(10, 24, 40, 0.48);
+      border: 1px solid rgba(132, 220, 255, 0.14);
+      border-left: 3px solid rgba(132, 220, 255, 0.6);
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.72);
+      line-height: 1.55;
+    }
+    .partners-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .partner-card {
+      background: rgba(10, 24, 40, 0.55);
+      border: 1px solid rgba(132, 220, 255, 0.14);
+      border-radius: 10px;
+      padding: 22px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      min-height: 160px;
+    }
+    .partner-card:hover {
+      background: rgba(132, 220, 255, 0.06);
+      border-color: rgba(132, 220, 255, 0.28);
+    }
+    .partner-card .role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(132, 220, 255, 0.7);
+      align-self: flex-start;
+    }
+    .partner-card .wordmark {
+      width: 100%;
+      max-width: 160px;
+      height: 56px;
+      color: #fafafa;
+      opacity: 0.92;
+      transition: opacity 0.2s ease;
+      margin: 4px 0;
+    }
+    .partner-card:hover .wordmark { opacity: 1; }
+    .partner-card .caption {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.74rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-align: center;
+      line-height: 1.4;
+      margin-top: auto;
+    }
+    .partner-card .status-dot {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(132, 220, 255, 0.4);
+      background: transparent;
+    }
+    .partner-card .status-dot.is-active {
+      background: #78d6ff;
+      border-color: #78d6ff;
+      box-shadow: 0 0 8px rgba(120, 214, 255, 0.55);
+    }
+    .partners-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    .partners-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .partners-legend-item .status-dot {
+      position: static;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(132, 220, 255, 0.4);
+      flex-shrink: 0;
+    }
+    .partners-legend-item .status-dot.is-active {
+      background: #78d6ff;
+      border-color: #78d6ff;
+      box-shadow: 0 0 8px rgba(120, 214, 255, 0.55);
+    }
+    @media (max-width: 1120px) {
+      .partners-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── Registre B — Papier / Rapport académique ───────────── */
+    .register-divider {
+      width: var(--content);
+      margin: 40px auto 0;
+      padding: 22px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      background:
+        linear-gradient(90deg, rgba(245, 241, 232, 0.94), rgba(245, 241, 232, 0.86)),
+        repeating-linear-gradient(0deg, rgba(35, 29, 19, 0) 0, rgba(35, 29, 19, 0) 22px, rgba(35, 29, 19, 0.035) 22px, rgba(35, 29, 19, 0.035) 23px);
+      border-radius: 14px 14px 0 0;
+      border: 1px solid rgba(35, 29, 19, 0.12);
+      border-bottom: 0;
+      color: #231d13;
+      font-family: 'Source Serif 4', Georgia, serif;
+      position: relative;
+    }
+    .register-divider::after {
+      content: '';
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      bottom: -1px;
+      height: 3px;
+      background:
+        linear-gradient(90deg, rgba(35, 29, 19, 0.35) 0 38%, transparent 38% 62%, rgba(35, 29, 19, 0.35) 62% 100%) 0 0 / 100% 1px no-repeat,
+        linear-gradient(90deg, transparent 0 calc(50% - 4px), rgba(35, 29, 19, 0.45) calc(50% - 4px) calc(50% + 4px), transparent calc(50% + 4px) 100%) 0 1px / 100% 2px no-repeat;
+      pointer-events: none;
+    }
+    .register-divider .kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #6b5a3e;
+    }
+    .register-divider h2 {
+      margin: 6px 0 0;
+      font-size: 1.32rem;
+      font-weight: 600;
+      letter-spacing: -0.012em;
+      font-feature-settings: "liga", "dlig", "onum";
+      font-style: italic;
+    }
+    .register-divider .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      color: #6b5a3e;
+      text-align: right;
+      font-feature-settings: "tnum", "onum";
+    }
+    .register-divider .meta .folio {
+      display: block;
+      color: #1a1610;
+      font-size: 0.84rem;
+      letter-spacing: 0.14em;
+      margin-bottom: 4px;
+    }
+
+    .section.register-b {
+      width: var(--content);
+      margin: 0 auto;
+      background:
+        radial-gradient(ellipse at 8% 0%, rgba(166, 133, 71, 0.06), transparent 40%),
+        radial-gradient(ellipse at 92% 100%, rgba(166, 133, 71, 0.05), transparent 40%),
+        #f5f1e8;
+      color: #231d13;
+      border: 1px solid rgba(35, 29, 19, 0.12);
+      border-top: 0;
+      border-radius: 0 0 14px 14px;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 250, 235, 0.6);
+      padding: 56px clamp(36px, 5.5vw, 80px) 64px;
+      backdrop-filter: none;
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-feature-settings: "liga", "dlig", "kern", "onum";
+      text-rendering: optimizeLegibility;
+      position: relative;
+    }
+
+    .section.register-b::before { display: none; }
+
+    /* Ornement de fin de section — losange typographique */
+    .section.register-b::after {
+      content: '§ · ❦ · §';
+      display: block;
+      text-align: center;
+      margin: 48px auto 0;
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.4em;
+      color: rgba(107, 90, 62, 0.55);
+      font-style: italic;
+    }
+
+    .section.register-b .section-head {
+      grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+      gap: 40px;
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(35, 29, 19, 0.15);
+      align-items: start;
+    }
+    .section.register-b .section-head .eyebrow {
+      color: #6b5a3e;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+    }
+    .section.register-b .section-head .eyebrow::before {
+      background: #6b5a3e;
+      box-shadow: 0 0 0 6px rgba(107, 90, 62, 0.12);
+    }
+    .section.register-b .section-head h2 {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-weight: 600;
+      color: #1a1610;
+      font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+      letter-spacing: -0.015em;
+      line-height: 1.1;
+    }
+    .section.register-b .section-head p,
+    .section.register-b p {
+      color: #3a342a;
+      line-height: 1.78;
+      font-size: 1.02rem;
+      hyphens: auto;
+    }
+    /* Lettrine classique sur le premier paragraphe de la tête de section */
+    .section.register-b .section-head > div > p:first-of-type::first-letter,
+    .section.register-b > .section-head p:first-of-type::first-letter {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-weight: 700;
+      font-size: 3.6em;
+      float: left;
+      line-height: 0.85;
+      padding: 4px 10px 0 0;
+      margin-top: 4px;
+      color: #5a3d00;
+    }
+    .section.register-b .section-note {
+      background:
+        linear-gradient(180deg, rgba(245, 232, 192, 0.55), rgba(245, 232, 192, 0.4)),
+        #f5f1e8;
+      border: 1px solid rgba(166, 133, 71, 0.32);
+      border-left: 3px solid rgba(166, 133, 71, 0.6);
+      color: #3a2e14;
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-style: italic;
+      padding: 18px 22px;
+      position: relative;
+    }
+    .section.register-b .section-note::before {
+      content: '¶';
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-style: normal;
+      font-size: 1.3rem;
+      color: rgba(166, 133, 71, 0.5);
+    }
+
+    /* Stack cards en mode rapport */
+    .section.register-b .stack-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+      border-top: 1px solid rgba(35, 29, 19, 0.12);
+      border-left: 1px solid rgba(35, 29, 19, 0.12);
+    }
+    .section.register-b .stack-card {
+      background: transparent;
+      border: 0;
+      border-right: 1px solid rgba(35, 29, 19, 0.12);
+      border-bottom: 1px solid rgba(35, 29, 19, 0.12);
+      border-radius: 0;
+      padding: 32px 28px;
+      position: relative;
+    }
+    .section.register-b .stack-card small {
+      color: #6b5a3e;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      display: block;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed rgba(35, 29, 19, 0.18);
+    }
+    .section.register-b .stack-card h3 {
+      font-family: 'Source Serif 4', Georgia, serif;
+      color: #1a1610;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin: 0 0 14px;
+      letter-spacing: -0.01em;
+    }
+    .section.register-b .stack-card p {
+      font-size: 0.98rem;
+      color: #3a342a;
+      line-height: 1.78;
+      text-align: justify;
+      hyphens: auto;
+      text-justify: inter-word;
+    }
+
+    /* Footnotes style */
+    .section.register-b .footnote {
+      display: inline-block;
+      vertical-align: super;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #8a6d2c;
+      margin-left: 2px;
+      cursor: help;
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .section.register-b .footnote:hover {
+      color: #5a3d00;
+      background: rgba(166, 133, 71, 0.15);
+      border-radius: 3px;
+      padding: 0 3px;
+    }
+    .section.register-b .footnotes-list {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(35, 29, 19, 0.15);
+      font-size: 0.86rem;
+      line-height: 1.7;
+      color: #4a4338;
+      font-family: 'Source Serif 4', Georgia, serif;
+    }
+    .section.register-b .footnotes-list h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #6b5a3e;
+      margin: 0 0 14px;
+      font-weight: 500;
+    }
+    .section.register-b .footnotes-list ol {
+      margin: 0;
+      padding-left: 24px;
+      columns: 2;
+      column-gap: 36px;
+    }
+    .section.register-b .footnotes-list li {
+      margin-bottom: 12px;
+      break-inside: avoid;
+      padding-left: 4px;
+      text-indent: -4px;
+    }
+    .section.register-b .footnotes-list li::marker {
+      color: #8a6d2c;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+    }
+    .section.register-b .footnotes-list li a {
+      color: #5a3d00;
+      border-bottom: 1px solid rgba(90, 61, 0, 0.3);
+    }
+    .section.register-b .footnotes-list li .backref {
+      display: inline-block;
+      margin-left: 4px;
+      padding: 0 4px;
+      color: #8a6d2c;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      border-bottom: 0;
+      text-decoration: none;
+      transition: color 160ms ease, background 160ms ease;
+    }
+    .section.register-b .footnotes-list li .backref:hover {
+      color: #5a3d00;
+      background: rgba(166, 133, 71, 0.18);
+      border-radius: 3px;
+    }
+
+    /* Risques en mode rapport */
+    .section.register-b .risks-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+      margin-top: 0;
+      border-top: 1px solid rgba(35, 29, 19, 0.12);
+      border-left: 1px solid rgba(35, 29, 19, 0.12);
+    }
+    .section.register-b .risk-card {
+      background: transparent;
+      border: 0;
+      border-right: 1px solid rgba(35, 29, 19, 0.12);
+      border-bottom: 1px solid rgba(35, 29, 19, 0.12);
+      border-radius: 0;
+      padding: 28px 28px;
+    }
+    .section.register-b .risk-card small {
+      color: #a13a3a;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+    }
+    .section.register-b .risk-card h3 {
+      font-family: 'Source Serif 4', Georgia, serif;
+      color: #1a1610;
+      font-weight: 700;
+      font-size: 1.12rem;
+      letter-spacing: -0.005em;
+      margin: 8px 0 10px;
+    }
+    .section.register-b .risk-card p {
+      color: #3a342a;
+      font-size: 0.98rem;
+      line-height: 1.7;
+    }
+    .section.register-b .risk-card .mitigation {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: rgba(166, 133, 71, 0.08);
+      border-left: 3px solid rgba(166, 133, 71, 0.55);
+      border-top: 0;
+      color: #3a342a;
+      font-size: 0.92rem;
+      font-family: 'Source Serif 4', Georgia, serif;
+    }
+    .section.register-b .risk-card .mitigation strong {
+      color: #5a3d00;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+    }
+
+    /* ── #risques polish (registre B / academic marginalia) ── */
+    .section.register-b .risks-grid { counter-reset: risk-num; }
+    .section.register-b .risk-card {
+      counter-increment: risk-num;
+      position: relative;
+      padding-left: 56px;
+    }
+    .section.register-b .risk-card::before {
+      content: counter(risk-num, upper-roman);
+      position: absolute;
+      top: 28px;
+      left: 18px;
+      width: 26px;
+      text-align: right;
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.1rem;
+      color: rgba(161, 58, 58, 0.55);
+      letter-spacing: 0.02em;
+      line-height: 1;
+    }
+    .section.register-b .risk-card::after {
+      content: '';
+      position: absolute;
+      top: 50px;
+      bottom: 28px;
+      left: 30px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(161, 58, 58, 0.4), rgba(161, 58, 58, 0.05));
+    }
+    .section.register-b .risk-card small {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section.register-b .risk-card small::before {
+      content: '▲';
+      font-size: 0.62rem;
+      color: rgba(161, 58, 58, 0.7);
+    }
+    .section.register-b .risk-card .mitigation {
+      position: relative;
+    }
+    .section.register-b .risk-card .mitigation strong {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section.register-b .risk-card .mitigation strong::before {
+      content: '↳';
+      color: rgba(166, 133, 71, 0.85);
+      font-family: 'Source Serif 4', serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0;
+    }
+    /* — #risques v2 — */
+    .section.register-b#risques {
+      position: relative;
+    }
+    .section.register-b#risques::before {
+      content: 'ANALYSE';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-22deg);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 12rem;
+      font-weight: 200;
+      letter-spacing: 0.15em;
+      color: rgba(161, 58, 58, 0.04);
+      pointer-events: none;
+      z-index: 0;
+      white-space: nowrap;
+    }
+    .section.register-b#risques > * { position: relative; z-index: 1; }
+    .section.register-b#risques .section-head::after {
+      content: 'CONFIDENTIEL · DOSSIER ROUGE · INTERNE ISL';
+      display: block;
+      margin-top: 12px;
+      padding: 6px 12px;
+      border: 1px solid rgba(161, 58, 58, 0.42);
+      border-radius: 2px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.24em;
+      color: #a13a3a;
+      width: max-content;
+      background: rgba(161, 58, 58, 0.04);
+    }
+    .section.register-b .risk-card small::after {
+      content: '';
+      display: inline-block;
+      margin-left: 8px;
+      width: 36px;
+      height: 4px;
+      vertical-align: middle;
+      background:
+        linear-gradient(90deg, #a13a3a 0 33%, transparent 33%),
+        rgba(161, 58, 58, 0.18);
+      border-radius: 2px;
+    }
+    .section.register-b .risk-card:nth-child(2) small::after {
+      background: linear-gradient(90deg, #a13a3a 0 66%, transparent 66%), rgba(161, 58, 58, 0.18);
+    }
+    .section.register-b .risk-card:nth-child(3) small::after {
+      background: linear-gradient(90deg, #a13a3a 0 100%, transparent 100%), rgba(161, 58, 58, 0.18);
+    }
+    .section.register-b .risk-card:nth-child(4) small::after {
+      background: linear-gradient(90deg, #a13a3a 0 50%, transparent 50%), rgba(161, 58, 58, 0.18);
+    }
+    .section.register-b .risk-card:nth-child(5) small::after {
+      background: linear-gradient(90deg, #a13a3a 0 80%, transparent 80%), rgba(161, 58, 58, 0.18);
+    }
+    .section.register-b .risk-card:nth-child(6) small::after {
+      background: linear-gradient(90deg, #a13a3a 0 60%, transparent 60%), rgba(161, 58, 58, 0.18);
+    }
+    .section.register-b .risk-card {
+      transition: background 200ms ease;
+    }
+    .section.register-b .risk-card:hover {
+      background: rgba(161, 58, 58, 0.025);
+    }
+    .section.register-b .risk-card:hover::before {
+      color: #a13a3a;
+    }
+    .section.register-b .risk-card .mitigation::after {
+      content: 'PROPRIÉTAIRE · ISL/RISK-OWNER · seuil documenté';
+      display: block;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(166, 133, 71, 0.32);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      color: rgba(90, 61, 0, 0.7);
+      text-transform: uppercase;
+    }
+
+    .section.register-b.is-spotlit {
+      border-color: rgba(35, 29, 19, 0.2);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.32);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 1120px) {
+      .section.register-b .stack-grid,
+      .section.register-b .risks-grid {
+        grid-template-columns: 1fr;
+      }
+      .section.register-b .footnotes-list ol { columns: 1; }
+      .register-divider { flex-direction: column; align-items: flex-start; }
+      .register-divider .meta { text-align: left; }
+    }
+
+    /* ── Registre C — Terminal / Monochrome minimaliste ─────── */
+    .register-divider.register-c-divider {
+      background:
+        linear-gradient(90deg, #050505, #0a0a0a 50%, #050505),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 48px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 3px solid rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+      margin-top: 40px;
+    }
+    .register-divider.register-c-divider::after {
+      content: '';
+      position: absolute;
+      left: 24px; right: 24px; bottom: -1px; height: 1px;
+      background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.35) 0 8px, transparent 8px 14px);
+    }
+    .register-divider.register-c-divider .kicker {
+      color: rgba(255, 255, 255, 0.5);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+    .register-divider.register-c-divider .kicker::before {
+      content: '▸ ';
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .register-divider.register-c-divider h2 {
+      color: #fafafa;
+      font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
+      font-weight: 500;
+      font-style: normal;
+      letter-spacing: -0.01em;
+      font-feature-settings: "tnum", "zero";
+    }
+    .register-divider.register-c-divider .meta {
+      color: rgba(255, 255, 255, 0.45);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+    }
+    .register-divider.register-c-divider .meta .folio {
+      display: block;
+      color: #fafafa;
+      font-size: 0.74rem;
+      letter-spacing: 0.2em;
+      margin-bottom: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .section.register-c {
+      width: var(--content);
+      margin: 0 auto 40px;
+      padding: 56px clamp(36px, 5.5vw, 80px) 64px;
+      background:
+        linear-gradient(180deg, #0a0a0a, #050505 60%, #0a0a0a),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.015) 0 1px, transparent 1px 4px);
+      color: #fafafa;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
+      font-feature-settings: "tnum", "zero", "ss01";
+      position: relative;
+      overflow: hidden;
+    }
+    .section.register-c::before { display: none; }
+    .section.register-c::after {
+      content: '';
+      position: absolute;
+      top: 16px; left: 16px; right: 16px;
+      height: 1px;
+      background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.25) 0 6px, transparent 6px 10px);
+      opacity: 0.6;
+    }
+
+    .section.register-c .section-head {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 40px;
+    }
+    .section.register-c .section-head .eyebrow {
+      color: rgba(255, 255, 255, 0.55);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+    .section.register-c .section-head .eyebrow::before {
+      content: '// ';
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .section.register-c .section-head h2 {
+      color: #fafafa;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500;
+      font-size: clamp(1.7rem, 2.6vw, 2.3rem);
+      letter-spacing: -0.015em;
+      line-height: 1.15;
+    }
+    .section.register-c .section-head p,
+    .section.register-c p {
+      color: rgba(250, 250, 250, 0.72);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.98rem;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+
+    /* Vidéo · médiathèque */
+    .section.register-c .video-player-shell {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+      background: #000;
+      margin-bottom: 28px;
+    }
+    .section.register-c .video-player-shell video {
+      border-radius: 0;
+      background: #000;
+      display: block;
+      width: 100%;
+    }
+    .section.register-c .video-selector {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .section.register-c .video-selector button {
+      background: #070707;
+      border: none;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0;
+      padding: 18px 20px;
+      text-align: left;
+      cursor: pointer;
+      color: rgba(250, 250, 250, 0.72);
+      font-family: 'JetBrains Mono', monospace;
+      transition: background 0.2s ease, color 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+    .section.register-c .video-selector button:last-child { border-right: none; }
+    .section.register-c .video-selector button::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 2px;
+      background: transparent;
+      transition: background 0.2s ease;
+    }
+    .section.register-c .video-selector button strong {
+      color: #fafafa;
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .section.register-c .video-selector button span {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.86rem;
+      line-height: 1.45;
+      color: rgba(250, 250, 250, 0.58);
+    }
+    .section.register-c .video-selector button:hover {
+      background: #101010;
+      color: #fafafa;
+    }
+    .section.register-c .video-selector button:hover::before {
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .section.register-c .video-selector button.is-active {
+      background: #101010;
+      color: #fafafa;
+    }
+    .section.register-c .video-selector button.is-active::before {
+      background: #fafafa;
+    }
+    .section.register-c .video-selector button.is-active strong::before {
+      content: '● ';
+      color: #fafafa;
+    }
+
+    /* Contact · CTA grid */
+    .section.register-c .cta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .section.register-c .cta-card {
+      background: #070707;
+      border: none;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0;
+      padding: 32px 30px;
+      position: relative;
+    }
+    .section.register-c .cta-card:last-child { border-right: none; }
+    .section.register-c .cta-card::before {
+      content: attr(data-slot);
+      position: absolute;
+      top: 14px; right: 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 0.2em;
+    }
+    .section.register-c .cta-card h3 {
+      color: #fafafa;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500;
+      font-size: 1.15rem;
+      letter-spacing: -0.005em;
+      margin: 0 0 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+    }
+    .section.register-c .cta-card p {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: rgba(250, 250, 250, 0.68);
+      margin-bottom: 20px;
+    }
+
+    /* Download list */
+    .section.register-c .download-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .section.register-c .download-list a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fafafa;
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      transition: color 0.15s ease, padding-left 0.15s ease;
+      position: relative;
+    }
+    .section.register-c .download-list a::before {
+      content: '↓';
+      position: absolute;
+      left: -2px;
+      color: rgba(255, 255, 255, 0.4);
+      opacity: 0;
+      transition: opacity 0.15s ease, left 0.15s ease;
+    }
+    .section.register-c .download-list a:hover {
+      color: #fff;
+      padding-left: 18px;
+    }
+    .section.register-c .download-list a:hover::before {
+      opacity: 1;
+      left: 2px;
+    }
+    .section.register-c .download-list a > span:first-child {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      color: rgba(250, 250, 250, 0.82);
+    }
+    .section.register-c .download-list a > span:last-child {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* Contact form */
+    .section.register-c .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 4px;
+    }
+    .section.register-c .contact-form-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .section.register-c .contact-form label {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 6px;
+    }
+    .section.register-c .contact-form label::before {
+      content: '> ';
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .section.register-c .contact-form input,
+    .section.register-c .contact-form select,
+    .section.register-c .contact-form textarea {
+      width: 100%;
+      background: #050505;
+      color: #fafafa;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0;
+      padding: 10px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .section.register-c .contact-form textarea {
+      min-height: 110px;
+      resize: vertical;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .section.register-c .contact-form input:focus,
+    .section.register-c .contact-form select:focus,
+    .section.register-c .contact-form textarea:focus {
+      outline: none;
+      border-color: #fafafa;
+      background: #0a0a0a;
+    }
+    .section.register-c .contact-form .button-primary {
+      background: #fafafa;
+      color: #050505;
+      border: 1px solid #fafafa;
+      border-radius: 0;
+      padding: 12px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+      align-self: flex-start;
+      margin-top: 6px;
+    }
+    .section.register-c .contact-form .button-primary::after {
+      content: ' →';
+    }
+    .section.register-c .contact-form .button-primary:hover {
+      background: transparent;
+      color: #fafafa;
+    }
+
+    .section.register-c.is-spotlit {
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 1120px) {
+      .section.register-c .section-head {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+      .section.register-c .video-selector {
+        grid-template-columns: 1fr;
+      }
+      .section.register-c .video-selector button {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .section.register-c .video-selector button:last-child { border-bottom: none; }
+      .section.register-c .cta-grid {
+        grid-template-columns: 1fr;
+      }
+      .section.register-c .cta-card {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .section.register-c .cta-card:last-child { border-bottom: none; }
+      .section.register-c .contact-form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Respect des préférences utilisateur ─────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+      .ambient-orb,
+      .asset-preview.wave::before,
+      .asset-preview.tunnel::before,
+      .asset-preview.audio::before,
+      .asset-preview.chassis::after,
+      .map-path,
+      .audio-wave span,
+      .track-fill {
+        animation: none !important;
+      }
+    }
+
     @media (max-width: 1120px) {
       .hero,
       .briefing-shell,
@@ -1932,6 +4405,14 @@
       .footer {
         flex-direction: column;
       }
+
+      .governance-grid,
+      .risks-grid,
+      .video-selector,
+      .contact-form-row,
+      .footer-meta {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -1946,20 +4427,28 @@
           <div class="brand-mark">ISL</div>
           <div class="brand-copy">
             <strong>Institut St-Laurent</strong>
-            <span>Souverainete AGI · Robotique · Quebec</span>
+            <span>Souveraineté AGI · Robotique · Québec</span>
           </div>
         </a>
 
         <nav class="nav-links" aria-label="Navigation principale">
-          <a href="#stack" data-nav-target="stack">Stack</a>
-          <a href="#agi" data-nav-target="agi">Axe AGI</a>
-          <a href="#robotique" data-nav-target="robotique">Pivot robotique</a>
-          <a href="#corridor" data-nav-target="corridor">Corridor</a>
-          <a href="#assets" data-nav-target="assets">Assets</a>
-          <a href="#contact" data-nav-target="contact">Contact</a>
+          <a href="#stack" data-nav-target="stack" data-i18n="nav.stack">Méthode</a>
+          <a href="#agi" data-nav-target="agi" data-i18n="nav.agi">Axe AGI</a>
+          <a href="#robotique" data-nav-target="robotique" data-i18n="nav.robotique">Robotique</a>
+          <a href="#corridor" data-nav-target="corridor" data-i18n="nav.corridor">Corridor</a>
+          <a href="#mediatheque" data-nav-target="mediatheque" data-i18n="nav.media">Vidéos</a>
+          <a href="#about" data-nav-target="about" data-i18n="nav.about">À propos</a>
+          <a href="#partenaires" data-nav-target="partenaires" data-i18n="nav.partners">Partenaires</a>
+          <a href="#risques" data-nav-target="risques" data-i18n="nav.risks">Risques</a>
         </nav>
 
-        <a class="nav-cta" href="#contact">Direction strategique</a>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="lang-toggle" role="group" aria-label="Langue du site">
+            <button type="button" data-lang="fr" class="is-active" aria-pressed="true">FR</button>
+            <button type="button" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+          <a class="nav-cta" href="#contact" data-i18n="nav.cta">Briefing</a>
+        </div>
       </div>
     </header>
 
@@ -1967,12 +4456,12 @@
       <section class="hero">
         <article class="hero-copy glass-panel reveal is-visible">
           <div>
-            <span class="eyebrow">Institut St-Laurent · Think Tank AGI · Montreal 2026</span>
-            <h1>Quebec peut encore <span>choisir son role</span> dans la course AGI.</h1>
-            <p class="hero-lead">18 mois. C'est la fenetre politique avant que les standards AGI soient verrouilleS au G7 de juin 2027. Le Quebec a deja tout — MILA, Poly, McGill, energie hydro, corridor manufacturier. Ce qui manque: un directeur AGI nomme dans les 30 prochains jours, un cluster souverain operationnel en janvier 2027, et une architecture de decision qui transforme la recherche en puissance industrielle reelle.</p>
+            <span class="eyebrow">Institut St-Laurent · Think Tank AGI · Montréal 2026</span>
+            <h1>Le Québec peut encore <span>choisir son rôle</span> dans la course AGI.</h1>
+            <p class="hero-lead">18 mois. C'est la fenêtre politique avant que les standards AGI soient verrouillés au G7 de juin 2027. Le Québec a déjà tout — MILA, Polytechnique, McGill, énergie hydro, corridor manufacturier. Ce qui manque : un directeur AGI nommé dans les 30 prochains jours, un cluster souverain opérationnel en janvier 2027, et une architecture de décision qui transforme la recherche en puissance industrielle réelle.</p>
 
             <div class="hero-actions">
-              <a class="button-primary" href="#agi">Axe souverainete AGI</a>
+              <a class="button-primary" href="#agi">Axe souveraineté AGI</a>
               <a class="button-secondary" href="#robotique">Pivot robotique Rive-Nord</a>
             </div>
           </div>
@@ -1980,15 +4469,15 @@
           <div class="hero-meta">
             <div class="meta-card">
               <strong>200 G$</strong>
-              <span>Investissement cumule US-Chine en AGI. Le Quebec repond par 0 cluster souverain, 0 modele fondation proprietaire et &lt;500 M$/an de capital risque IA.</span>
+              <span>Investissement cumulé US-Chine en AGI 2023-2025. Le Québec répond par 0 cluster souverain, 0 modèle fondation propriétaire et &lt; 500 M$/an de capital de risque IA.<a href="#about" class="source-citation" aria-label="Source">S1</a></span>
             </div>
             <div class="meta-card">
               <strong>6/10</strong>
-              <span>Score de preparation AGI du Quebec. Talent et recherche: 9/10. Compute souverain et modele fondation: 1/10. Le desequilibre est structurel — et corrigeable en 18 mois.</span>
+              <span>Score de préparation AGI du Québec. Talent et recherche : 9/10. Compute souverain et modèle fondation : 1/10. Le déséquilibre est structurel — et corrigeable en 18 mois.<a href="#risques" class="source-citation" aria-label="Méthodologie">M</a></span>
             </div>
             <div class="meta-card">
               <strong>100 M$/mois</strong>
-              <span>Valeur perdue chaque mois sans cluster souverain: drain PhD, contrats d'entrainement perdus, dependance AWS/Azure totale. Irreversible apres G7 juin 2027.</span>
+              <span>Valeur estimée non captée chaque mois sans cluster souverain : drain PhD, contrats d'entraînement perdus, dépendance AWS/Azure totale. Scénario Architecte vs Suiveur — voir intervalles de confiance.<a href="#risques" class="source-citation" aria-label="Voir risques">R5</a></span>
             </div>
           </div>
         </article>
@@ -2062,11 +4551,43 @@
         </aside>
       </section>
 
+      <section class="valley-strip reveal" aria-label="Vallée du Saint-Laurent · Rendu topographique temps réel">
+        <div id="valley-webgl" class="valley-webgl-layer" aria-hidden="true"></div>
+        <div class="valley-labels" id="valley-labels" aria-hidden="true">
+          <span class="valley-label" data-city="ottawa"><em>OTTAWA</em><i>45.42°N</i></span>
+          <span class="valley-label" data-city="montreal"><em>MONTRÉAL</em><i>45.50°N · pôle</i></span>
+          <span class="valley-label" data-city="rive-nord"><em>RIVE-NORD</em><i>45.75°N</i></span>
+          <span class="valley-label" data-city="trois-rivieres"><em>TROIS-RIVIÈRES</em><i>46.34°N</i></span>
+          <span class="valley-label" data-city="quebec"><em>QUÉBEC</em><i>46.81°N · capitale</i></span>
+          <span class="valley-label" data-city="sherbrooke"><em>SHERBROOKE</em><i>45.40°N</i></span>
+        </div>
+        <div class="valley-hud valley-hud-tl">
+          <span class="valley-hud-label">LAT · LON</span>
+          <span class="valley-hud-value" id="valley-hud-coords">46.81°N · 71.21°W</span>
+        </div>
+        <div class="valley-hud valley-hud-tr">
+          <span class="valley-hud-label">CORRIDOR · ACTIF</span>
+          <span class="valley-hud-value">650 km · 6 nœuds · 4 500 emplois/5 ans</span>
+        </div>
+        <div class="valley-hud valley-hud-bl">
+          <span class="valley-hud-label">RENDU · WEBGL</span>
+          <span class="valley-hud-value" id="valley-hud-render"><span class="valley-hud-dot"></span>TRANSMITTING · 60 FPS</span>
+        </div>
+        <div class="valley-hud valley-hud-br">
+          <span class="valley-hud-label">TOPOGRAPHIE</span>
+          <span class="valley-hud-value">NRCan · Natural Earth · 23 pts centerline</span>
+        </div>
+        <div class="valley-caption">
+          <span class="valley-caption-eyebrow">// LANDSCAPE · CORRIDOR SAINT-LAURENT · RENDU 3D TEMPS RÉEL</span>
+          <span class="valley-caption-title">Un fleuve, six nœuds, un axe manufacturier.</span>
+        </div>
+      </section>
+
       <section class="section glass-panel reveal" id="briefing">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Cabinet briefing · Trois decisions · J+30</span>
-            <h2>Trois decisions ont 30 jours. Apres, elles appartiennent a quelqu'un d'autre.</h2>
+            <span class="eyebrow">Cabinet briefing · Trois décisions · J+30</span>
+            <h2>Trois décisions ont 30 jours. Après, elles appartiennent à quelqu'un d'autre.</h2>
           </div>
           <p>Un ministre, un cabinet ou un partenaire industriel doit comprendre en moins d'une minute quelle machine financer, ou elle se construit, et pourquoi le delai est irreversible. Ces trois decisions structurent la prochaine decennie economique du Quebec.</p>
         </div>
@@ -2132,44 +4653,64 @@
         </div>
       </section>
 
-      <section class="section glass-panel reveal" id="stack">
+      <div class="register-divider reveal" aria-hidden="false">
+        <div>
+          <div class="kicker">Rapport technique · Section I</div>
+          <h2>Cadre analytique L0 → L4</h2>
+        </div>
+        <div class="meta"><span class="folio">§ I · p. 01 / 02</span>Lecture 12 min · Révision pair-à-pair · Mars 2026</div>
+      </div>
+
+      <section class="section register-b reveal" id="stack">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Cadre analytique · Architecture L0→L4</span>
-            <h2>L'ISL ne reagit pas aux signaux AGI — il les lit a cinq couches de profondeur.</h2>
+            <span class="eyebrow">Cadre analytique · Architecture L0 → L4</span>
+            <h2>L'ISL ne réagit pas aux signaux AGI — il les lit à cinq couches de profondeur.</h2>
           </div>
-          <div class="section-note">Le modele L0→L4 est le pilier methodologique canonique de l'ISL. Chaque recommandation, chaque rapport, chaque decision d'investissement trace son chemin a travers ces couches avant d'atterrir dans une action. La logique emerge hierarchiquement des patterns — pas de couches paralleles.</div>
+          <div class="section-note">Le modèle L0→L4 est le pilier méthodologique canonique de l'ISL. Chaque recommandation, chaque rapport, chaque décision d'investissement trace son chemin à travers ces couches avant d'atterrir dans une action. La logique émerge hiérarchiquement des patterns — pas de couches parallèles.</div>
         </div>
 
         <div class="stack-grid">
           <article class="stack-card">
-            <small>L0 · Matiere — Pattern brut · Match(x)</small>
+            <small>L0 · Matière — Pattern brut · Match(x)</small>
             <h3>Perception des signaux faibles</h3>
-            <p>L'ISL monitore en continu: benchmarks de capacite frontier (GPT-5, Claude 4, Gemini Ultra), publications ArXiv, mouvements VC/PE en IA, decisions reglementaires G7. Signaux critiques actifs: drain 40% doctorants MILA vers Anthropic/OpenAI 2023-2025, zero cluster souverain &gt;1 000 H100 au Quebec, standard AGI en cours de verrouillage pre-G7 juin 2027.</p>
+            <p>L'ISL monitore en continu : benchmarks de capacité frontier (GPT-5, Claude 4, Gemini Ultra)<a href="#fn-1" id="fn-1-ref" class="footnote">1</a>, publications ArXiv, mouvements VC/PE en IA, décisions réglementaires G7. Signaux critiques actifs : drain 40 % doctorants MILA vers Anthropic / OpenAI 2023-2025<a href="#fn-2" id="fn-2-ref" class="footnote">2</a>, zéro cluster souverain &gt; 1 000 H100 au Québec<a href="#fn-3" id="fn-3-ref" class="footnote">3</a>, standard AGI en cours de verrouillage pré-G7 juin 2027.</p>
           </article>
           <article class="stack-card">
-            <small>L1 · Forme — Pattern organise · Cluster(P)</small>
-            <h3>Structuration des enjeux emergents</h3>
-            <p>Classer les signaux en enjeux coherents: concentration compute (3 acteurs controlent 85% des H100 mondiaux), fragmentation reglementaire (EU AI Act vs EO 14110 vs vide juridique QC), fenetre manufacturiere robotique 18-24 mois avant verrouillage chaine Tokyo/Seoul. Le modele Terman (Stanford 1955) applique: Quebec a 80% des briques, il manque la boucle d'essaimage HP-Fairchild et la gouvernance de corridor.</p>
+            <small>L1 · Forme — Pattern organisé · Cluster(P)</small>
+            <h3>Structuration des enjeux émergents</h3>
+            <p>Classer les signaux en enjeux cohérents : concentration compute (3 acteurs contrôlent 85 % des H100 mondiaux)<a href="#fn-4" id="fn-4-ref" class="footnote">4</a>, fragmentation réglementaire (EU AI Act vs EO 14110 vs vide juridique QC), fenêtre manufacturière robotique 18-24 mois avant verrouillage chaîne Tokyo / Séoul. Le modèle Terman (Stanford 1955)<a href="#fn-5" id="fn-5-ref" class="footnote">5</a> appliqué : le Québec a 80 % des briques, il manque la boucle d'essaimage HP-Fairchild et la gouvernance de corridor.</p>
           </article>
           <article class="stack-card">
-            <small>L2→L3 · Coherence et Regle — Select + Reason</small>
-            <h3>Causalite, plans sequences, seuils</h3>
-            <p>Sans cluster souverain → pas de modele fondation QC → pas de Standard Montreal → pas de siege diplomatique G7 AGI. La chaine causale est irreversible apres juin 2027. Plans sequences: J+30 directeur nomme, M6 cluster en construction, M12 modele fondation 100B params, M18 usine Rive-Nord a cadence. Seuil rentabilite robotique: 50 unites contrats publics M12-18. Etalon: Singapore 2019-2024 — 1,2 G$ investissement → 8,4 G$ PIB IA en 5 ans.</p>
+            <small>L2 → L3 · Cohérence et Règle — Select + Reason</small>
+            <h3>Causalité, plans séquencés, seuils</h3>
+            <p>Sans cluster souverain → pas de modèle fondation QC → pas de Standard Montréal → pas de siège diplomatique G7 AGI. La chaîne causale est irréversible après juin 2027. Plans séquencés : J+30 directeur nommé, M6 cluster en construction, M12 modèle fondation 100B params, M18 usine Rive-Nord à cadence. Seuil rentabilité robotique : 50 unités contrats publics M12-18. Étalon : Singapour 2019-2024 — 1,2 G$ investissement → 8,4 G$ PIB IA en 5 ans<a href="#fn-6" id="fn-6-ref" class="footnote">6</a>.</p>
           </article>
           <article class="stack-card">
-            <small>L4 · Direction — Metalogique · Meta(R)</small>
-            <h3>Repositionnement geopolitique continu</h3>
-            <p>Auto-correction permanente: chaque signal recalibre le plan. ISL ajuste la these a chaque publication MILA, annonce NVIDIA, mouvement diplomatique UK-AISI / US-NIST. Objectif 2030: Scenario Architecte +35% PIB, 50 000 emplois directs, 10 G$/an revenus licences export. Vs Scenario Suiveur: +5% PIB, regles decidees a Washington et Bruxelles, 5 G$/an de dependance structurelle cumulee. Le Standard Montreal — 15 pays adherents en 2028 — est la materialisation publique de L4.</p>
+            <small>L4 · Direction — Métalogique · Meta(R)</small>
+            <h3>Repositionnement géopolitique continu</h3>
+            <p>Auto-correction permanente : chaque signal recalibre le plan. L'ISL ajuste la thèse à chaque publication MILA, annonce NVIDIA, mouvement diplomatique UK AISI / US NIST. Objectif 2030 : Scénario Architecte +35 % PIB, 50 000 emplois directs, 10 G$/an revenus licences export. Vs Scénario Suiveur : +5 % PIB, règles décidées à Washington et Bruxelles, 5 G$/an de dépendance structurelle cumulée. Le Standard Montréal — 15 pays adhérents en 2028 — est la matérialisation publique de L4.</p>
           </article>
+        </div>
+
+        <div class="footnotes-list">
+          <h4>Sources et références</h4>
+          <ol>
+            <li id="fn-1">Stanford AI Index Report 2025, chapitre 2 « Technical Performance » : <a href="https://aiindex.stanford.edu/" target="_blank" rel="noopener">aiindex.stanford.edu</a>. <a href="#fn-1-ref" class="backref" aria-label="Retour au texte">↩</a></li>
+            <li id="fn-2">Estimation ISL croisée sur cohortes MILA 2023-2025 (LinkedIn + publications) ; marge d'erreur ±8 %. <a href="#fn-2-ref" class="backref" aria-label="Retour au texte">↩</a></li>
+            <li id="fn-3">Inventaire Epoch AI des clusters &gt; 1 000 H100 dans le monde, 2025 : <a href="https://epochai.org/" target="_blank" rel="noopener">epochai.org</a>. <a href="#fn-3-ref" class="backref" aria-label="Retour au texte">↩</a></li>
+            <li id="fn-4">SemiAnalysis, « GPU Supply Analysis », 2024 : <a href="https://semianalysis.com/" target="_blank" rel="noopener">semianalysis.com</a>. <a href="#fn-4-ref" class="backref" aria-label="Retour au texte">↩</a></li>
+            <li id="fn-5">Lécuyer C., <em>Making Silicon Valley</em>, MIT Press, 2006 ; Terman F., Stanford Industrial Park, 1955. <a href="#fn-5-ref" class="backref" aria-label="Retour au texte">↩</a></li>
+            <li id="fn-6">IMDA Singapore, « National AI Strategy 2.0 », 2023 ; données croisées OECD.AI Observatory. <a href="#fn-6-ref" class="backref" aria-label="Retour au texte">↩</a></li>
+          </ol>
         </div>
       </section>
 
       <section class="section glass-panel reveal" id="agi">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Axe AGI · Hub de souverainete · Rapport ISL 2026</span>
-            <h2>Zero cluster souverain. 40% des cerveaux partis. 18 mois avant verrouillage.</h2>
+            <span class="eyebrow">Axe AGI · Hub de souveraineté · Rapport ISL 2026</span>
+            <h2>Zéro cluster souverain. 40 % des cerveaux partis. 18 mois avant verrouillage.</h2>
           </div>
           <p>Le rapport AGI de l'ISL etablit trois diagnostics irreversibles: le Quebec n'a aucune infrastructure compute independante, il perd ses meilleurs chercheurs au rythme de 40% par cohorte, et la fenetre pour imposer un standard Montréal au G7 se ferme en juin 2027. Chaque mois de delai coute 100 M$ de valeur economique non capturee.</p>
         </div>
@@ -2293,8 +4834,8 @@
       <section class="section glass-panel reveal" id="robotique">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Axe robotique · Usine Rive-Nord · Decision GO/NO-GO J+30</span>
-            <h2>18 mois pour ouvrir l'usine avant que Tokyo et Seoul verrouillent la chaine mondiale.</h2>
+            <span class="eyebrow">Axe robotique · Usine Rive-Nord · Décision GO/NO-GO J+30</span>
+            <h2>18 mois pour ouvrir l'usine avant que Tokyo et Séoul verrouillent la chaîne mondiale.</h2>
           </div>
           <p>Le Quebec a trois avantages uniques et temporaires: energie hydro a 4 cents/kWh (vs 22 cents a Tokyo), MILA pour les modeles VLA francophones, et corridor manufacturier Rive-Nord actif. La fenetre est 18-24 mois. Budget 75 M$. Decision GO/NO-GO requise avant le 17 mai 2026. Le seuil de rentabilite est a 50 unites contrats publics a M18.</p>
         </div>
@@ -2322,13 +4863,165 @@
                     <stop offset="0%" stop-color="#7dddff"></stop>
                     <stop offset="100%" stop-color="#009ADE"></stop>
                   </linearGradient>
+                  <linearGradient id="body-fill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0099de" stop-opacity="0.14"/>
+                    <stop offset="55%" stop-color="#0099de" stop-opacity="0.06"/>
+                    <stop offset="100%" stop-color="#0099de" stop-opacity="0"/>
+                  </linearGradient>
+                  <radialGradient id="chip-glow" cx="0.5" cy="0.5" r="0.5">
+                    <stop offset="0%" stop-color="#00e5c9" stop-opacity="0.55"/>
+                    <stop offset="100%" stop-color="#00e5c9" stop-opacity="0"/>
+                  </radialGradient>
                   <filter id="zone-glow">
                     <feGaussianBlur stdDeviation="3" result="blur"/>
                     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
                   </filter>
                 </defs>
 
-                <!-- Skeleton (unchanged) -->
+                <!-- CAD rulers (behind everything) -->
+                <g stroke="rgba(132, 220, 255, 0.32)" fill="rgba(132, 220, 255, 0.42)" font-family="'JetBrains Mono', monospace" font-size="6" letter-spacing="1">
+                  <line x1="26" y1="40" x2="26" y2="500" stroke-width="0.4"/>
+                  <g stroke-width="0.6">
+                    <line x1="22" y1="70" x2="30" y2="70"/>
+                    <line x1="24" y1="100" x2="30" y2="100" stroke-width="0.3"/>
+                    <line x1="22" y1="130" x2="30" y2="130"/>
+                    <line x1="24" y1="160" x2="30" y2="160" stroke-width="0.3"/>
+                    <line x1="22" y1="190" x2="30" y2="190"/>
+                    <line x1="24" y1="220" x2="30" y2="220" stroke-width="0.3"/>
+                    <line x1="22" y1="250" x2="30" y2="250"/>
+                    <line x1="24" y1="280" x2="30" y2="280" stroke-width="0.3"/>
+                    <line x1="22" y1="310" x2="30" y2="310"/>
+                    <line x1="24" y1="340" x2="30" y2="340" stroke-width="0.3"/>
+                    <line x1="22" y1="370" x2="30" y2="370"/>
+                    <line x1="24" y1="400" x2="30" y2="400" stroke-width="0.3"/>
+                    <line x1="22" y1="430" x2="30" y2="430"/>
+                    <line x1="24" y1="460" x2="30" y2="460" stroke-width="0.3"/>
+                  </g>
+                  <text x="8" y="73">070</text>
+                  <text x="8" y="133">130</text>
+                  <text x="8" y="193">190</text>
+                  <text x="8" y="253">250</text>
+                  <text x="8" y="313">310</text>
+                  <text x="8" y="373">370</text>
+                  <text x="8" y="433">430</text>
+
+                  <line x1="40" y1="505" x2="470" y2="505" stroke-width="0.4"/>
+                  <line x1="100" y1="501" x2="100" y2="509" stroke-width="0.6"/>
+                  <line x1="150" y1="503" x2="150" y2="507" stroke-width="0.3"/>
+                  <line x1="200" y1="501" x2="200" y2="509" stroke-width="0.6"/>
+                  <line x1="250" y1="498" x2="250" y2="512" stroke-width="0.8"/>
+                  <line x1="300" y1="501" x2="300" y2="509" stroke-width="0.6"/>
+                  <line x1="350" y1="503" x2="350" y2="507" stroke-width="0.3"/>
+                  <line x1="400" y1="501" x2="400" y2="509" stroke-width="0.6"/>
+                  <text x="250" y="519" text-anchor="middle" letter-spacing="3" fill="rgba(132, 220, 255, 0.55)">AXIS · 0</text>
+                  <text x="36" y="26" letter-spacing="2" fill="rgba(132, 220, 255, 0.55)">CAD · MODEL REV 0.4</text>
+                  <text x="474" y="26" text-anchor="end" letter-spacing="2" fill="rgba(64, 248, 196, 0.6)">● LIVE</text>
+                </g>
+
+                <!-- Internal components (behind wireframe skeleton) -->
+                <g id="chassis-internals" opacity="0.92">
+                  <!-- Body silhouettes (translucent volumes) -->
+                  <ellipse cx="250" cy="88" rx="38" ry="42" fill="url(#body-fill)"/>
+                  <path d="M208 126 L292 126 L312 275 L188 275 Z" fill="url(#body-fill)" opacity="0.75"/>
+                  <path d="M204 268 L296 268 L292 360 L208 360 Z" fill="url(#body-fill)" opacity="0.55"/>
+                  <path d="M176 160 L112 218 L122 336 L162 346 L184 264 Z" fill="url(#body-fill)" opacity="0.5"/>
+                  <path d="M324 160 L388 218 L378 336 L338 346 L316 264 Z" fill="url(#body-fill)" opacity="0.5"/>
+                  <path d="M198 355 L228 355 L214 488 L188 488 Z" fill="url(#body-fill)" opacity="0.5"/>
+                  <path d="M272 355 L302 355 L312 488 L286 488 Z" fill="url(#body-fill)" opacity="0.5"/>
+
+                  <!-- Head: VLA chip + stereo vision -->
+                  <circle cx="250" cy="75" r="12" fill="url(#chip-glow)"/>
+                  <circle cx="238" cy="72" r="2.2" fill="#00e5c9"/>
+                  <circle cx="262" cy="72" r="2.2" fill="#00e5c9"/>
+                  <line x1="238" y1="72" x2="262" y2="72" stroke="rgba(0, 229, 201, 0.35)" stroke-width="0.5" stroke-dasharray="1 2"/>
+                  <rect x="236" y="82" width="28" height="18" rx="2" fill="none" stroke="rgba(0, 229, 201, 0.55)" stroke-width="0.8"/>
+                  <text x="250" y="94" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="6" fill="#00e5c9" letter-spacing="1.5" font-weight="500">VLA</text>
+
+                  <!-- Torso: battery + SoC + radiator -->
+                  <text x="250" y="138" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="5" fill="#9edfff" letter-spacing="1" opacity="0.7">BAT · 4.2kWh</text>
+                  <rect x="218" y="140" width="64" height="14" rx="1" fill="none" stroke="rgba(132, 220, 255, 0.5)" stroke-width="0.8"/>
+                  <line x1="222" y1="144" x2="278" y2="144" stroke="rgba(132, 220, 255, 0.32)" stroke-width="0.4"/>
+                  <line x1="222" y1="148" x2="278" y2="148" stroke="rgba(132, 220, 255, 0.32)" stroke-width="0.4"/>
+                  <line x1="222" y1="152" x2="278" y2="152" stroke="rgba(132, 220, 255, 0.32)" stroke-width="0.4"/>
+
+                  <g stroke="rgba(132, 220, 255, 0.55)" stroke-width="0.7" fill="none">
+                    <rect x="225" y="168" width="50" height="38" rx="1"/>
+                    <line x1="230" y1="166" x2="230" y2="168"/>
+                    <line x1="240" y1="166" x2="240" y2="168"/>
+                    <line x1="250" y1="166" x2="250" y2="168"/>
+                    <line x1="260" y1="166" x2="260" y2="168"/>
+                    <line x1="270" y1="166" x2="270" y2="168"/>
+                    <line x1="230" y1="206" x2="230" y2="208"/>
+                    <line x1="240" y1="206" x2="240" y2="208"/>
+                    <line x1="250" y1="206" x2="250" y2="208"/>
+                    <line x1="260" y1="206" x2="260" y2="208"/>
+                    <line x1="270" y1="206" x2="270" y2="208"/>
+                  </g>
+                  <rect x="240" y="180" width="20" height="14" rx="0.5" fill="rgba(132, 220, 255, 0.1)"/>
+                  <text x="250" y="191" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="6" fill="#9edfff" letter-spacing="1" font-weight="500">SoC</text>
+
+                  <g stroke="rgba(132, 220, 255, 0.28)" stroke-width="0.5" fill="none">
+                    <line x1="218" y1="216" x2="282" y2="216"/>
+                    <line x1="218" y1="222" x2="282" y2="222"/>
+                    <line x1="218" y1="228" x2="282" y2="228"/>
+                    <line x1="218" y1="234" x2="282" y2="234"/>
+                    <line x1="218" y1="240" x2="282" y2="240"/>
+                    <line x1="218" y1="246" x2="282" y2="246"/>
+                  </g>
+                  <text x="286" y="234" font-family="'JetBrains Mono', monospace" font-size="4.5" fill="rgba(132, 220, 255, 0.55)" letter-spacing="0.8">COOL</text>
+
+                  <!-- Spine cable -->
+                  <path d="M250 134 Q246 200, 250 270" stroke="rgba(132, 220, 255, 0.3)" stroke-width="0.9" fill="none" stroke-dasharray="2 2"/>
+
+                  <!-- Shoulder servos (large) -->
+                  <circle cx="208" cy="126" r="8.5" fill="rgba(10, 24, 40, 0.88)" stroke="rgba(132, 220, 255, 0.65)" stroke-width="0.9"/>
+                  <circle cx="208" cy="126" r="4" fill="none" stroke="rgba(132, 220, 255, 0.45)" stroke-width="0.5"/>
+                  <circle cx="208" cy="126" r="1.6" fill="#78d6ff"/>
+                  <circle cx="292" cy="126" r="8.5" fill="rgba(10, 24, 40, 0.88)" stroke="rgba(132, 220, 255, 0.65)" stroke-width="0.9"/>
+                  <circle cx="292" cy="126" r="4" fill="none" stroke="rgba(132, 220, 255, 0.45)" stroke-width="0.5"/>
+                  <circle cx="292" cy="126" r="1.6" fill="#78d6ff"/>
+
+                  <!-- Shoulder angle arcs -->
+                  <path d="M196 126 A 12 12 0 0 1 220 126" stroke="rgba(0, 229, 201, 0.4)" stroke-width="0.6" fill="none" stroke-dasharray="1 2"/>
+                  <path d="M280 126 A 12 12 0 0 1 304 126" stroke="rgba(0, 229, 201, 0.4)" stroke-width="0.6" fill="none" stroke-dasharray="1 2"/>
+
+                  <!-- Elbow servos -->
+                  <circle cx="160" cy="266" r="6.5" fill="rgba(10, 24, 40, 0.88)" stroke="rgba(132, 220, 255, 0.6)" stroke-width="0.85"/>
+                  <circle cx="160" cy="266" r="2.5" fill="none" stroke="rgba(132, 220, 255, 0.4)" stroke-width="0.4"/>
+                  <circle cx="340" cy="266" r="6.5" fill="rgba(10, 24, 40, 0.88)" stroke="rgba(132, 220, 255, 0.6)" stroke-width="0.85"/>
+                  <circle cx="340" cy="266" r="2.5" fill="none" stroke="rgba(132, 220, 255, 0.4)" stroke-width="0.4"/>
+
+                  <!-- Hip: IMU cube -->
+                  <rect x="240" y="286" width="20" height="20" rx="1" fill="rgba(10, 24, 40, 0.85)" stroke="rgba(120, 214, 255, 0.6)" stroke-width="0.85"/>
+                  <line x1="250" y1="290" x2="250" y2="302" stroke="rgba(120, 214, 255, 0.65)" stroke-width="0.6"/>
+                  <line x1="244" y1="296" x2="256" y2="296" stroke="rgba(120, 214, 255, 0.65)" stroke-width="0.6"/>
+                  <circle cx="250" cy="296" r="1.2" fill="#78d6ff"/>
+                  <text x="250" y="322" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="5" fill="#9edfff" letter-spacing="1" opacity="0.75">IMU · 9-DoF</text>
+
+                  <!-- Knee servos -->
+                  <circle cx="214" cy="352" r="6.5" fill="rgba(10, 24, 40, 0.88)" stroke="rgba(132, 220, 255, 0.6)" stroke-width="0.85"/>
+                  <circle cx="214" cy="352" r="2.5" fill="none" stroke="rgba(132, 220, 255, 0.4)" stroke-width="0.4"/>
+                  <circle cx="286" cy="352" r="6.5" fill="rgba(10, 24, 40, 0.88)" stroke="rgba(132, 220, 255, 0.6)" stroke-width="0.85"/>
+                  <circle cx="286" cy="352" r="2.5" fill="none" stroke="rgba(132, 220, 255, 0.4)" stroke-width="0.4"/>
+
+                  <!-- Ankle actuators -->
+                  <circle cx="198" cy="452" r="5" fill="rgba(10, 24, 40, 0.85)" stroke="rgba(132, 220, 255, 0.55)" stroke-width="0.75"/>
+                  <circle cx="302" cy="452" r="5" fill="rgba(10, 24, 40, 0.85)" stroke="rgba(132, 220, 255, 0.55)" stroke-width="0.75"/>
+
+                  <!-- Leg cable runs -->
+                  <path d="M214 358 Q212 400, 214 445" stroke="rgba(132, 220, 255, 0.22)" stroke-width="0.7" fill="none" stroke-dasharray="2 2"/>
+                  <path d="M286 358 Q288 400, 286 445" stroke="rgba(132, 220, 255, 0.22)" stroke-width="0.7" fill="none" stroke-dasharray="2 2"/>
+
+                  <!-- Forearm actuator stripes -->
+                  <g stroke="rgba(132, 220, 255, 0.3)" stroke-width="0.5" fill="none">
+                    <line x1="135" y1="280" x2="155" y2="330"/>
+                    <line x1="130" y1="286" x2="150" y2="336"/>
+                    <line x1="345" y1="280" x2="365" y2="330"/>
+                    <line x1="350" y1="286" x2="370" y2="336"/>
+                  </g>
+                </g>
+
+                <!-- Skeleton -->
                 <g fill="none" stroke="url(#wire)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="250" cy="88" r="44"></circle>
                   <path d="M224 78 L250 60 L276 78"></path>
@@ -2355,7 +5048,7 @@
                 </g>
 
                 <!-- Joint dots -->
-                <g fill="#7dddff" opacity="0.86">
+                <g class="chassis-joints" fill="#7dddff" opacity="0.86">
                   <circle cx="250" cy="88" r="5"></circle>
                   <circle cx="208" cy="126" r="4"></circle>
                   <circle cx="292" cy="126" r="4"></circle>
@@ -2377,41 +5070,48 @@
                   <path class="chassis-highlight" id="hl-jambe-droite" d="M272 355 L304 355 L312 490 L286 490 Z" fill="rgba(0,154,222,0.18)" stroke="rgba(132,220,255,0.7)" stroke-width="1.4" filter="url(#zone-glow)"></path>
                 </g>
 
-                <!-- Labels -->
-                <g font-family="IBM Plex Sans, sans-serif" fill="#d3eeff">
+                <!-- Labels (terminal/bracketed) -->
+                <g fill="#d3eeff">
                   <g class="chassis-label" data-label-zone="tete">
-                    <line x1="300" y1="65" x2="278" y2="76" stroke="rgba(120,214,255,0.4)" stroke-width="1"></line>
-                    <text x="306" y="58" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.12em">VLA</text>
-                    <text x="306" y="71" font-size="11">Cerveau + vision</text>
+                    <line x1="300" y1="65" x2="278" y2="76" stroke="rgba(120,214,255,0.45)" stroke-width="1"></line>
+                    <circle cx="278" cy="76" r="1.6" fill="#78d6ff"></circle>
+                    <text x="306" y="58" font-family="'JetBrains Mono', monospace" font-size="9" fill="#9edfff" font-weight="500" letter-spacing="0.18em">[VLA]</text>
+                    <text x="306" y="71" font-family="'IBM Plex Sans', sans-serif" font-size="10.5" fill="#cfe8ff" opacity="0.82">Cerveau + vision</text>
                   </g>
                   <g class="chassis-label" data-label-zone="torse">
-                    <line x1="320" y1="198" x2="314" y2="210" stroke="rgba(132,220,255,0.4)" stroke-width="1"></line>
-                    <text x="326" y="195" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.1em">COMPUTE</text>
-                    <text x="326" y="208" font-size="11">SoC + batterie</text>
+                    <line x1="320" y1="198" x2="314" y2="210" stroke="rgba(132,220,255,0.45)" stroke-width="1"></line>
+                    <circle cx="314" cy="210" r="1.6" fill="#78d6ff"></circle>
+                    <text x="326" y="195" font-family="'JetBrains Mono', monospace" font-size="9" fill="#9edfff" font-weight="500" letter-spacing="0.18em">[COMPUTE]</text>
+                    <text x="326" y="208" font-family="'IBM Plex Sans', sans-serif" font-size="10.5" fill="#cfe8ff" opacity="0.82">SoC + batterie</text>
                   </g>
                   <g class="chassis-label" data-label-zone="bras-gauche">
-                    <line x1="64" y1="248" x2="130" y2="254" stroke="rgba(132,220,255,0.4)" stroke-width="1"></line>
-                    <text x="4" y="244" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.1em">END-EFFECTOR</text>
-                    <text x="4" y="257" font-size="11">6 DoF · 5 kg</text>
+                    <line x1="64" y1="248" x2="130" y2="254" stroke="rgba(132,220,255,0.45)" stroke-width="1"></line>
+                    <circle cx="130" cy="254" r="1.6" fill="#78d6ff"></circle>
+                    <text x="4" y="244" font-family="'JetBrains Mono', monospace" font-size="9" fill="#9edfff" font-weight="500" letter-spacing="0.18em">[END-EFFECTOR]</text>
+                    <text x="4" y="257" font-family="'IBM Plex Sans', sans-serif" font-size="10.5" fill="#cfe8ff" opacity="0.82">6 DoF · 5 kg</text>
                   </g>
                   <g class="chassis-label" data-label-zone="bras-droit">
-                    <line x1="435" y1="248" x2="372" y2="254" stroke="rgba(132,220,255,0.4)" stroke-width="1"></line>
-                    <text x="438" y="244" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.1em">OUTILLAGE</text>
-                    <text x="438" y="257" font-size="11">Modulaire</text>
+                    <line x1="435" y1="248" x2="372" y2="254" stroke="rgba(132,220,255,0.45)" stroke-width="1"></line>
+                    <circle cx="372" cy="254" r="1.6" fill="#78d6ff"></circle>
+                    <text x="438" y="244" font-family="'JetBrains Mono', monospace" font-size="9" fill="#9edfff" font-weight="500" letter-spacing="0.18em">[OUTILLAGE]</text>
+                    <text x="438" y="257" font-family="'IBM Plex Sans', sans-serif" font-size="10.5" fill="#cfe8ff" opacity="0.82">Modulaire</text>
                   </g>
                   <g class="chassis-label" data-label-zone="hanches">
-                    <line x1="320" y1="304" x2="294" y2="310" stroke="rgba(132,220,255,0.4)" stroke-width="1"></line>
-                    <text x="326" y="301" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.1em">IMU</text>
-                    <text x="326" y="314" font-size="11">Équilibre dynamique</text>
+                    <line x1="320" y1="304" x2="294" y2="310" stroke="rgba(132,220,255,0.45)" stroke-width="1"></line>
+                    <circle cx="294" cy="310" r="1.6" fill="#78d6ff"></circle>
+                    <text x="326" y="301" font-family="'JetBrains Mono', monospace" font-size="9" fill="#9edfff" font-weight="500" letter-spacing="0.18em">[IMU]</text>
+                    <text x="326" y="314" font-family="'IBM Plex Sans', sans-serif" font-size="10.5" fill="#cfe8ff" opacity="0.82">Équilibre dynamique</text>
                   </g>
                   <g class="chassis-label" data-label-zone="jambe-gauche">
-                    <line x1="130" y1="430" x2="196" y2="424" stroke="rgba(132,220,255,0.4)" stroke-width="1"></line>
-                    <text x="4" y="427" font-size="10" fill="#9edfff" font-weight="600" letter-spacing="0.1em">LOCOMOTION</text>
-                    <text x="4" y="440" font-size="11">1.5 m/s · 4 DoF</text>
+                    <line x1="130" y1="430" x2="196" y2="424" stroke="rgba(132,220,255,0.45)" stroke-width="1"></line>
+                    <circle cx="196" cy="424" r="1.6" fill="#78d6ff"></circle>
+                    <text x="4" y="427" font-family="'JetBrains Mono', monospace" font-size="9" fill="#9edfff" font-weight="500" letter-spacing="0.18em">[LOCOMOTION]</text>
+                    <text x="4" y="440" font-family="'IBM Plex Sans', sans-serif" font-size="10.5" fill="#cfe8ff" opacity="0.82">1.5 m/s · 4 DoF</text>
                   </g>
                   <g class="chassis-label" data-label-zone="perception">
-                    <line x1="300" y1="80" x2="272" y2="74" stroke="rgba(0,229,201,0.5)" stroke-width="1"></line>
-                    <text x="306" y="84" font-size="10" fill="#00e5c9" font-weight="600" letter-spacing="0.12em">VISION</text>
+                    <line x1="300" y1="80" x2="272" y2="74" stroke="rgba(0,229,201,0.55)" stroke-width="1"></line>
+                    <circle cx="272" cy="74" r="1.6" fill="#00e5c9"></circle>
+                    <text x="306" y="84" font-family="'JetBrains Mono', monospace" font-size="9" fill="#00e5c9" font-weight="500" letter-spacing="0.2em">[VISION]</text>
                   </g>
                 </g>
 
@@ -2474,8 +5174,8 @@
       <section class="section glass-panel reveal" id="corridor">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Corridor Terman · Saint-Laurent · 6 noeuds · 4 500 emplois</span>
-            <h2>Le Quebec a 80% des briques du modele Terman. Il manque la boucle d'essaimage.</h2>
+            <span class="eyebrow">Corridor Terman · Saint-Laurent · 6 nœuds · 4 500 emplois</span>
+            <h2>Le Québec a 80 % des briques du modèle Terman. Il manque la boucle d'essaimage.</h2>
           </div>
           <p>Stanford 1955: Terman connecte universite, industrie et capital. HP essaime Fairchild, Fairchild essaime Intel — la Silicon Valley emerge d'une boucle intentionnelle. Le Quebec a deja le talent (MILA), l'energie (Hydro-Quebec 4¢), le territoire (corridor Saint-Laurent) et les clients publics (etat, sante, construction). Il manque: la gouvernance de corridor, la culture d'essaimage et 30 M$ d'amorce. Budget 30 M$ / 90 jours → 450 emplois immédiats, 2,1 G$ PIB a 12 mois, 4 500 emplois directs a 5 ans.</p>
         </div>
@@ -2569,7 +5269,7 @@
         <div class="section-head">
           <div>
             <span class="eyebrow">Rapports publics · Think Tank ISL · 2026</span>
-            <h2>Cinq ans de recherche condenses en decisions executables.</h2>
+            <h2>Cinq ans de recherche condensés en décisions exécutables.</h2>
           </div>
           <p>Le Think Tank ISL produit des rapports publics independants: compute souverain, robotique humanoide, corridor Saint-Laurent, fractal de Terman, feuille de route d'execution. Chaque document est construit pour un ministre, un investisseur institutionnel ou un partenaire industriel — pas pour un lecteur universitaire.</p>
         </div>
@@ -2596,73 +5296,448 @@
         </div>
       </section>
 
-      <section class="section glass-panel reveal" id="contact">
+      <div class="register-divider register-c-divider reveal" aria-hidden="false">
+        <div>
+          <div class="kicker">Terminal · Briefing visuel · Channel III</div>
+          <h2>// médiathèque / accès direct</h2>
+        </div>
+        <div class="meta"><span class="folio">CH · III / IV</span>Run · 4 briefings · &lt;15 min</div>
+      </div>
+
+      <section class="section register-c reveal" id="mediatheque">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Resume executif · Audio ISL · 3 theses · 18 minutes</span>
-            <h2>Absorber cinq ans de recherche en 18 minutes, en deplacement ou avant une reunion.</h2>
+            <span class="eyebrow">Médiathèque · 4 briefings vidéo · Think Tank ISL</span>
+            <h2>Quatre vidéos pour absorber la thèse en moins de quinze minutes.</h2>
           </div>
-          <p>Le visiteur institutionnel — ministre, investisseur, partenaire industriel — n'a pas toujours le temps de lire 136 pages de rapports. Ce resume audio condense les trois theses de l'ISL avec leur logique causale, leurs chiffres et leurs horizons d'action. Une rampe d'acces executive au contenu complet.</p>
+          <p>Briefing visuel pensé pour les visiteurs institutionnels qui n'ont pas le temps de lire 136 pages de rapports. Chaque vidéo développe un angle : souveraineté AGI, pivot robotique, coopération géopolitique et finalité économique. À regarder avant un conseil, une revue d'investissement ou un briefing de cabinet.</p>
         </div>
 
-        <div class="podcast-layout">
-          <aside class="podcast-player">
-            <div class="audio-pod">
-              <h3 class="audio-pod-title">Audio Overview · NotebookLM</h3>
-              <p class="audio-pod-copy">Pod flottant prevu pour accueillir le fichier final du briefing audio. La version UI est deja structuree pour recevoir une source reelle sans repenser l'interface.</p>
-              <div class="audio-controls">
-                <button class="play-button" id="audio-toggle" type="button" aria-label="Lecture de demonstration"></button>
-                <div class="audio-track">
-                  <strong>Executive Brief · 08:24</strong>
-                  <div class="audio-status" id="audio-status">Standby institutionnel</div>
-                  <div class="track-bar"><div class="track-fill" id="track-fill"></div></div>
-                  <div class="audio-wave" id="audio-wave" aria-hidden="true">
-                    <span></span><span></span><span></span><span></span><span></span><span></span>
-                  </div>
+        <div class="video-player-shell">
+          <video id="isl-video" controls preload="metadata" playsinline poster="">
+            <source id="isl-video-source" src="isl_telechargement/L_IA___la_souveraineté.mp4" type="video/mp4">
+            Votre navigateur ne prend pas en charge la lecture vidéo HTML5.
+          </video>
+        </div>
+
+        <div class="video-selector" role="tablist" aria-label="Sélection des briefings vidéo">
+          <button type="button" class="is-active" data-video-src="isl_telechargement/L_IA___la_souveraineté.mp4" data-video-title="L'IA & la souveraineté">
+            <strong>01 · Souveraineté</strong>
+            <span>Pourquoi le Québec ne peut plus dépendre d'AWS et Azure pour l'entraînement.</span>
+          </button>
+          <button type="button" data-video-src="isl_telechargement/AGI_au_service_du_Québec.mp4" data-video-title="AGI au service du Québec">
+            <strong>02 · AGI</strong>
+            <span>Le cluster 2 000 H100 comme actif diplomatique, pas comme ligne budgétaire.</span>
+          </button>
+          <button type="button" data-video-src="isl_telechargement/Pivot_Robotique_du_Québec.mp4" data-video-title="Pivot robotique du Québec">
+            <strong>03 · Robotique</strong>
+            <span>L'usine Rive-Nord : 18 mois avant que Tokyo et Séoul referment la fenêtre.</span>
+          </button>
+          <button type="button" data-video-src="isl_telechargement/L_IA_Coopérative.mp4" data-video-title="L'IA coopérative">
+            <strong>04 · Coopération</strong>
+            <span>Standard Montréal : UK AISI, US NIST, CNRC. Rule-maker, pas spectateur.</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="section glass-panel reveal" id="about">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">À propos · Gouvernance · Indépendance</span>
+            <h2>Un think tank indépendant, adossé à la recherche publique québécoise.</h2>
+          </div>
+          <p>Un think tank crédible se juge à trois choses : qui l'anime, qui le finance et quelle méthode il utilise. L'ISL publie ces trois dimensions. Les rapports sont bâtis sur données publiques vérifiables (Statistique Canada, MILA, OECD.AI, IEA, Benchmark compute independent). Toute projection chiffrée est étayée, toute incertitude est déclarée.</p>
+        </div>
+
+        <div class="governance-grid">
+          <article class="governance-card">
+            <span class="video-kicker">Conseil scientifique</span>
+            <h3>Profils ciblés pour le conseil fondateur</h3>
+            <p>Chercheurs seniors en IA fondamentale et sécurité AGI, économistes industriels spécialisés politique technologique, anciens hauts fonctionnaires MEIE / ISDE / CNRC, dirigeants manufacturiers du corridor Saint-Laurent.</p>
+            <ul>
+              <li>Direction scientifique : affiliations MILA, Polytechnique, McGill attendues</li>
+              <li>Direction politique : expérience cabinet ministériel ou diplomatie fédérale</li>
+              <li>Direction industrielle : chaîne de valeur manufacturière Québec</li>
+            </ul>
+          </article>
+          <article class="governance-card">
+            <span class="video-kicker">Financement · Divulgation complète</span>
+            <h3>Modèle tripartite, aucun conflit d'intérêt non déclaré</h3>
+            <p>Financement cible réparti entre trois sources afin d'éviter toute capture. Chaque rapport publié fait l'objet d'une note de divulgation listant les financements reçus dans les 24 mois précédents, conformément aux standards du On Think Tanks Directory.</p>
+            <ul>
+              <li>40 % fonds philanthropiques québécois (fondations familiales)</li>
+              <li>40 % contrats de recherche publics non directifs (MEIE, FRQNT, FCI)</li>
+              <li>20 % commanditaires industriels, plafonnés à 15 % par entité</li>
+            </ul>
+          </article>
+          <article class="governance-card">
+            <span class="video-kicker">Méthodologie · L0→L4</span>
+            <h3>Cadre analytique documenté et reproductible</h3>
+            <p>Le modèle L0→L4 (perception, forme, cohérence, règle, métalogique) structure chaque rapport. Les sources primaires sont citées, les hypothèses sont explicitées, les scénarios alternatifs (Suiveur, Équilibre, Architecte) sont toujours présentés ensemble.</p>
+            <ul>
+              <li>Sources primaires : Statistique Canada, OECD.AI, IEA, Epoch AI, SemiAnalysis</li>
+              <li>Révision pair à pair avant publication (chercheurs externes à l'ISL)</li>
+              <li>Code et données : dépôt public quand la source le permet</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="disclosure-note">
+          <strong>Note de transparence.</strong> L'ISL est en phase de constitution (avril 2026). Cette page publie la structure de gouvernance cible ainsi que le modèle de divulgation. Les noms du conseil scientifique et la liste nominative des financements seront publiés avec le premier rapport officiel, prévu au T3 2026. Aucun contrat classifié, aucun financement étranger non déclaré.
+        </div>
+      </section>
+
+      <section class="section glass-panel reveal partners-band" id="partenaires">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Partenaires · Dialogue institutionnel · Constitution 2026</span>
+            <h2>Dix institutions pivots, de la recherche au régulateur international.</h2>
+          </div>
+          <p>L'ISL entretient un dialogue structuré avec un corridor d'institutions académiques, gouvernementales et internationales. La liste ci-dessous indique des partenaires <em>cibles ou pressentis</em> : aucun accord officiel n'est signé avant la publication du premier rapport (T3 2026). Le niveau de dialogue est rendu visible par le marqueur d'état.</p>
+        </div>
+
+        <div class="partners-header-note">
+          <strong>Représentations typographiques.</strong> Les marques affichées ici sont des rendus stylisés produits par l'ISL à titre indicatif. Elles ne sont ni fournies ni validées par les institutions concernées et ne constituent pas un endossement.
+        </div>
+
+        <div class="partners-grid">
+          <article class="partner-card">
+            <span class="role">Recherche · QC</span>
+            <span class="status-dot is-active" aria-label="Dialogue actif"></span>
+            <svg class="wordmark" viewBox="0 0 180 64" role="img" aria-label="MILA">
+              <text x="90" y="42" text-anchor="middle" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="32" letter-spacing="6" fill="currentColor">MILA</text>
+              <line x1="30" y1="54" x2="150" y2="54" stroke="currentColor" stroke-width="1.2" opacity="0.4"/>
+            </svg>
+            <span class="caption">Institut québécois d'IA · Modèles & alignement</span>
+          </article>
+
+          <article class="partner-card">
+            <span class="role">Recherche · QC</span>
+            <span class="status-dot is-active" aria-label="Dialogue actif"></span>
+            <svg class="wordmark" viewBox="0 0 180 64" role="img" aria-label="Polytechnique Montréal">
+              <text x="90" y="28" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-weight="600" font-size="13" letter-spacing="2.4" fill="currentColor">POLYTECHNIQUE</text>
+              <line x1="40" y1="36" x2="140" y2="36" stroke="currentColor" stroke-width="0.8" opacity="0.4"/>
+              <text x="90" y="52" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-weight="400" font-style="italic" font-size="11" letter-spacing="3" fill="currentColor" opacity="0.72">Montréal</text>
+            </svg>
+            <span class="caption">Génie · Systèmes · IA appliquée</span>
+          </article>
+
+          <article class="partner-card">
+            <span class="role">Recherche · QC</span>
+            <span class="status-dot" aria-label="Pressenti"></span>
+            <svg class="wordmark" viewBox="0 0 180 64" role="img" aria-label="McGill">
+              <text x="90" y="44" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-weight="700" font-size="28" fill="currentColor">McGill</text>
+              <text x="90" y="58" text-anchor="middle" font-family="'Source Serif 4', serif" font-weight="400" font-size="8" letter-spacing="4" fill="currentColor" opacity="0.55">UNIVERSITY</text>
+            </svg>
+            <span class="caption">IA fondamentale · Sécurité · Policy</span>
+          </article>
+
+          <article class="partner-card">
+            <span class="role">Recherche · QC</span>
+            <span class="status-dot" aria-label="Pressenti"></span>
+            <svg class="wordmark" viewBox="0 0 180 64" role="img" aria-label="IVADO">
+              <text x="90" y="42" text-anchor="middle" font-family="'IBM Plex Sans', sans-serif" font-weight="300" font-size="28" letter-spacing="10" fill="currentColor">IVADO</text>
+              <text x="90" y="56" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" letter-spacing="3" fill="currentColor" opacity="0.55">DATA · OPTIMIZATION</text>
+            </svg>
+            <span class="caption">Science données · Recherche interfac.</span>
+          </article>
+
+          <article class="partner-card">
+            <span class="role">Infrastructure · QC</span>
+            <span class="status-dot is-active" aria-label="Dialogue actif"></span>
+            <svg class="wordmark" viewBox="0 0 180 64" role="img" aria-label="Hydro-Québec">
+              <circle cx="28" cy="32" r="11" fill="none" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M28 22 L28 42 M18 32 L38 32" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <text x="52" y="28" font-family="'IBM Plex Sans', sans-serif" font-weight="600" font-size="14" letter-spacing="2" fill="currentColor">HYDRO</text>
+              <text x="52" y="48" font-family="'IBM Plex Sans', sans-serif" font-weight="400" font-size="13" letter-spacing="2" fill="currentColor" opacity="0.72">QUÉBEC</text>
+            </svg>
+            <span class="caption">Tarif industriel L · 4¢/kWh · Corridor</span>
+          </article>
+
+          <article class="partner-card">
+            <span class="role">Gouvernement · CA</span>
+            <span class="status-dot" aria-label="Pressenti"></span>
+            <svg class="wordmark" viewBox="0 0 180 64" role="img" aria-label="CNRC · NRC">
+              <text x="90" y="38" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="500" font-size="22" letter-spacing="6" fill="currentColor">CNRC</text>
+              <text x="90" y="54" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" letter-spacing="4" fill="currentColor" opacity="0.55">NATIONAL · RESEARCH</text>
+            </svg>
+            <span class="caption">Conseil recherches Canada · Ottawa</span>
+          </article>
+
+          <article class="partner-card">
+            <span class="role">Gouvernement · QC</span>
+            <span class="status-dot" aria-label="Pressenti"></span>
+            <svg class="wordmark" viewBox="0 0 180 64" role="img" aria-label="MEIE">
+              <text x="90" y="32" text-anchor="middle" font-family="'IBM Plex Sans', sans-serif" font-weight="500" font-size="22" letter-spacing="4" fill="currentColor">MEIE</text>
+              <text x="90" y="50" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" letter-spacing="2" fill="currentColor" opacity="0.55">ÉCONOMIE · INNOVATION · ÉNERGIE</text>
+            </svg>
+            <span class="caption">Ministère Économie Innovation Énergie</span>
+          </article>
+
+          <article class="partner-card">
+            <span class="role">Gouvernement · QC</span>
+            <span class="status-dot" aria-label="Pressenti"></span>
+            <svg class="wordmark" viewBox="0 0 180 64" role="img" aria-label="FRQNT">
+              <text x="90" y="34" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-weight="700" font-size="22" letter-spacing="3" fill="currentColor">FRQNT</text>
+              <text x="90" y="52" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" letter-spacing="2" fill="currentColor" opacity="0.55">FONDS RECHERCHE · NATURE · TECHNO</text>
+            </svg>
+            <span class="caption">Fonds recherche du Québec · Nature</span>
+          </article>
+
+          <article class="partner-card">
+            <span class="role">International · UK</span>
+            <span class="status-dot" aria-label="Pressenti"></span>
+            <svg class="wordmark" viewBox="0 0 180 64" role="img" aria-label="UK AI Safety Institute">
+              <text x="90" y="24" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="500" font-size="10" letter-spacing="4" fill="currentColor" opacity="0.7">UNITED KINGDOM</text>
+              <text x="90" y="48" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="500" font-size="22" letter-spacing="6" fill="currentColor">AISI</text>
+              <line x1="40" y1="56" x2="140" y2="56" stroke="currentColor" stroke-width="0.8" opacity="0.4"/>
+            </svg>
+            <span class="caption">AI Safety Institute · Évaluation modèles</span>
+          </article>
+
+          <article class="partner-card">
+            <span class="role">International · US</span>
+            <span class="status-dot" aria-label="Pressenti"></span>
+            <svg class="wordmark" viewBox="0 0 180 64" role="img" aria-label="US NIST">
+              <text x="90" y="24" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="500" font-size="10" letter-spacing="4" fill="currentColor" opacity="0.7">UNITED STATES</text>
+              <text x="90" y="50" text-anchor="middle" font-family="'IBM Plex Sans', sans-serif" font-weight="700" font-size="24" letter-spacing="5" fill="currentColor">NIST</text>
+              <line x1="40" y1="58" x2="140" y2="58" stroke="currentColor" stroke-width="0.8" opacity="0.4"/>
+            </svg>
+            <span class="caption">AI RMF · Standards interop. · NIST</span>
+          </article>
+        </div>
+
+        <div class="partners-legend">
+          <span class="partners-legend-item"><span class="status-dot is-active"></span>Dialogue formel en cours</span>
+          <span class="partners-legend-item"><span class="status-dot"></span>Partenariat pressenti · non engagé</span>
+        </div>
+      </section>
+
+      <div class="register-divider reveal" aria-hidden="false">
+        <div>
+          <div class="kicker">Rapport technique · Section II</div>
+          <h2>Analyse contradictoire · Risques documentés</h2>
+        </div>
+        <div class="meta"><span class="folio">§ II · p. 02 / 02</span>Lecture 9 min · Révision contradictoire · Avril 2026</div>
+      </div>
+
+      <section class="section register-b reveal" id="risques">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Analyse contradictoire · Risques · Angles critiques</span>
+            <h2>Les risques que nos propres rapports exposent — et comment nous les atténuons.</h2>
+          </div>
+          <p>Un rapport qui n'expose pas ses propres failles n'est pas un rapport, c'est un plaidoyer. Voici les six objections principales reçues lors des revues externes et les mesures d'atténuation intégrées à la feuille de route. Chaque risque a un propriétaire identifié et un seuil de déclenchement documenté<a href="#fn-r-1" id="fn-r-1-ref" class="footnote">1</a>.</p>
+        </div>
+
+        <div class="risks-grid">
+          <article class="risk-card">
+            <small>Risque 01 · Énergie / Carbone</small>
+            <h3>Un cluster H100 consomme 12 MW en continu</h3>
+            <p>2 000 H100 à pleine charge = 10-12 MW électrique + refroidissement. Même sur hydro, c'est l'équivalent d'une petite ville. Question politique : priorité énergétique vs industrie lourde, pêcheries, résidentiel.</p>
+            <div class="mitigation">
+              <strong>Atténuation</strong>
+              Allocation Hydro-Québec sous contrat tarif industriel L, couplage avec récupération chaleur datacenter (Laval, partenariat CH des Laurentides), audit carbone annuel publié.
+            </div>
+          </article>
+          <article class="risk-card">
+            <small>Risque 02 · Concurrence interne</small>
+            <h3>Toronto (Vector), Edmonton (Amii) revendiquent la même position</h3>
+            <p>Vector Institute a 190 M$ fédéral sur 5 ans. Amii a l'Alberta Machine Intelligence Supercluster. Le Québec ne part pas favori pour le compute fédéral — il part en retard de 18 mois.</p>
+            <div class="mitigation">
+              <strong>Atténuation</strong>
+              Différenciation par la souveraineté francophone + corridor manufacturier intégré. Vector est académique, Amii est horizontal, l'ISL propose un axe politique-industriel vertical unique au Québec.
+            </div>
+          </article>
+          <article class="risk-card">
+            <small>Risque 03 · Talent / Immigration</small>
+            <h3>60 % des doctorants MILA ne sont pas canadiens</h3>
+            <p>Sans réforme des délais d'immigration (PEQ, Arrima, permis de travail), même un cluster opérationnel n'empêchera pas les départs vers Anthropic ou DeepMind. Le compute n'est pas suffisant — il faut la voie rapide d'immigration.</p>
+            <div class="mitigation">
+              <strong>Atténuation</strong>
+              Volet conjoint ISL-MIFI : catégorie prioritaire « chercheurs AGI » avec traitement 45 jours, package rétention compétitif, engagement de service minimum de 3 ans sur cluster souverain.
+            </div>
+          </article>
+          <article class="risk-card">
+            <small>Risque 04 · Premières Nations</small>
+            <h3>Tout projet d'infrastructure touche des territoires ancestraux</h3>
+            <p>Un datacenter Tier III dans les Laurentides ou Mauricie croise les territoires traditionnels atikamekw, innus, anishinaabeg. Sans consultation précoce, le projet se retrouve en Cour supérieure pour 18 mois minimum.</p>
+            <div class="mitigation">
+              <strong>Atténuation</strong>
+              Consultation co-conçue avec le Secrétariat aux affaires autochtones dès le J+30, modèle de bénéfices économiques partagés (participation, emplois directs, formation), audit de l'ECDPA respecté.
+            </div>
+          </article>
+          <article class="risk-card">
+            <small>Risque 05 · Chiffres contestables</small>
+            <h3>« ROI 1:25 », « 100 M$/mois » — projections fragiles</h3>
+            <p>Les projections économiques reposent sur des hypothèses de marché (adoption licences, contrats export, prix compute). Une erreur de 30 % sur l'adoption écrase la thèse. Le scénario Architecte n'est pas garanti.</p>
+            <div class="mitigation">
+              <strong>Atténuation</strong>
+              Publication des trois scénarios (Suiveur, Équilibre, Architecte) avec intervalles de confiance. Chaque chiffre hero est annoté d'une note méthodologique accessible. Révisions trimestrielles publiées.
+            </div>
+          </article>
+          <article class="risk-card">
+            <small>Risque 06 · Capture politique</small>
+            <h3>Think tank = outil de lobbying pour un camp particulier ?</h3>
+            <p>Objection classique : un think tank aligné sur le gouvernement en place perd sa crédibilité quand le gouvernement change. L'AGI traverse plusieurs cycles électoraux — la position doit tenir face à un gouvernement libéral, caquiste ou autre.</p>
+            <div class="mitigation">
+              <strong>Atténuation</strong>
+              Charte d'indépendance publique, conseil scientifique à mandat décalé des cycles électoraux (5 ans), refus de financement partisan, positions publiées contradictoires quand nécessaire (ex : critique du virage IA responsable si sous-budgété).
+            </div>
+          </article>
+        </div>
+
+        <div class="footnotes-list">
+          <h4>Protocole d'analyse contradictoire</h4>
+          <ol>
+            <li id="fn-r-1">Les six risques ci-dessus ont émergé de trois revues externes menées entre janvier et mars 2026 auprès de chercheurs, anciens fonctionnaires et dirigeants industriels non affiliés à l'ISL. Méthodologie : <em>red team</em> structurée en trois rondes, identification des objections fortes, classement par probabilité × impact. <a href="#fn-r-1-ref" class="backref" aria-label="Retour au texte">↩</a></li>
+            <li>Chaque risque suit le même cadre : énoncé, preuve de pertinence, mesure d'atténuation, seuil de déclenchement, propriétaire opérationnel. Les seuils et propriétaires sont publiés en annexe des rapports thématiques.</li>
+            <li>Révision semestrielle : les risques sont ré-évalués chaque T1 et T3, et le registre public est mis à jour. Un risque retiré du registre fait l'objet d'une note justificative.</li>
+            <li>Sources externes citées : <a href="https://www.iea.org/" target="_blank" rel="noopener">IEA World Energy Outlook</a> (énergie), Hydro-Québec rapports annuels (tarif L), ECDPA (consultation autochtone), Epoch AI (benchmarks compute), MILA rapports annuels (talent).</li>
+          </ol>
+        </div>
+      </section>
+
+      <div class="register-divider register-c-divider reveal" aria-hidden="false">
+        <div>
+          <div class="kicker">Terminal · Engagement · Channel IV</div>
+          <h2>// contact / trois canaux d'entrée</h2>
+        </div>
+        <div class="meta"><span class="folio">CH · IV / IV</span>Chatham House · 30 min · SLA 5 j</div>
+      </div>
+
+      <section class="section register-c reveal" id="contact">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Engager l'ISL · Briefing, partenariat, rapports</span>
+            <h2>Un ministre, un investisseur, un partenaire industriel : trois portes d'entrée.</h2>
+          </div>
+          <p>L'ISL ouvre trois canaux d'accès selon le profil institutionnel. Les briefings exécutifs sont confidentiels, non-attribués et limités à 30 minutes. Les rapports publics sont téléchargeables directement. Les partenariats industriels et gouvernementaux passent par une LOI standardisée.</p>
+        </div>
+
+        <div class="cta-grid">
+          <article class="cta-card" data-slot="SLOT 01 / RAPPORTS">
+            <h3>Rapports publics · Téléchargement direct</h3>
+            <p>Cinq rapports publiés, cités, vérifiables, bâtis sur données publiques. Chaque document inclut sa méthodologie, ses sources primaires et ses scénarios alternatifs. Aucun accès conditionnel.</p>
+            <div class="download-list">
+              <a href="isl_telechargement/Rapport AGI — Situation et Recommandations Strat-u00e9giques.pdf" download>
+                <span>Rapport AGI · Situation et recommandations</span>
+                <span>PDF · 48 p</span>
+              </a>
+              <a href="isl_telechargement/Résumé exécutif.pdf" download>
+                <span>Résumé exécutif · Synthèse stratégique</span>
+                <span>PDF</span>
+              </a>
+              <a href="isl_telechargement/AGI Think Tank.pdf" download>
+                <span>AGI Think Tank · Vision globale</span>
+                <span>PDF</span>
+              </a>
+              <a href="isl_telechargement/rapport unifé.pdf" download>
+                <span>Rapport unifié · Corridor Saint-Laurent</span>
+                <span>PDF · 52 p</span>
+              </a>
+              <a href="isl_telechargement/Pivot Robotique.pdf" download>
+                <span>Pivot robotique humanoïde · Rive-Nord</span>
+                <span>PDF · 36 p</span>
+              </a>
+              <a href="isl_telechargement/Axe Stratégique Robotique Humanoïde — Vallée du Saint-Laurent.pdf" download>
+                <span>Axe stratégique robotique humanoïde · Vallée Saint-Laurent</span>
+                <span>PDF</span>
+              </a>
+              <a href="isl_telechargement/fractal de Terman.pdf" download>
+                <span>Modèle fractal de Terman appliqué au Québec</span>
+                <span>PDF</span>
+              </a>
+              <a href="isl_telechargement/Modèle Fractal de Terman — Implantation de l'IA dans la Vallée du Saint-Laurent.pdf" download>
+                <span>Implantation IA · Modèle fractal de Terman</span>
+                <span>PDF</span>
+              </a>
+              <a href="isl_telechargement/La Vallée du Saint-Laurent _ Transposer le modèle fractal de Terman _ Rapport Exécutif.pdf" download>
+                <span>Transposition Terman · Rapport exécutif</span>
+                <span>PDF</span>
+              </a>
+              <a href="isl_telechargement/STRATÉGIE DE TRANSPOSITION.pdf" download>
+                <span>Stratégie de transposition · Méthodologie</span>
+                <span>PDF</span>
+              </a>
+              <a href="isl_telechargement/Manifeste des Meilleures Pratiques — Power User et Power Agent (1).pdf" download>
+                <span>Manifeste · Power User et Power Agent</span>
+                <span>PDF</span>
+              </a>
+              <a href="isl_telechargement/Feuille de Route.pdf" download>
+                <span>Feuille de route d'exécution · 2026–2030</span>
+                <span>PDF</span>
+              </a>
+              <a href="global-plan.html">
+                <span>Global Plan · Direction civilisationnelle (v1.2)</span>
+                <span>HTML · Lecture en ligne</span>
+              </a>
+            </div>
+          </article>
+
+          <article class="cta-card" data-slot="SLOT 02 / BRIEFING">
+            <h3>Demander un briefing exécutif</h3>
+            <p>Briefing 30 minutes, sous règle Chatham House. Ouvert aux cabinets ministériels, investisseurs institutionnels, partenaires industriels et médias accrédités. Réponse sous 5 jours ouvrables.</p>
+            <form class="contact-form" id="briefing-form" action="mailto:briefing@institut-saint-laurent.org" method="post" enctype="text/plain">
+              <div class="contact-form-row">
+                <div>
+                  <label for="cf-name">Nom</label>
+                  <input id="cf-name" name="name" type="text" required autocomplete="name">
+                </div>
+                <div>
+                  <label for="cf-role">Fonction</label>
+                  <input id="cf-role" name="role" type="text" required placeholder="Ministre, VP, journaliste…">
                 </div>
               </div>
-            </div>
-          </aside>
-
-          <div>
-            <div class="podcast-copy">
-              <h3>Resume executif · 3 theses · 18 minutes</h3>
-              <p>L'ISL condense cinq ans de recherche en trois theses actionnables: 1) Cluster souverain 2 000 H100 avant janvier 2027. 2) Usine Rive-Nord GO/NO-GO avant le 17 mai 2026. 3) Corridor Saint-Laurent active en 90 jours pour 30 M$. Chaque these a un budget, un horizon et un seuil de rentabilite. Ce podcast NotebookLM permet de les absorber en deplacement, avant une reunion de cabinet ou une revue d'investissement.</p>
-              <ul>
-                <li>These 1: 112 M$ cluster, ROI 1:25, fenetre irreversible G7 juin 2027.</li>
-                <li>These 2: 75 M$ Rive-Nord, 18 mois, avantage cout structurel vs Tokyo/Seoul.</li>
-                <li>These 3: 30 M$ corridor, 90 jours, 4 500 emplois / 5 ans, modele Terman applique.</li>
-              </ul>
-            </div>
-
-            <div class="cta-grid">
-              <article class="cta-card">
-                <h3>Engager l'ISL · Partenaires strategiques</h3>
-                <p>L'ISL cherche trois profils: un directeur executif AGI Quebec (Bengio/Precup/Pineau/Larochelle), un partenaire industriel Rive-Nord (manufacturier, integrateur, constructeur), un partenaire gouvernemental (MEIE, InvestQC, CNRC).</p>
-                <ul>
-                  <li>Ministre ou cabinet: briefing 30 minutes sur demande</li>
-                  <li>Investisseur institutionnel: due diligence pack disponible</li>
-                  <li>Partenaire industriel: LOI Rive-Nord ouverte</li>
-                </ul>
-              </article>
-              <article class="cta-card">
-                <h3>Acces aux rapports · Think Tank ISL</h3>
-                <p>Cinq rapports publics disponibles: AGI souverain, robotique Rive-Nord, corridor Saint-Laurent, fractal de Terman, feuille de route execution. Chaque rapport est cite, verifiable, construit sur donnees publiques. Aucune projection non etayee.</p>
-                <ul>
-                  <li>Rapport AGI: 48 pages, donnees verifiables</li>
-                  <li>Rapport robotique: 36 pages, analyse comparative</li>
-                  <li>Rapport unifie corridor: 52 pages, modele Terman</li>
-                </ul>
-              </article>
-            </div>
-          </div>
+              <div class="contact-form-row">
+                <div>
+                  <label for="cf-email">Courriel</label>
+                  <input id="cf-email" name="email" type="email" required autocomplete="email">
+                </div>
+                <div>
+                  <label for="cf-type">Type de demande</label>
+                  <select id="cf-type" name="type" required>
+                    <option value="briefing">Briefing exécutif 30 min</option>
+                    <option value="investor">Due diligence investisseur</option>
+                    <option value="industrial">Partenariat industriel (LOI Rive-Nord)</option>
+                    <option value="media">Demande média (Chatham House)</option>
+                    <option value="research">Collaboration recherche</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label for="cf-message">Contexte (optionnel)</label>
+                <textarea id="cf-message" name="message" placeholder="Thèse d'intérêt, calendrier, contraintes particulières…"></textarea>
+              </div>
+              <button type="submit" class="button-primary">Envoyer la demande</button>
+            </form>
+          </article>
         </div>
       </section>
     </main>
 
+    <div class="footer-meta" style="width:var(--content);margin:0 auto;">
+      <div>
+        <h4>Sources primaires</h4>
+        Statistique Canada · OECD.AI Policy Observatory · IEA World Energy Outlook · Epoch AI · SemiAnalysis · Stanford AI Index · UK AISI research agenda · US NIST AI RMF · MILA publications ArXiv.
+      </div>
+      <div>
+        <h4>Méthodologie</h4>
+        Cadre L0→L4 documenté. Trois scénarios systématiquement publiés (Suiveur / Équilibre / Architecte). Intervalles de confiance sur projections économiques. Révision pair à pair externe avant publication.
+        <br><br>
+        <a href="#stack">Voir le cadre analytique →</a>
+      </div>
+      <div>
+        <h4>Transparence</h4>
+        Think tank indépendant sans financement partisan. Divulgation des financements publiée à chaque rapport. Charte d'indépendance disponible sur demande.
+        <br><br>
+        <a href="#about">Gouvernance et financement →</a>
+      </div>
+    </div>
+
     <footer class="footer">
-      <span>Institut St-Laurent · Think Tank AGI · Montreal 2026 · La Vallee du Saint-Laurent</span>
-      <span>Fenetre critique: 2026–2027 · Cluster 2 000 H100 · Usine Rive-Nord · Standard Montreal · 4 500 emplois · Scenario Architecte +35% PIB</span>
+      <span>Institut St-Laurent · Think Tank AGI & Robotique · Montréal · <span id="footer-updated">Dernière mise à jour : 19 avril 2026</span></span>
+      <span>Fenêtre critique : 2026–2027 · Cluster 2 000 H100 · Usine Rive-Nord · Standard Montréal · 4 500 emplois · Scénario Architecte +35 % PIB</span>
     </footer>
   </div>
 
@@ -2678,10 +5753,10 @@
     const timelineFocusProof = document.getElementById('timeline-focus-proof');
     const mapHotspots = document.querySelectorAll('.map-hotspot');
     const nodeTriggerButtons = document.querySelectorAll('[data-node-trigger]');
-    const audioToggle = document.getElementById('audio-toggle');
-    const audioStatus = document.getElementById('audio-status');
-    const audioWave = document.getElementById('audio-wave');
-    const trackFill = document.getElementById('track-fill');
+    const islVideo = document.getElementById('isl-video');
+    const islVideoSource = document.getElementById('isl-video-source');
+    const videoSelectorBtns = document.querySelectorAll('.video-selector button[data-video-src]');
+    const langButtons = document.querySelectorAll('.lang-toggle button[data-lang]');
     const navLinks = document.querySelectorAll('[data-nav-target]');
     const robotFocusCards = document.querySelectorAll('[data-robot-focus]');
     const heroCommandTitle = document.getElementById('hero-command-title');
@@ -3091,47 +6166,76 @@
       button.addEventListener('click', () => setMapFocus(button.dataset.nodeTrigger));
     });
 
-    let audioPlaying = false;
-    let audioProgress = 38;
-    let audioTimerId = 0;
-
-    const renderAudio = () => {
-      audioToggle.classList.toggle('is-playing', audioPlaying);
-      audioWave.classList.toggle('is-playing', audioPlaying);
-      trackFill.classList.toggle('is-playing', audioPlaying);
-      trackFill.style.width = `${audioProgress}%`;
-      audioStatus.textContent = audioPlaying ? 'Lecture de demonstration' : 'Standby institutionnel';
-    };
-
-    const stopAudioLoop = () => {
-      if (audioTimerId) {
-        window.clearInterval(audioTimerId);
-        audioTimerId = 0;
+    const switchVideo = (src, title) => {
+      if (!islVideo || !islVideoSource || !src) return;
+      islVideoSource.setAttribute('src', src);
+      islVideo.setAttribute('aria-label', title || 'Briefing vidéo ISL');
+      islVideo.load();
+      const playPromise = islVideo.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => { /* autoplay bloqué : user click requis */ });
       }
     };
 
-    const startAudioLoop = () => {
-      stopAudioLoop();
-      audioTimerId = window.setInterval(() => {
-        audioProgress += 1.8;
-        if (audioProgress >= 100) {
-          audioProgress = 14;
-        }
-        renderAudio();
-      }, 280);
-    };
-
-    audioToggle.addEventListener('click', () => {
-      audioPlaying = !audioPlaying;
-      if (audioPlaying) {
-        startAudioLoop();
-      } else {
-        stopAudioLoop();
-      }
-      renderAudio();
+    videoSelectorBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        videoSelectorBtns.forEach((b) => {
+          b.classList.toggle('is-active', b === btn);
+          b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+        });
+        switchVideo(btn.dataset.videoSrc, btn.dataset.videoTitle);
+      });
     });
 
-    renderAudio();
+    // ── i18n FR/EN toggle ───────────────────────────────────────
+    const i18n = {
+      fr: {
+        'nav.stack': 'Méthode',
+        'nav.agi': 'Axe AGI',
+        'nav.robotique': 'Robotique',
+        'nav.corridor': 'Corridor',
+        'nav.media': 'Vidéos',
+        'nav.about': 'À propos',
+        'nav.partners': 'Partenaires',
+        'nav.risks': 'Risques',
+        'nav.cta': 'Briefing'
+      },
+      en: {
+        'nav.stack': 'Method',
+        'nav.agi': 'AGI Axis',
+        'nav.robotique': 'Robotics',
+        'nav.corridor': 'Corridor',
+        'nav.media': 'Videos',
+        'nav.about': 'About',
+        'nav.partners': 'Partners',
+        'nav.risks': 'Risks',
+        'nav.cta': 'Briefing'
+      }
+    };
+
+    const applyLang = (lang) => {
+      const dict = i18n[lang] || i18n.fr;
+      document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : 'fr');
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+      });
+      langButtons.forEach((btn) => {
+        const active = btn.dataset.lang === lang;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      try { localStorage.setItem('isl-lang', lang); } catch (_) { /* noop */ }
+    };
+
+    langButtons.forEach((btn) => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+
+    try {
+      const saved = localStorage.getItem('isl-lang');
+      if (saved === 'en') applyLang('en');
+    } catch (_) { /* noop */ }
 
     const updateProgress = () => {
       const scrollable = document.documentElement.scrollHeight - window.innerHeight;

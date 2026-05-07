@@ -1,0 +1,8 @@
+
+# 2026-05-07 — exclude videos from public repo (Yoan: 'pousse juste les fichiers pas les vidéos')
+*.mp4
+*.mov
+*.avi
+*.webm
+.DS_Store
+Thumbs.db
